@@ -4,7 +4,7 @@ const path = require("path");
 module.exports = {
   mode: "development",
 
-  entry: path.resolve(__dirname, "../src/index.js"),
+  entry: path.resolve(__dirname, "../src/index.jsx"),
 
   output: {
     path: path.resolve(__dirname, "../build"),
@@ -13,7 +13,7 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.m?js$/,
+        test: /\.jsx?$/,
         exclude: /(node_modules|bower_components)/,
         use: {
           loader: "babel-loader",
@@ -21,6 +21,7 @@ module.exports = {
       },
     ],
   },
+
   plugins: [
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, "../src/index.html"),
