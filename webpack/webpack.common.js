@@ -1,17 +1,22 @@
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const path = require("path");
 
 module.exports = {
-  mode: "development",
-
   entry: path.resolve(__dirname, "../src/index.jsx"),
 
   output: {
     path: path.resolve(__dirname, "../build"),
     filename: "bundle.js",
   },
+
   module: {
     rules: [
+      {
+        test: /\.css$/i,
+        exclude: /\node_modules/,
+        use: [MiniCssExtractPlugin.loader, "css-loader"],
+      },
       {
         test: /\.jsx?$/,
         exclude: /(node_modules|bower_components)/,
@@ -26,14 +31,8 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, "../src/index.html"),
     }),
+    new MiniCssExtractPlugin({
+      filename: "index.css",
+    }),
   ],
-
-  devtool: "eval-cheap-module-source-map",
-
-  devServer: {
-    historyApiFallback: true,
-    hot: true,
-    static: "../build",
-    port: "3000",
-  },
 };
