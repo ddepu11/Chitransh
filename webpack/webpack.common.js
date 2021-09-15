@@ -10,7 +10,17 @@ module.exports = {
     path: path.resolve(__dirname, "../build"),
     filename: "bundle.js",
   },
-
+  module: {
+    rules: [
+      {
+        test: /\.m?js$/,
+        exclude: /(node_modules|bower_components)/,
+        use: {
+          loader: "babel-loader",
+        },
+      },
+    ],
+  },
   plugins: [
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, "../src/index.html"),
