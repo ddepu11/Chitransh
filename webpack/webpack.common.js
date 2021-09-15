@@ -1,3 +1,4 @@
+const HtmlWebpackPlugin = require("html-webpack-plugin");
 const path = require("path");
 
 module.exports = {
@@ -8,5 +9,17 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, "../build"),
     filename: "bundle.js",
+  },
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: path.resolve(__dirname, "../src/index.html"),
+    }),
+  ],
+
+  devtool: "eval-cheap-module-source-map",
+
+  devServer: {
+    historyApiFallback: true,
+    hot: true,
   },
 };
