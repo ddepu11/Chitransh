@@ -10,3 +10,4 @@ module.exports = {
     minimizer: [new CssMinimizerPlugin()],
   },
 };
+
