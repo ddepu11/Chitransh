@@ -10,6 +10,7 @@ module.exports = {
     path: path.resolve(__dirname, "../build"),
     filename: "bundle.js",
   },
+
   plugins: [
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, "../src/index.html"),
@@ -21,5 +22,7 @@ module.exports = {
   devServer: {
     historyApiFallback: true,
     hot: true,
+    static: "../build",
+    port: "3000",
   },
 };
