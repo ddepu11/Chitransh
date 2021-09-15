@@ -1,0 +1,15 @@
+{
+  "name": "chitransh",
+  "version": "1.0.0",
+  "description": "image sharing app",
+  "main": "index.js",
+  "scripts": {
+    "build": "webpack --config ./webpack/webpack.common.js"
+  },
+  "author": "deepanshu tiwari",
+  "license": "ISC",
+  "devDependencies": {
+    "webpack": "^5.52.1",
+    "webpack-cli": "^4.8.0"
+  }
+}
