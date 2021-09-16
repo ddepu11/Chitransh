@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { FcGoogle } from 'react-icons/fc';
 import FormControl from '../../Components/FormControl';
 import Button from '../../Components/Button';
 import useSignInLogic from './Login/useSignInLogic';
@@ -51,11 +52,35 @@ const SignIn = () => {
             padding='5px 10px'
             borderRadius='5px'
             fs='0.8em'
-            width='52%'
+            width='57%'
             margin='20px 0 0'
             bgColor='#266faa'
           >
             Log In
+          </Button>
+
+          <div className='or_line flex'>
+            <div className='left_line' />
+            <span>OR</span>
+            <div className='right_line' />
+          </div>
+
+          {/* FcGoogle */}
+          <Button
+            type='submit'
+            padding='5px 10px'
+            borderRadius='5px'
+            fs='0.8em'
+            width='57%'
+            margin='20px 0 0'
+            bgColor='transparent'
+            transform='scale(1.05)'
+            bSh='rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px'
+          >
+            <div className='center flex'>
+              <FcGoogle fontSize='1.5em' />
+              <span>Log in with Google</span>
+            </div>
           </Button>
         </form>
       </div>
@@ -78,10 +103,10 @@ const Wrapper = styled.section`
   }
 
   .hero {
-    padding: 50px 00px;
+    padding: 50px 00px 20px;
     width: 50%;
     flex-direction: column;
-    border: 1px dashed #bbbbbb;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
 
     form {
       margin-top: 40px;
@@ -90,6 +115,41 @@ const Wrapper = styled.section`
 
     .row {
       width: 60%;
+    }
+
+    .or_line {
+      margin-top: 20px;
+      width: 57%;
+      justify-content: space-between;
+
+      .left_line {
+        height: 2px;
+        width: 40%;
+        background-color: #c5c5c5;
+      }
+
+      span {
+        color: #686565;
+      }
+
+      .right_line {
+        height: 2px;
+        width: 40%;
+        background-color: #c5c5c5;
+      }
+
+      :hover {
+        cursor: default;
+      }
+    }
+
+    .center {
+      color: #333;
+
+      span {
+        margin-left: 10px;
+        font-size: 1.3em;
+      }
     }
   }
 `;

@@ -120,8 +120,6 @@ const ButtonWrapper = styled.button`
   background-color: ${({ bgColor }) => bgColor && bgColor};
 
   color: ${({ color }) => color && color};
-  transition: ${({ transition }) => transition && transition};
-  transform: ${({ transform }) => transform && transform};
 
   box-shadow: ${({ boxShadow }) => boxShadow && boxShadow};
   border-radius: ${({ borderRadius }) => borderRadius && borderRadius};
@@ -132,6 +130,12 @@ const ButtonWrapper = styled.button`
   bottom: ${({ fromBottom }) => fromBottom && fromBottom};
   left: ${({ fromLeft }) => fromLeft && fromLeft};
   right: ${({ fromRight }) => fromRight && fromRight};
+
+  transition: ${({ transition }) => transition && transition};
+
+  :hover {
+    transform: ${({ transform }) => transform && transform};
+  }
 `;
 
 export default Button;
