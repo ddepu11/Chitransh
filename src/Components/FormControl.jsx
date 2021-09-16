@@ -28,7 +28,7 @@ const FormControl = ({
     inputPadding={inputPadding}
     fcPadding={fcPadding}
     fcMargin={fcMargin}
-    fcWidthn={fcWidth}
+    fcWidth={fcWidth}
   >
     <div className='fc_top'>
       <label htmlFor={id}>{label}</label>
@@ -84,7 +84,7 @@ const Wrapper = styled.div`
   flex-direction: column;
   padding: ${({ fcPadding }) => fcPadding && fcPadding};
   margin: ${({ fcMargin }) => fcMargin && fcMargin};
-  width: ${({ width }) => width && width};
+  width: ${({ fcWidth }) => fcWidth && fcWidth};
 
   .fc_top {
     padding: 8px 0;

@@ -12,6 +12,8 @@ const SignIn = () => {
         <form>
           <div className='row'>
             <FormControl
+              fcWidth='70%'
+              fcPadding='5px'
               label='Email'
               placeholder='enter your email'
               name='email'
@@ -24,6 +26,8 @@ const SignIn = () => {
 
           <div className='row'>
             <FormControl
+              fcWidth='70%'
+              fcPadding='5px'
               label='Password'
               placeholder='enter your password'
               name='password'
@@ -33,6 +37,7 @@ const SignIn = () => {
               inputFs='1em'
             />
           </div>
+          
         </form>
       </div>
     </Wrapper>
@@ -43,16 +48,26 @@ const Wrapper = styled.section`
   border: 1px dashed #b9b8b8;
   padding: 50px 0;
 
+  .instagram {
+    font-family: 'Cookie', cursive;
+    text-align: center;
+    font-size: 3em;
+    letter-spacing: 3px;
+    color: #233;
+  }
+  .instagram:hover {
+    cursor: default;
+  }
+
   .hero {
     width: 50%;
     flex-direction: column;
     border: 1px dashed #6b6a6a;
     padding: 20px 30px;
-  }
 
-  .instagram {
-    font-family: 'Dancing Script', cursive;
-    text-align: center;
+    form {
+      margin-top: 40px;
+    }
   }
 `;
 
