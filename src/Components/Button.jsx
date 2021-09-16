@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
 const Button = ({
+  type,
   children,
   padding,
   margin,
@@ -30,7 +31,7 @@ const Button = ({
   return (
     <ButtonWrapper
       onClick={handleClick}
-      type='button'
+      type={type}
       data-value={dataVal}
       disabled={isDisabled}
       padding={padding}
@@ -57,6 +58,7 @@ const Button = ({
 };
 
 Button.propTypes = {
+  type: PropTypes.string,
   handleClick: PropTypes.func,
   children: PropTypes.oneOfType([
     PropTypes.string,
@@ -85,6 +87,7 @@ Button.propTypes = {
 };
 
 Button.defaultProps = {
+  type: 'button',
   handleClick: () => {},
   children: 'XYZ',
   padding: '0px',
@@ -130,3 +133,5 @@ const ButtonWrapper = styled.button`
   left: ${({ fromLeft }) => fromLeft && fromLeft};
   right: ${({ fromRight }) => fromRight && fromRight};
 `;
+
+export default Button;

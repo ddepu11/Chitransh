@@ -5,6 +5,7 @@ import styled from 'styled-components';
 const FormControl = ({
   inputValue,
   handleInput,
+  inputColor,
   id,
   placeholder,
   refObj,
@@ -21,6 +22,7 @@ const FormControl = ({
   fcWidth,
 }) => (
   <Wrapper
+    inputColor={inputColor}
     labelFs={labelFs}
     inputFs={inputFs}
     inputW={inputW}
@@ -51,9 +53,10 @@ const FormControl = ({
 FormControl.propTypes = {
   inputValue: PropTypes.string.isRequired,
   handleInput: PropTypes.func.isRequired,
+  inputColor: PropTypes.string.isRequired,
   id: PropTypes.string.isRequired,
   placeholder: PropTypes.string.isRequired,
-  refObj: PropTypes.object.isRequired,
+  refObj: PropTypes.element,
   inputType: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
   label: PropTypes.string.isRequired,
@@ -77,6 +80,7 @@ FormControl.defaultProps = {
   fcPadding: '10px 0px  10px',
   fcMargin: 'auto',
   fcWidth: '100%',
+  refObj: null,
 };
 
 const Wrapper = styled.div`
@@ -103,7 +107,7 @@ const Wrapper = styled.div`
   input {
     background: #e9ebeb;
     border-radius: 5px;
-    color: #5a5a5f;
+    color: ${({ inputColor }) => inputColor && inputColor};
     font-size: ${({ inputFs }) => inputFs && inputFs};
     padding: ${({ inputPadding }) => inputPadding && inputPadding};
     width: ${({ inputW }) => inputW && inputW};

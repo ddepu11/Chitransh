@@ -1,18 +1,20 @@
 import styled from 'styled-components';
 import FormControl from '../../Components/FormControl';
+import Button from '../../Components/Button';
+import useSignInLogic from './Login/useSignInLogic';
 
 const SignIn = () => {
-  console.log('SignIn');
+  const { handleSubmit, handleInput, userCredentials } = useSignInLogic();
 
   return (
     <Wrapper className='flex'>
       <div className='hero'>
-        <h1 className='instagram'>Chintransh</h1>
+        <h1 className='instagram'>Chitransh</h1>
 
-        <form>
+        <form className='flex' onSubmit={handleSubmit}>
           <div className='row'>
             <FormControl
-              fcWidth='70%'
+              fcWidth='100%'
               fcPadding='5px'
               label='Email'
               placeholder='enter your email'
@@ -21,12 +23,15 @@ const SignIn = () => {
               inputType='email'
               labelFs='1.1em'
               inputFs='1em'
+              inputColor='#333'
+              inputValue={userCredentials.email}
+              handleInput={handleInput}
             />
           </div>
 
           <div className='row'>
             <FormControl
-              fcWidth='70%'
+              fcWidth='100%'
               fcPadding='5px'
               label='Password'
               placeholder='enter your password'
@@ -35,8 +40,23 @@ const SignIn = () => {
               inputType='password'
               labelFs='1.1em'
               inputFs='1em'
+              inputColor='#333'
+              inputValue={userCredentials.password}
+              handleInput={handleInput}
             />
           </div>
+
+          <Button
+            type='submit'
+            padding='5px 10px'
+            borderRadius='5px'
+            fs='0.8em'
+            width='52%'
+            margin='20px 0 0'
+            bgColor='#266faa'
+          >
+            Log In
+          </Button>
         </form>
       </div>
     </Wrapper>
@@ -44,7 +64,6 @@ const SignIn = () => {
 };
 
 const Wrapper = styled.section`
-  border: 1px dashed #b9b8b8;
   padding: 50px 0;
 
   .instagram {
@@ -59,13 +78,18 @@ const Wrapper = styled.section`
   }
 
   .hero {
+    padding: 50px 00px;
     width: 50%;
     flex-direction: column;
-    border: 1px dashed #6b6a6a;
-    padding: 20px 30px;
+    border: 1px dashed #bbbbbb;
 
     form {
       margin-top: 40px;
+      flex-direction: column;
+    }
+
+    .row {
+      width: 60%;
     }
   }
 `;
