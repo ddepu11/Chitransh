@@ -1,6 +1,11 @@
 import { useRef, useState, useEffect } from 'react';
+import {
+  fetchSignInMethodsForEmail,
+  createUserWithEmailAndPassword,
+} from 'firebase/auth';
 import clearAllSetTimeoutOrSetInterval from '../../../utils/clearAllSetTimeoutOrSetInterval';
 import validateForm from '../../../utils/validateForm';
+import { authInstance } from '../../../config/firebase';
 
 const useSignUpLogic = () => {
   const [userCredentials, setUserCredentials] = useState({
@@ -27,6 +32,33 @@ const useSignUpLogic = () => {
     passwordValidationMessageTag: useRef(null),
   };
 
+  const signUp = () => {
+    createUserWithEmailAndPassword(
+      authInstance,
+      userCredentials.email.trim(),
+      userCredentials.password.trim()
+    ).then((user) => {
+      console.log(user);
+    });
+  };
+
+  const saveUserInfoInFireStore = () => {};
+
+  const checkIsEmailAddressAlreadyRegistered = () => {
+    fetchSignInMethodsForEmail(authInstance, userCredentials.email)
+      .then((isEmailAlreadyRegistered) => {
+        if (isEmailAlreadyRegistered.length > 0) {
+          // Email is already being used by someone else
+          console.log(isEmailAlreadyRegistered);
+        } else {
+          // Email is not being used by someone else
+          // signUp();
+          saveUserInfoInFireStore();
+        }
+      })
+      .catch();
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -37,7 +69,9 @@ const useSignUpLogic = () => {
       'SIGN_UP'
     );
 
-    console.log(errorFlag);
+    if (!errorFlag) {
+      checkIsEmailAddressAlreadyRegistered();
+    }
   };
 
   const handleInput = (e) => {
