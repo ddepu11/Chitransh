@@ -68,9 +68,18 @@ input:focus {
   margin: 0 auto;
 }
 
+.message {
+  transition: all 0.5s ease;
+}
+
 .message.error {
   color: red;
 }
 .message.success {
   color: green;
+}
+
+.message.remove {
+  transform: scale(0) translateX(-200px);
+  font-size: 0px;
 }

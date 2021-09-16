@@ -1,12 +1,19 @@
 import styled from 'styled-components';
+import { Link } from 'react-router-dom';
 import TwitterIcon from '@material-ui/icons/Twitter';
 import FormControl from '../../Components/FormControl';
 import Button from '../../Components/Button';
 import useLogInLogic from './Logic/useLogInLogic';
 
 const LogIn = () => {
-  const { handleSubmit, handleInput, userCredentials, handleLoginViaTwitter } =
-    useLogInLogic();
+  const {
+    handleSubmit,
+    handleInput,
+    userCredentials,
+    handleLoginViaTwitter,
+    emailValidationMessageTag,
+    passwordValidationMessageTag,
+  } = useLogInLogic();
 
   return (
     <Wrapper className='flex'>
@@ -28,6 +35,8 @@ const LogIn = () => {
               inputColor='#333'
               inputValue={userCredentials.email}
               handleInput={handleInput}
+              refObj={emailValidationMessageTag}
+              messageFs='1em'
             />
           </div>
 
@@ -45,6 +54,8 @@ const LogIn = () => {
               inputColor='#333'
               inputValue={userCredentials.password}
               handleInput={handleInput}
+              refObj={passwordValidationMessageTag}
+              messageFs='1em'
             />
           </div>
 
@@ -56,6 +67,7 @@ const LogIn = () => {
             width='57%'
             margin='20px 0 0'
             bgColor='#266faa'
+            transform='scale(1.02)'
           >
             Log In
           </Button>
@@ -89,19 +101,21 @@ const LogIn = () => {
       <div className='bottom flex'>
         <p>Don&apos;t have an account?</p>
 
-        <Button
-          type='submit'
-          padding='5px 10px'
-          borderRadius='5px'
-          margin='0px 0 0'
-          bgColor='transparent'
-          bSh=''
-          color='#147cd1'
-          fs='1.05em'
-          transform=''
-        >
-          <span style={{ fontWeight: 700 }}>Sign Up</span>
-        </Button>
+        <Link to='/signup'>
+          <Button
+            type='submit'
+            padding='5px 10px'
+            borderRadius='5px'
+            margin='0px 0 0'
+            bgColor='transparent'
+            bSh=''
+            color='#147cd1'
+            fs='1.05em'
+            transform=''
+          >
+            <span style={{ fontWeight: 700 }}>Sign Up</span>
+          </Button>
+        </Link>
       </div>
     </Wrapper>
   );

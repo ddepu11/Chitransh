@@ -56,7 +56,7 @@ FormControl.propTypes = {
   inputColor: PropTypes.string.isRequired,
   id: PropTypes.string.isRequired,
   placeholder: PropTypes.string.isRequired,
-  refObj: PropTypes.element,
+  refObj: PropTypes.object,
   inputType: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
   label: PropTypes.string.isRequired,
