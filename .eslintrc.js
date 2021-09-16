@@ -19,5 +19,6 @@ module.exports = {
 
   rules: {
     'react/react-in-jsx-scope': ['off'],
+    'react/forbid-prop-types': ['warn', { forbid: ['any'] }],
   },
 };
