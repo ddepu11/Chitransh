@@ -1,8 +1,10 @@
-import { useState } from "react";
-import styled from "styled-components";
+import { useState } from 'react';
+import styled from 'styled-components';
 
 const App = () => {
   const [num, setNum] = useState(1);
+
+  const a = 54;
 
   const handleIncrease = () => {
     setNum((prevState) => {
@@ -20,13 +22,17 @@ const App = () => {
     <Wrapper>
       <h2>I am a app</h2>
 
-      <button onClick={handleIncrease}>Increse</button>
+      <button type='button' onClick={handleIncrease}>
+        Increse
+      </button>
 
       <h2>{num}</h2>
 
-      <button onClick={handleDecrese}>Decrese</button>
+      <button type='button' onClick={handleDecrese}>
+        Decrese
+      </button>
 
-      <p>Hey what's is up guys ??</p>
+      <p>Hey whats is up guys ??</p>
     </Wrapper>
   );
 };
