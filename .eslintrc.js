@@ -1,0 +1,23 @@
+module.exports = {
+  parser: '@babel/eslint-parser',
+
+  ignorePatterns: ['webpack'],
+
+  extends: [
+    'airbnb',
+    'airbnb/hooks',
+    'prettier',
+    'plugin:react/recommended',
+    'plugin:flowtype/recommended',
+  ],
+
+  env: {
+    browser: true,
+  },
+
+  plugins: ['react', 'prettier', 'flowtype'],
+
+  rules: {
+    'react/react-in-jsx-scope': ['off'],
+  },
+};

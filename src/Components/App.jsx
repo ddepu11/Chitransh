@@ -1,26 +1,23 @@
 import { useState } from 'react';
 import styled from 'styled-components';
+import Home from './Home';
 
 const App = () => {
   const [num, setNum] = useState(1);
 
-  const a = 54;
-
   const handleIncrease = () => {
-    setNum((prevState) => {
-      return prevState + 1;
-    });
+    setNum((prevState) => prevState + 1);
   };
 
   const handleDecrese = () => {
-    setNum((prevState) => {
-      return prevState - 1;
-    });
+    setNum((prevState) => prevState - 1);
   };
 
   return (
     <Wrapper>
-      <h2>I am a app</h2>
+      <Home />
+      <p>Hello world</p>
+      <h2>I am a not just a app</h2>
 
       <button type='button' onClick={handleIncrease}>
         Increse
