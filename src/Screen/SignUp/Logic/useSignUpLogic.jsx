@@ -1,4 +1,6 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
+import clearAllSetTimeoutOrSetInterval from '../../../utils/clearAllSetTimeoutOrSetInterval';
+import validateForm from '../../../utils/validateForm';
 
 const useSignUpLogic = () => {
   const [userCredentials, setUserCredentials] = useState({
@@ -7,6 +9,16 @@ const useSignUpLogic = () => {
     userName: '',
     password: '',
   });
+
+  const setTimeOutId = useRef(0);
+
+  useEffect(() => {
+    console.log('SignUp');
+
+    return () => {
+      clearAllSetTimeoutOrSetInterval(setTimeOutId);
+    };
+  }, []);
 
   const validationMessageTags = {
     emailValidationMessageTag: useRef(null),
@@ -18,7 +30,14 @@ const useSignUpLogic = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    console.log(userCredentials);
+    const errorFlag = validateForm(
+      userCredentials,
+      validationMessageTags,
+      setTimeOutId,
+      'SIGN_UP'
+    );
+
+    console.log(errorFlag);
   };
 
   const handleInput = (e) => {
