@@ -1,5 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
-import { TwitterAuthProvider, signInWithPopup } from 'firebase/auth';
+import {
+  TwitterAuthProvider,
+  signInWithPopup,
+  signInWithEmailAndPassword,
+  // deleteUser,
+} from 'firebase/auth';
+
 import { authInstance } from '../../../config/firebase';
 import validateForm from '../../../utils/validateForm';
 import clearAllSetTimeoutOrSetInterval from '../../../utils/clearAllSetTimeoutOrSetInterval';
@@ -22,9 +28,23 @@ const useLogInLogic = () => {
     };
   }, [userCredentials]);
 
+  const logInUsingUserCredentials = () => {
+    signInWithEmailAndPassword(
+      authInstance,
+      userCredentials.email,
+      userCredentials.password
+    )
+      .then((userCredential) => {
+        console.log(userCredential);
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    validateForm(
+    const error = validateForm(
       userCredentials,
       {
         emailValidationMessageTag,
@@ -32,6 +52,11 @@ const useLogInLogic = () => {
       },
       setTimeOutId
     );
+
+    if (!error) {
+      console.log(error);
+      logInUsingUserCredentials();
+    }
   };
 
   const handleInput = (e) => {
@@ -44,8 +69,8 @@ const useLogInLogic = () => {
     const provider = new TwitterAuthProvider();
 
     signInWithPopup(authInstance, provider)
-      .then(() => {
-        // console.log();
+      .then((user) => {
+        console.log(user);
       })
       .catch((err) => {
         console.log(err);
