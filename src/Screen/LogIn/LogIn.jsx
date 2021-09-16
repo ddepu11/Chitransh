@@ -31,7 +31,7 @@ const LogIn = () => {
               id='email'
               inputType='text'
               labelFs='1em'
-              inputFs='1em'
+              inputFs='0.85em'
               inputPadding='8px 10px'
               inputColor='#333'
               inputValue={userCredentials.email}
@@ -51,7 +51,7 @@ const LogIn = () => {
               id='password'
               inputType='password'
               labelFs='1em'
-              inputFs='1em'
+              inputFs='0.85em'
               inputPadding='8px 10px'
               inputColor='#333'
               inputValue={userCredentials.password}

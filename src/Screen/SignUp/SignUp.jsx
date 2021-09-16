@@ -2,9 +2,11 @@ import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import FormControl from '../../Components/FormControl';
 import Button from '../../Components/Button';
+import useSignUpLogic from './Logic/useSignUpLogic';
 
 const SignUp = () => {
-  console.log('SignUp');
+  const { handleInput, handleSubmit, userCredentials, validationMessageTags } =
+    useSignUpLogic();
 
   return (
     <Wrapper className='flex'>
@@ -15,7 +17,7 @@ const SignUp = () => {
           Sign up to see photos and videos from your friends.
         </p>
 
-        <form className='flex'>
+        <form className='flex' onSubmit={handleSubmit}>
           <div className='row'>
             <FormControl
               fcWidth='100%'
@@ -26,12 +28,12 @@ const SignUp = () => {
               id='email'
               inputType='text'
               labelFs='1em'
-              inputFs='1em'
+              inputFs='0.85em'
               inputPadding='8px 10px'
               inputColor='#333'
-              // inputValue={userCredentials.email}
-              // handleInput={handleInput}
-              // refObj={emailValidationMessageTag}
+              inputValue={userCredentials.email}
+              handleInput={handleInput}
+              refObj={validationMessageTags.emailValidationMessageTag}
               messageFs='0.8em'
             />
           </div>
@@ -46,12 +48,12 @@ const SignUp = () => {
               id='fullName'
               inputType='text'
               labelFs='1em'
-              inputFs='1em'
+              inputFs='0.85em'
               inputPadding='8px 10px'
               inputColor='#333'
-              // inputValue={userCredentials.password}
-              // handleInput={handleInput}
-              // refObj={passwordValidationMessageTag}
+              inputValue={userCredentials.fullName}
+              handleInput={handleInput}
+              refObj={validationMessageTags.fullNameValidationMessageTag}
               messageFs='0.8em'
             />
           </div>
@@ -62,16 +64,16 @@ const SignUp = () => {
               fcPadding='5px'
               label='Username'
               placeholder='enter your username'
-              name='username'
+              name='userName'
               id='username'
               inputType='username'
               labelFs='1em'
-              inputFs='1em'
+              inputFs='0.85em'
               inputPadding='8px 10px'
               inputColor='#333'
-              // inputValue={userCredentials.password}
-              // handleInput={handleInput}
-              // refObj={passwordValidationMessageTag}
+              inputValue={userCredentials.userName}
+              handleInput={handleInput}
+              refObj={validationMessageTags.userNameValidationMessageTag}
               messageFs='0.8em'
             />
           </div>
@@ -86,12 +88,12 @@ const SignUp = () => {
               id='password'
               inputType='password'
               labelFs='1em'
-              inputFs='1em'
+              inputFs='0.85em'
               inputPadding='8px 10px'
               inputColor='#333'
-              // inputValue={userCredentials.password}
-              // handleInput={handleInput}
-              // refObj={passwordValidationMessageTag}
+              inputValue={userCredentials.password}
+              handleInput={handleInput}
+              refObj={validationMessageTags.passwordValidationMessageTag}
               messageFs='0.8em'
             />
           </div>
