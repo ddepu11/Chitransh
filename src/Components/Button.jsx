@@ -117,6 +117,7 @@ const ButtonWrapper = styled.button`
   padding: ${({ padding }) => padding && padding};
   margin: ${({ margin }) => margin && margin};
   font-size: ${({ fontSize }) => fontSize && fontSize};
+
   background-color: ${({ bgColor }) => bgColor && bgColor};
 
   color: ${({ color }) => color && color};

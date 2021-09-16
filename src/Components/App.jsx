@@ -1,11 +1,20 @@
+import { useEffect } from 'react';
 import styled from 'styled-components';
-import SignIn from '../Screen/SignIn/SignIn';
+import { authInstance } from '../config/firebase';
+import LogIn from '../Screen/LogIn/LogIn';
 
 const App = () => {
-  console.log('App');
+  useEffect(() => {
+    authInstance.onAuthStateChanged((user) => {
+      if (user) {
+        console.log(user.email);
+      }
+    });
+  }, []);
+
   return (
     <Wrapper className='w-960'>
-      <SignIn />
+      <LogIn />
     </Wrapper>
   );
 };

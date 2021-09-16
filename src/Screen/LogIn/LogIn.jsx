@@ -1,11 +1,12 @@
 import styled from 'styled-components';
-import { FcGoogle } from 'react-icons/fc';
+import TwitterIcon from '@material-ui/icons/Twitter';
 import FormControl from '../../Components/FormControl';
 import Button from '../../Components/Button';
-import useSignInLogic from './Login/useSignInLogic';
+import useLogInLogic from './Logic/useLogInLogic';
 
-const SignIn = () => {
-  const { handleSubmit, handleInput, userCredentials } = useSignInLogic();
+const LogIn = () => {
+  const { handleSubmit, handleInput, userCredentials, handleLoginViaTwitter } =
+    useLogInLogic();
 
   return (
     <Wrapper className='flex'>
@@ -21,7 +22,7 @@ const SignIn = () => {
               placeholder='enter your email'
               name='email'
               id='email'
-              inputType='email'
+              inputType='text'
               labelFs='1.1em'
               inputFs='1em'
               inputColor='#333'
@@ -65,24 +66,42 @@ const SignIn = () => {
             <div className='right_line' />
           </div>
 
-          {/* FcGoogle */}
           <Button
-            type='submit'
+            type='button'
             padding='5px 10px'
             borderRadius='5px'
-            fs='0.8em'
+            fs='1.1em'
             width='57%'
             margin='20px 0 0'
             bgColor='transparent'
-            transform='scale(1.05)'
+            transform='scale(1.03)'
             bSh='rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px'
+            handleClick={handleLoginViaTwitter}
           >
             <div className='center flex'>
-              <FcGoogle fontSize='1.5em' />
-              <span>Log in with Google</span>
+              <TwitterIcon className='ic_twitter' />
+              <span>Log in with twitter</span>
             </div>
           </Button>
         </form>
+      </div>
+
+      <div className='bottom flex'>
+        <p>Don&apos;t have an account?</p>
+
+        <Button
+          type='submit'
+          padding='5px 10px'
+          borderRadius='5px'
+          margin='0px 0 0'
+          bgColor='transparent'
+          bSh=''
+          color='#147cd1'
+          fs='1.05em'
+          transform=''
+        >
+          <span style={{ fontWeight: 700 }}>Sign Up</span>
+        </Button>
       </div>
     </Wrapper>
   );
@@ -90,6 +109,7 @@ const SignIn = () => {
 
 const Wrapper = styled.section`
   padding: 50px 0;
+  flex-direction: column;
 
   .instagram {
     font-family: 'Cookie', cursive;
@@ -144,14 +164,31 @@ const Wrapper = styled.section`
     }
 
     .center {
-      color: #333;
+      .ic_twitter {
+        color: #0d97e7;
+      }
 
       span {
+        color: #333;
         margin-left: 10px;
-        font-size: 1.3em;
       }
+    }
+  }
+
+  .bottom {
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    width: 50%;
+    padding: 10px 0;
+    margin-top: 10px;
+
+    p {
+      font-size: 1em;
+    }
+
+    p:hover {
+      cursor: default;
     }
   }
 `;
 
-export default SignIn;
+export default LogIn;
