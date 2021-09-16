@@ -30,13 +30,14 @@ const LogIn = () => {
               name='email'
               id='email'
               inputType='text'
-              labelFs='1.1em'
+              labelFs='1em'
               inputFs='1em'
+              inputPadding='8px 10px'
               inputColor='#333'
               inputValue={userCredentials.email}
               handleInput={handleInput}
               refObj={emailValidationMessageTag}
-              messageFs='1em'
+              messageFs='0.8em'
             />
           </div>
 
@@ -49,13 +50,14 @@ const LogIn = () => {
               name='password'
               id='password'
               inputType='password'
-              labelFs='1.1em'
+              labelFs='1em'
               inputFs='1em'
+              inputPadding='8px 10px'
               inputColor='#333'
               inputValue={userCredentials.password}
               handleInput={handleInput}
               refObj={passwordValidationMessageTag}
-              messageFs='1em'
+              messageFs='0.8em'
             />
           </div>
 
@@ -110,7 +112,7 @@ const LogIn = () => {
             bgColor='transparent'
             bSh=''
             color='#147cd1'
-            fs='1.05em'
+            fs='0.9em'
             transform=''
           >
             <span style={{ fontWeight: 700 }}>Sign Up</span>
@@ -128,7 +130,7 @@ const Wrapper = styled.section`
   .instagram {
     font-family: 'Cookie', cursive;
     text-align: center;
-    font-size: 3em;
+    font-size: 3.3em;
     letter-spacing: 3px;
     color: #233;
   }
@@ -196,7 +198,7 @@ const Wrapper = styled.section`
     margin-top: 10px;
 
     p {
-      font-size: 1em;
+      font-size: 0.9em;
     }
 
     p:hover {
