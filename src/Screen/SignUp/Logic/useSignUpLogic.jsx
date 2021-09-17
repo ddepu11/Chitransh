@@ -3,13 +3,21 @@ import {
   fetchSignInMethodsForEmail,
   createUserWithEmailAndPassword,
 } from 'firebase/auth';
+import { useDispatch, useSelector } from 'react-redux';
 import { collection, addDoc } from 'firebase/firestore';
 import { v4 as uuidv4 } from 'uuid';
 import clearAllSetTimeoutOrSetInterval from '../../../utils/clearAllSetTimeoutOrSetInterval';
 import validateForm from '../../../utils/validateForm';
 import { authInstance, firestoreInstance } from '../../../config/firebase';
+import { userLoadingBegins, userLoadingEnds } from '../../../features/user';
+import {
+  notificationShowError,
+  notificationShowSuccess,
+} from '../../../features/notification';
 
 const useSignUpLogic = () => {
+  const dispatch = useDispatch();
+
   const [userCredentials, setUserCredentials] = useState({
     email: '',
     fullName: '',
@@ -39,23 +47,39 @@ const useSignUpLogic = () => {
       authInstance,
       userCredentials.email.trim(),
       userCredentials.password.trim()
-    ).then((user) => {
-      console.log(user);
-    });
+    )
+      .then(() => {
+        dispatch(notificationShowSuccess({ msg: 'Successfully siggned up!' }));
+        dispatch(userLoadingEnds());
+        setUserCredentials({
+          email: '',
+          fullName: '',
+          userName: '',
+          password: '',
+        });
+      })
+      .catch((err) => {
+        dispatch(notificationShowError({ msg: err.code.toString().slice(5) }));
+        dispatch(userLoadingEnds());
+      });
   };
 
   const saveUserInfoInFireStore = async () => {
     try {
       const docRef = await addDoc(collection(firestoreInstance, 'users'), {
         id: uuidv4(),
-        ...userCredentials,
+        email: userCredentials.email,
+        fullName: userCredentials.fullName,
+        userName: userCredentials.userName,
+        photoURL: '',
       });
 
       if (docRef) {
         signUp();
       }
     } catch (err) {
-      console.log(err);
+      dispatch(notificationShowError({ msg: err.code.toString().slice(5) }));
+      dispatch(userLoadingEnds());
     }
   };
 
@@ -64,14 +88,22 @@ const useSignUpLogic = () => {
       .then((isEmailAlreadyRegistered) => {
         if (isEmailAlreadyRegistered.length > 0) {
           // Email is already being used by someone else
-          console.log(isEmailAlreadyRegistered);
+          dispatch(
+            notificationShowError({
+              msg: 'this email address is already being used by someone else',
+            })
+          );
+          dispatch(userLoadingEnds());
         } else {
           // Email is not being used by someone else
           // signUp();
           saveUserInfoInFireStore();
         }
       })
-      .catch();
+      .catch((err) => {
+        dispatch(notificationShowError({ msg: err.code.toString().slice(5) }));
+        dispatch(userLoadingEnds());
+      });
   };
 
   const handleSubmit = (e) => {
@@ -85,6 +117,7 @@ const useSignUpLogic = () => {
     );
 
     if (!errorFlag) {
+      dispatch(userLoadingBegins());
       checkIsEmailAddressAlreadyRegistered();
     }
   };
@@ -94,8 +127,15 @@ const useSignUpLogic = () => {
 
     setUserCredentials({ ...userCredentials, [name]: value });
   };
+  const { userLoading } = useSelector((state) => state.user.value);
 
-  return { handleSubmit, handleInput, userCredentials, validationMessageTags };
+  return {
+    handleSubmit,
+    handleInput,
+    userCredentials,
+    validationMessageTags,
+    userLoading,
+  };
 };
 
 export default useSignUpLogic;

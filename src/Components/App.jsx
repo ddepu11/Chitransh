@@ -1,26 +1,66 @@
 import { useEffect } from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import styled from 'styled-components';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { authInstance } from '../config/firebase';
+import { collection, getDocs, query, where } from 'firebase/firestore';
+import { authInstance, firestoreInstance } from '../config/firebase';
 import Home from '../Screen/Home/Home';
 import LogIn from '../Screen/LogIn/LogIn';
 import PrivacyPolicy from '../Screen/PrivacyPolicy/PrivacyPolicy';
 import SignUp from '../Screen/SignUp/SignUp';
 import TermsOfService from '../Screen/TermsOfService/TermsOfService';
 import useNotification from '../Screen/useNotification';
+import {
+  userLoadingBegins,
+  userLoadingEnds,
+  userLoggedIn,
+  userLoggedOut,
+} from '../features/user';
+import {
+  notificationShowError,
+  notificationShowInfo,
+} from '../features/notification';
 
 const App = () => {
+  const dispatch = useDispatch();
+
   useEffect(() => {
+    dispatch(userLoadingBegins());
+
+    const fetchUserData = async (email) => {
+      console.log(email);
+      try {
+        const usersRef = collection(firestoreInstance, 'users');
+
+        const q = query(usersRef, where('email', '==', email));
+        const querySnapshot = await getDocs(q);
+
+        querySnapshot.forEach((doc) => {
+          // doc.data() is never undefined for query doc snapshots
+
+          dispatch(userLoadingEnds());
+          dispatch(
+            notificationShowInfo({ msg: `Welcome back ${doc.data().fullName}` })
+          );
+          dispatch(userLoggedIn({ id: doc.id, info: doc.data() }));
+        });
+      } catch (err) {
+        dispatch(notificationShowError({ msg: err.code.toString().slice(5) }));
+        dispatch(userLoadingEnds());
+      }
+    };
+
     const unsub = authInstance.onAuthStateChanged((user) => {
       if (user && user.providerData.length > 0) {
-        // console.log(user.providerData[0].email);
-        console.log('Sign In');
+        const { email } = user.providerData[0];
+
+        fetchUserData(email);
       } else {
         authInstance.signOut();
-        console.log('Sign Out');
+        dispatch(userLoggedOut());
+        dispatch(userLoadingEnds());
       }
     });
 
@@ -28,7 +68,7 @@ const App = () => {
       console.log('Clean Up App');
       unsub();
     };
-  }, []);
+  }, [dispatch]);
 
   const { errorNotification, successNotification, infoNotification } =
     useNotification();

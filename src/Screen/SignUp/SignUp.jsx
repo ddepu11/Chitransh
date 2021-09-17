@@ -3,10 +3,20 @@ import styled from 'styled-components';
 import FormControl from '../../Components/FormControl';
 import Button from '../../Components/Button';
 import useSignUpLogic from './Logic/useSignUpLogic';
+import Loader from '../../Components/Loader';
 
 const SignUp = () => {
-  const { handleInput, handleSubmit, userCredentials, validationMessageTags } =
-    useSignUpLogic();
+  const {
+    handleInput,
+    handleSubmit,
+    userCredentials,
+    validationMessageTags,
+    userLoading,
+  } = useSignUpLogic();
+
+  if (userLoading) {
+    return <Loader />;
+  }
 
   return (
     <Wrapper className='flex'>

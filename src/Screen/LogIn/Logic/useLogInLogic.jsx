@@ -1,22 +1,17 @@
 import { useEffect, useRef, useState } from 'react';
-import {
-  TwitterAuthProvider,
-  signInWithPopup,
-  signInWithEmailAndPassword,
-  // deleteUser,
-} from 'firebase/auth';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 import { useDispatch, useSelector } from 'react-redux';
-
+import { useHistory } from 'react-router-dom';
 import { authInstance } from '../../../config/firebase';
 import validateForm from '../../../utils/validateForm';
 import clearAllSetTimeoutOrSetInterval from '../../../utils/clearAllSetTimeoutOrSetInterval';
-import {
-  notificationShowError,
-  notificationShowInfo,
-} from '../../../features/notification';
+import { notificationShowError } from '../../../features/notification';
 import { userLoadingBegins, userLoadingEnds } from '../../../features/user';
 
 const useLogInLogic = () => {
+  const dispatch = useDispatch();
+  const history = useHistory();
+
   const [userCredentials, setUserCredentials] = useState({
     email: '',
     password: '',
@@ -26,15 +21,17 @@ const useLogInLogic = () => {
   const emailValidationMessageTag = useRef(null);
   const passwordValidationMessageTag = useRef(null);
 
+  const { hasUserLoggedIn } = useSelector((state) => state.user.value);
+
   useEffect(() => {
-    console.log('Login use Effect');
+    if (hasUserLoggedIn) {
+      history.push('/');
+    }
 
     return () => {
       clearAllSetTimeoutOrSetInterval(setTimeOutId);
     };
-  }, []);
-
-  const dispatch = useDispatch();
+  }, [hasUserLoggedIn, history]);
 
   const logInUsingUserCredentials = () => {
     signInWithEmailAndPassword(
@@ -43,11 +40,10 @@ const useLogInLogic = () => {
       userCredentials.password
     )
       .then(() => {
-        dispatch(notificationShowInfo({ msg: 'Successfully logged in!' }));
         dispatch(userLoadingEnds());
       })
       .catch((err) => {
-        dispatch(notificationShowError({ msg: err.code }));
+        dispatch(notificationShowError({ msg: err.code.toString().slice(5) }));
         dispatch(userLoadingEnds());
       });
   };
@@ -75,25 +71,12 @@ const useLogInLogic = () => {
     setUserCredentials({ ...userCredentials, [name]: value });
   };
 
-  const handleLoginViaTwitter = () => {
-    const provider = new TwitterAuthProvider();
-
-    signInWithPopup(authInstance, provider)
-      .then((user) => {
-        console.log(user);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
   const { userLoading } = useSelector((state) => state.user.value);
 
   return {
     handleSubmit,
     userCredentials,
     handleInput,
-    handleLoginViaTwitter,
     emailValidationMessageTag,
     passwordValidationMessageTag,
     userLoading,

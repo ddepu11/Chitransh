@@ -11,13 +11,12 @@ const LogIn = () => {
     handleSubmit,
     handleInput,
     userCredentials,
-    handleLoginViaTwitter,
     emailValidationMessageTag,
     passwordValidationMessageTag,
     userLoading,
   } = useLogInLogic();
 
-  if (!userLoading) {
+  if (userLoading) {
     return <Loader />;
   }
 
@@ -96,11 +95,10 @@ const LogIn = () => {
             bgColor='transparent'
             transform='scale(1.03)'
             bSh='rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px'
-            handleClick={handleLoginViaTwitter}
           >
             <div className='center flex'>
               <TwitterIcon className='ic_twitter' />
-              <span>Log in with twitter</span>
+              <span>Log in as random user</span>
             </div>
           </Button>
         </form>
