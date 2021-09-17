@@ -24,7 +24,7 @@ module.exports = {
       'error',
       {
         props: true,
-        ignorePropertyModificationsFor: ['ref', 'setTimeOutId'],
+        ignorePropertyModificationsFor: ['ref', 'setTimeOutId', 'state'],
       },
     ],
   },

@@ -21,12 +21,12 @@ const useLogInLogic = () => {
   const passwordValidationMessageTag = useRef(null);
 
   useEffect(() => {
-    console.log(userCredentials);
+    console.log('Login use Effect');
 
     return () => {
       clearAllSetTimeoutOrSetInterval(setTimeOutId);
     };
-  }, [userCredentials]);
+  }, []);
 
   const logInUsingUserCredentials = () => {
     signInWithEmailAndPassword(
@@ -39,6 +39,7 @@ const useLogInLogic = () => {
       })
       .catch((err) => {
         console.log(err.message);
+        console.log(err.code);
       });
   };
 
