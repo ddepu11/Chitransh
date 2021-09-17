@@ -58,7 +58,7 @@ const App = () => {
     errorNotification,
     infoNotification,
   ]);
-  
+
   return (
     <>
       <ToastContainer />

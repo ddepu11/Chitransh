@@ -5,7 +5,7 @@ import {
   signInWithEmailAndPassword,
   // deleteUser,
 } from 'firebase/auth';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { authInstance } from '../../../config/firebase';
 import validateForm from '../../../utils/validateForm';
@@ -87,6 +87,8 @@ const useLogInLogic = () => {
       });
   };
 
+  const { userLoading } = useSelector((state) => state.user.value);
+
   return {
     handleSubmit,
     userCredentials,
@@ -94,6 +96,7 @@ const useLogInLogic = () => {
     handleLoginViaTwitter,
     emailValidationMessageTag,
     passwordValidationMessageTag,
+    userLoading,
   };
 };
 

@@ -4,6 +4,7 @@ import TwitterIcon from '@material-ui/icons/Twitter';
 import FormControl from '../../Components/FormControl';
 import Button from '../../Components/Button';
 import useLogInLogic from './Logic/useLogInLogic';
+import Loader from '../../Components/Loader';
 
 const LogIn = () => {
   const {
@@ -13,7 +14,12 @@ const LogIn = () => {
     handleLoginViaTwitter,
     emailValidationMessageTag,
     passwordValidationMessageTag,
+    userLoading,
   } = useLogInLogic();
+
+  if (!userLoading) {
+    return <Loader />;
+  }
 
   return (
     <Wrapper className='flex'>
