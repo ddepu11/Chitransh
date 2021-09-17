@@ -84,7 +84,7 @@ const LogIn = () => {
             type='button'
             padding='5px 10px'
             borderRadius='5px'
-            fs='1.1em'
+            fs='1em'
             width='57%'
             margin='20px 0 0'
             bgColor='transparent'

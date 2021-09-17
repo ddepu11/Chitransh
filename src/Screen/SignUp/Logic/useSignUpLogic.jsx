@@ -3,9 +3,11 @@ import {
   fetchSignInMethodsForEmail,
   createUserWithEmailAndPassword,
 } from 'firebase/auth';
+import { collection, addDoc } from 'firebase/firestore';
+import { v4 as uuidv4 } from 'uuid';
 import clearAllSetTimeoutOrSetInterval from '../../../utils/clearAllSetTimeoutOrSetInterval';
 import validateForm from '../../../utils/validateForm';
-import { authInstance } from '../../../config/firebase';
+import { authInstance, firestoreInstance } from '../../../config/firebase';
 
 const useSignUpLogic = () => {
   const [userCredentials, setUserCredentials] = useState({
@@ -42,7 +44,20 @@ const useSignUpLogic = () => {
     });
   };
 
-  const saveUserInfoInFireStore = () => {};
+  const saveUserInfoInFireStore = async () => {
+    try {
+      const docRef = await addDoc(collection(firestoreInstance, 'users'), {
+        id: uuidv4(),
+        ...userCredentials,
+      });
+
+      if (docRef) {
+        signUp();
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   const checkIsEmailAddressAlreadyRegistered = () => {
     fetchSignInMethodsForEmail(authInstance, userCredentials.email)
