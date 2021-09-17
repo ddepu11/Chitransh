@@ -12,8 +12,9 @@ import validateForm from '../../../utils/validateForm';
 import clearAllSetTimeoutOrSetInterval from '../../../utils/clearAllSetTimeoutOrSetInterval';
 import {
   notificationShowError,
-  notificationShowSuccess,
+  notificationShowInfo,
 } from '../../../features/notification';
+import { userLoadingBegins, userLoadingEnds } from '../../../features/user';
 
 const useLogInLogic = () => {
   const [userCredentials, setUserCredentials] = useState({
@@ -41,13 +42,13 @@ const useLogInLogic = () => {
       userCredentials.email,
       userCredentials.password
     )
-      .then((userCredential) => {
-        console.log(userCredential);
-        dispatch(notificationShowSuccess({ msg: 'Successfully logged in!' }));
+      .then(() => {
+        dispatch(notificationShowInfo({ msg: 'Successfully logged in!' }));
+        dispatch(userLoadingEnds());
       })
       .catch((err) => {
         dispatch(notificationShowError({ msg: err.code }));
-        console.log(err.code);
+        dispatch(userLoadingEnds());
       });
   };
 
@@ -63,7 +64,7 @@ const useLogInLogic = () => {
     );
 
     if (!error) {
-      console.log(error);
+      dispatch(userLoadingBegins());
       logInUsingUserCredentials();
     }
   };

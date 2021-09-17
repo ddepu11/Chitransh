@@ -30,11 +30,13 @@ const App = () => {
     };
   }, []);
 
-  const { errorNotification, successNotification } = useNotification();
-  const { message, success, error } = useSelector(
+  const { errorNotification, successNotification, infoNotification } =
+    useNotification();
+  const { message, success, error, info } = useSelector(
     (state) => state.notification.value
   );
 
+  // For Showing notification
   useEffect(() => {
     if (message && success) {
       successNotification(message);
@@ -43,8 +45,20 @@ const App = () => {
     if (message && error) {
       errorNotification(message);
     }
-  }, [message, success, error, successNotification, errorNotification]);
 
+    if (message && info) {
+      infoNotification(message);
+    }
+  }, [
+    message,
+    success,
+    error,
+    info,
+    successNotification,
+    errorNotification,
+    infoNotification,
+  ]);
+  
   return (
     <>
       <ToastContainer />

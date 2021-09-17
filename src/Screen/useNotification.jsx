@@ -29,7 +29,21 @@ const useNotification = () => {
     });
   };
 
-  return { successNotification, errorNotification };
+  const infoNotification = (msg) => {
+    toast.info(msg, {
+      position: 'top-left',
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: 'colored',
+      transition: Flip,
+    });
+  };
+
+  return { successNotification, errorNotification, infoNotification };
 };
 
 export default useNotification;
