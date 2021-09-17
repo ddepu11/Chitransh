@@ -5,10 +5,15 @@ import {
   signInWithEmailAndPassword,
   // deleteUser,
 } from 'firebase/auth';
+import { useDispatch } from 'react-redux';
 
 import { authInstance } from '../../../config/firebase';
 import validateForm from '../../../utils/validateForm';
 import clearAllSetTimeoutOrSetInterval from '../../../utils/clearAllSetTimeoutOrSetInterval';
+import {
+  notificationShowError,
+  notificationShowSuccess,
+} from '../../../features/notification';
 
 const useLogInLogic = () => {
   const [userCredentials, setUserCredentials] = useState({
@@ -28,6 +33,8 @@ const useLogInLogic = () => {
     };
   }, []);
 
+  const dispatch = useDispatch();
+
   const logInUsingUserCredentials = () => {
     signInWithEmailAndPassword(
       authInstance,
@@ -36,9 +43,10 @@ const useLogInLogic = () => {
     )
       .then((userCredential) => {
         console.log(userCredential);
+        dispatch(notificationShowSuccess({ msg: 'Successfully logged in!' }));
       })
       .catch((err) => {
-        console.log(err.message);
+        dispatch(notificationShowError({ msg: err.code }));
         console.log(err.code);
       });
   };
