@@ -10,7 +10,9 @@ const Navbar = () => {
   return (
     <Wrapper>
       <div className='w-960 nav_center_div flex'>
-        <h1 className='instagram'>Chitransh</h1>
+        <Link to='/'>
+          <h1 className='instagram'>Chitransh</h1>
+        </Link>
 
         <div className='search'>
           <input
@@ -51,7 +53,7 @@ const Wrapper = styled.nav`
   }
 
   .instagram:hover {
-    cursor: default;
+    cursor: pointer;
   }
 
   .nav_center_div {
