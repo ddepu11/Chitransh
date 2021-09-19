@@ -3,12 +3,21 @@ import HomeIcon from '@material-ui/icons/Home';
 import AddBoxOutlinedIcon from '@material-ui/icons/AddBoxOutlined';
 import FavoriteBorderOutlinedIcon from '@material-ui/icons/FavoriteBorderOutlined';
 import { Link } from 'react-router-dom';
+import HomeOutlinedIcon from '@material-ui/icons/HomeOutlined';
+import FavoriteOutlinedIcon from '@material-ui/icons/FavoriteOutlined';
+import AddBoxIcon from '@material-ui/icons/AddBox';
+import { useState } from 'react';
 
 const Navbar = () => {
-  console.log('Navbar');
+  const [activeIcon, setActiveIcon] = useState('home');
+
+  const handleActiveIcon = (e) => {
+    const icon = e.currentTarget.getAttribute('data-icon');
+    setActiveIcon(icon);
+  };
 
   return (
-    <Wrapper>
+    <Wrapper activeIcon={activeIcon}>
       <div className='w-960 nav_center_div flex'>
         <Link to='/'>
           <h1 className='instagram'>Chitransh</h1>
@@ -23,14 +32,41 @@ const Navbar = () => {
         </div>
 
         <div className='far_right flex'>
-          <Link to='/' className='link_home'>
-            <HomeIcon className='ic_home' />
-          </Link>
+          {activeIcon === 'home' ? (
+            <Link to='/' className='link_home'>
+              <HomeIcon className='ic_home' />
+            </Link>
+          ) : (
+            <Link to='/' className='link_home'>
+              <HomeOutlinedIcon
+                className='ic_home'
+                data-icon='home'
+                onClick={handleActiveIcon}
+              />
+            </Link>
+          )}
 
-          <FavoriteBorderOutlinedIcon className='ic_liked' />
-          <AddBoxOutlinedIcon className='ic_add' />
+          {activeIcon === 'like' ? (
+            <FavoriteOutlinedIcon className='ic_liked' />
+          ) : (
+            <FavoriteBorderOutlinedIcon
+              className='ic_liked'
+              data-icon='like'
+              onClick={handleActiveIcon}
+            />
+          )}
 
-          <div className='avatar'>
+          {activeIcon === 'add' ? (
+            <AddBoxIcon className='ic_add' />
+          ) : (
+            <AddBoxOutlinedIcon
+              className='ic_add'
+              data-icon='add'
+              onClick={handleActiveIcon}
+            />
+          )}
+
+          <div className='avatar' onClick={handleActiveIcon} data-icon='avatar'>
             <img src='https://i.pravatar.cc/300' alt='pravatar' />
           </div>
         </div>
@@ -72,7 +108,7 @@ const Wrapper = styled.nav`
 
   .far_right {
     justify-content: space-between;
-    width: 23%;
+    width: 22%;
     /* border: 1px solid red; */
 
     .ic_home,
@@ -81,6 +117,7 @@ const Wrapper = styled.nav`
       font-size: 1.75em;
       color: #343f3f;
     }
+
     .ic_liked,
     .ic_add:hover {
       cursor: pointer;
@@ -92,13 +129,20 @@ const Wrapper = styled.nav`
   }
 
   .avatar {
-    width: 30px;
-    height: 30px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    border: ${({ activeIcon }) =>
+      activeIcon === 'avatar' ? '2px solid #222' : ''};
+    padding: ${({ activeIcon }) => (activeIcon === 'avatar' ? '1px' : '0px')};
 
     img {
       border-radius: 50%;
       width: 100%;
       height: 100%;
+      /* border: ${({ activeIcon }) =>
+        activeIcon === 'avatar' ? '0.01px solid #444' : ''}; */
     }
   }
 
