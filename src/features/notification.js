@@ -35,6 +35,15 @@ const notificationSlice = createSlice({
         info: true,
       };
     },
+
+    notificationClear: (state = initialState) => {
+      state.value = {
+        message: null,
+        success: false,
+        error: false,
+        info: false,
+      };
+    },
   },
 });
 
@@ -42,6 +51,7 @@ export const {
   notificationShowError,
   notificationShowSuccess,
   notificationShowInfo,
+  notificationClear,
 } = notificationSlice.actions;
 
 export default notificationSlice.reducer;

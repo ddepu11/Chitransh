@@ -1,6 +1,10 @@
+import { useDispatch } from 'react-redux';
 import { Flip, toast } from 'react-toastify';
+import { notificationClear } from '../features/notification';
 
 const useNotification = () => {
+  const dispatch = useDispatch();
+
   const successNotification = (msg) => {
     toast.success(msg, {
       position: 'top-left',
@@ -12,6 +16,7 @@ const useNotification = () => {
       progress: undefined,
       theme: 'colored',
       transition: Flip,
+      onClose: () => dispatch(notificationClear()),
     });
   };
 
@@ -26,6 +31,7 @@ const useNotification = () => {
       progress: undefined,
       theme: 'colored',
       transition: Flip,
+      onClose: () => dispatch(notificationClear()),
     });
   };
 
@@ -40,6 +46,7 @@ const useNotification = () => {
       progress: undefined,
       theme: 'colored',
       transition: Flip,
+      onClose: () => dispatch(notificationClear()),
     });
   };
 

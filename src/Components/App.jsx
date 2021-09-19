@@ -18,7 +18,10 @@ import {
   userLoggedIn,
   userLoggedOut,
 } from '../features/user';
-import { notificationShowError } from '../features/notification';
+import {
+  notificationShowError,
+  notificationShowInfo,
+} from '../features/notification';
 import Navbar from '../Screen/Navbar/Navbar';
 
 const App = () => {
@@ -46,6 +49,7 @@ const App = () => {
           dispatch(userLoggedIn({ id: doc.id, info: doc.data() }));
         });
       } catch (err) {
+        console.log(err.code);
         dispatch(notificationShowError({ msg: err.code.toString().slice(5) }));
         dispatch(userLoadingEnds());
       }
