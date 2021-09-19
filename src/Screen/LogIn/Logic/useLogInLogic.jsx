@@ -39,9 +39,7 @@ const useLogInLogic = () => {
       userCredentials.email,
       userCredentials.password
     )
-      .then(() => {
-        dispatch(userLoadingEnds());
-      })
+      .then(() => {})
       .catch((err) => {
         dispatch(notificationShowError({ msg: err.code.toString().slice(5) }));
         dispatch(userLoadingEnds());

@@ -202,13 +202,10 @@ const Wrapper = styled.nav`
 
   .the_box {
     position: absolute;
-    top: 44px;
+    top: 45px;
     width: 250px;
     color: #333;
-    box-shadow: rgba(0, 0, 0, 0.25) 0px 0.0625em 0.0625em,
-      rgba(0, 0, 0, 0.25) 0px 0.125em 0.5em,
-      rgba(255, 255, 255, 0.1) 0px 0px 0px 1px inset;
-
+    box-shadow: #344 -1px 1px 5px;
     .profile,
     .saved {
       justify-content: flex-start;
@@ -253,7 +250,8 @@ const Wrapper = styled.nav`
     width: 20px;
     height: 20px;
     transform: rotate(44deg);
-    background-color: #ffffff;
+    border-top: 1px solid #88888899;
+    border-left: 1px solid #97969699;
   }
 `;
 

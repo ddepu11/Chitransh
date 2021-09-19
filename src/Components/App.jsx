@@ -18,7 +18,10 @@ import {
   userLoggedIn,
   userLoggedOut,
 } from '../features/user';
-import { notificationShowError } from '../features/notification';
+import {
+  notificationShowError,
+  notificationShowInfo,
+} from '../features/notification';
 import Navbar from '../Screen/Navbar/Navbar';
 
 const App = () => {
@@ -35,15 +38,12 @@ const App = () => {
         const querySnapshot = await getDocs(q);
 
         querySnapshot.forEach((doc) => {
-          // doc.data() is never undefined for query doc snapshots
-
-          dispatch(userLoadingEnds());
-
-          // dispatch(
-          //   notificationShowInfo({ msg: `Welcome back ${doc.data().fullName}` })
-          // );
+          dispatch(
+            notificationShowInfo({ msg: `Welcome back ${doc.data().fullName}` })
+          );
 
           dispatch(userLoggedIn({ id: doc.id, info: doc.data() }));
+          dispatch(userLoadingEnds());
         });
       } catch (err) {
         dispatch(notificationShowError({ msg: err.code.toString().slice(5) }));
