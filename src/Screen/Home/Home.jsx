@@ -1,10 +1,16 @@
+import { useSelector } from 'react-redux';
 import styled from 'styled-components';
+import Loader from '../../Components/Loader';
 
 const Home = () => {
-  console.log('Home');
+  const { userLoading } = useSelector((state) => state.user.value);
+
+  if (userLoading) {
+    return <Loader />;
+  }
 
   return (
-    <Wrapper>
+    <Wrapper className='w-960'>
       <h2>Home</h2>
     </Wrapper>
   );

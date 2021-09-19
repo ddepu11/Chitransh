@@ -18,10 +18,8 @@ import {
   userLoggedIn,
   userLoggedOut,
 } from '../features/user';
-import {
-  notificationShowError,
-  notificationShowInfo,
-} from '../features/notification';
+import { notificationShowError } from '../features/notification';
+import Navbar from '../Screen/Navbar/Navbar';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -30,7 +28,6 @@ const App = () => {
     dispatch(userLoadingBegins());
 
     const fetchUserData = async (email) => {
-      console.log(email);
       try {
         const usersRef = collection(firestoreInstance, 'users');
 
@@ -41,9 +38,11 @@ const App = () => {
           // doc.data() is never undefined for query doc snapshots
 
           dispatch(userLoadingEnds());
-          dispatch(
-            notificationShowInfo({ msg: `Welcome back ${doc.data().fullName}` })
-          );
+
+          // dispatch(
+          //   notificationShowInfo({ msg: `Welcome back ${doc.data().fullName}` })
+          // );
+
           dispatch(userLoggedIn({ id: doc.id, info: doc.data() }));
         });
       } catch (err) {
@@ -65,13 +64,15 @@ const App = () => {
     });
 
     return () => {
-      console.log('Clean Up App');
       unsub();
     };
   }, [dispatch]);
 
   const { errorNotification, successNotification, infoNotification } =
     useNotification();
+
+  const { hasUserLoggedIn } = useSelector((state) => state.user.value);
+
   const { message, success, error, info } = useSelector(
     (state) => state.notification.value
   );
@@ -103,8 +104,9 @@ const App = () => {
     <>
       <ToastContainer />
 
-      <Wrapper className='w-960'>
+      <Wrapper>
         <Router>
+          {hasUserLoggedIn && <Navbar />}
           <Switch>
             <Route path='/login' exact>
               <LogIn />
@@ -132,8 +134,6 @@ const App = () => {
   );
 };
 
-const Wrapper = styled.main`
-  padding: 10px;
-`;
+const Wrapper = styled.main``;
 
 export default App;

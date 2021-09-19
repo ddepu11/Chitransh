@@ -19,7 +19,7 @@ const SignUp = () => {
   }
 
   return (
-    <Wrapper className='flex'>
+    <Wrapper className='w-960 flex'>
       <div className='hero'>
         <h1 className='instagram'>Chitransh</h1>
 
