@@ -38,9 +38,9 @@ const App = () => {
         const querySnapshot = await getDocs(q);
 
         querySnapshot.forEach((doc) => {
-          dispatch(
-            notificationShowInfo({ msg: `Welcome back ${doc.data().fullName}` })
-          );
+          // dispatch(
+          //   notificationShowInfo({ msg: `Welcome back ${doc.data().fullName}` })
+          // );
 
           dispatch(userLoggedIn({ id: doc.id, info: doc.data() }));
           dispatch(userLoadingEnds());
@@ -134,6 +134,9 @@ const App = () => {
   );
 };
 
-const Wrapper = styled.main``;
+const Wrapper = styled.main`
+  position: relative;
+  height: 100vh;
+`;
 
 export default App;

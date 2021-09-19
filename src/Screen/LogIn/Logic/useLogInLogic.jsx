@@ -47,7 +47,8 @@ const useLogInLogic = () => {
   };
 
   const handleSubmit = (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
+
     const error = validateForm(
       userCredentials,
       {
@@ -71,6 +72,17 @@ const useLogInLogic = () => {
 
   const { userLoading } = useSelector((state) => state.user.value);
 
+  const loginAsRandomUser = () => {
+    dispatch(userLoadingBegins());
+
+    signInWithEmailAndPassword(authInstance, 'ddepu11@gmail.com', 'aaaaaa')
+      .then(() => {})
+      .catch((err) => {
+        dispatch(notificationShowError({ msg: err.code.toString().slice(5) }));
+        dispatch(userLoadingEnds());
+      });
+  };
+
   return {
     handleSubmit,
     userCredentials,
@@ -78,6 +90,7 @@ const useLogInLogic = () => {
     emailValidationMessageTag,
     passwordValidationMessageTag,
     userLoading,
+    loginAsRandomUser,
   };
 };
 

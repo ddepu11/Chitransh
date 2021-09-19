@@ -14,6 +14,7 @@ const LogIn = () => {
     emailValidationMessageTag,
     passwordValidationMessageTag,
     userLoading,
+    loginAsRandomUser,
   } = useLogInLogic();
 
   if (userLoading) {
@@ -95,6 +96,7 @@ const LogIn = () => {
             bgColor='transparent'
             transform='scale(1.03)'
             bSh='rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px'
+            handleClick={loginAsRandomUser}
           >
             <div className='center flex'>
               <TwitterIcon className='ic_twitter' />

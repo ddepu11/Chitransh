@@ -17,6 +17,7 @@ import {
   notificationShowInfo,
 } from '../../features/notification';
 import { userLoadingEnds } from '../../features/user';
+import CreatePost from '../Create/CreatePost';
 
 const Navbar = () => {
   const dispatch = useDispatch();
@@ -40,87 +41,102 @@ const Navbar = () => {
   };
 
   return (
-    <Wrapper activeIcon={activeIcon}>
-      <div className='w-960 nav_center_div flex'>
-        <Link to='/'>
-          <h1 className='instagram'>Chitransh</h1>
-        </Link>
+    <>
+      <CreatePost />
+      <Wrapper activeIcon={activeIcon}>
+        <div className='w-960 nav_center_div flex'>
+          <Link to='/'>
+            <h1 className='instagram'>Chitransh</h1>
+          </Link>
 
-        <div className='search'>
-          <input
-            type='text'
-            name='searchTerm'
-            placeholder='&#128269;&nbsp;Search'
-          />
-        </div>
+          <div className='search'>
+            <input
+              type='text'
+              name='searchTerm'
+              placeholder='&#128269;&nbsp;Search'
+            />
+          </div>
 
-        <div className='far_right flex'>
-          {activeIcon === 'home' ? (
-            <Link to='/' className='link_home'>
-              <HomeIcon className='ic_home' />
-            </Link>
-          ) : (
-            <Link to='/' className='link_home'>
-              <HomeOutlinedIcon
-                className='ic_home'
-                data-icon='home'
+          <div className='far_right flex'>
+            {activeIcon === 'home' ? (
+              <Link to='/' className='link_home'>
+                <HomeIcon className='ic_home' />
+              </Link>
+            ) : (
+              <Link to='/' className='link_home'>
+                <HomeOutlinedIcon
+                  className='ic_home'
+                  data-icon='home'
+                  onClick={handleActiveIcon}
+                />
+              </Link>
+            )}
+
+            {activeIcon === 'like' ? (
+              <FavoriteOutlinedIcon className='ic_liked' />
+            ) : (
+              <FavoriteBorderOutlinedIcon
+                className='ic_liked'
+                data-icon='like'
                 onClick={handleActiveIcon}
               />
-            </Link>
-          )}
+            )}
 
-          {activeIcon === 'like' ? (
-            <FavoriteOutlinedIcon className='ic_liked' />
-          ) : (
-            <FavoriteBorderOutlinedIcon
-              className='ic_liked'
-              data-icon='like'
+            {activeIcon === 'add' ? (
+              <AddBoxIcon className='ic_add' />
+            ) : (
+              <AddBoxOutlinedIcon
+                className='ic_add'
+                data-icon='add'
+                onClick={handleActiveIcon}
+              />
+            )}
+
+            <div
+              className='avatar'
               onClick={handleActiveIcon}
-            />
-          )}
-
-          {activeIcon === 'add' ? (
-            <AddBoxIcon className='ic_add' />
-          ) : (
-            <AddBoxOutlinedIcon
-              className='ic_add'
-              data-icon='add'
-              onClick={handleActiveIcon}
-            />
-          )}
-
-          <div className='avatar' onClick={handleActiveIcon} data-icon='avatar'>
-            <img src='https://i.pravatar.cc/300' alt='pravatar' />
-          </div>
-
-          <div className='the_box'>
-            <div className='profile flex'>
-              <AccountCircleRoundedIcon className='ic_profile' />
-              <span>Profile</span>
-            </div>
-
-            <div className='saved flex'>
-              <BookmarkBorderOutlinedIcon className='ic_saved' />
-              <span>Saved</span>
-            </div>
-
-            <Button
-              type='button'
-              padding='10px'
-              bgColor='transparent'
-              width='100%'
-              bSh=''
-              color='#333'
-              handleClick={handleLogOut}
+              data-icon='avatar'
+              tabIndex='0'
+              onBlur={() => {
+                setActiveIcon('/');
+              }}
             >
-              <span>Log Out</span>
-            </Button>
-          </div>
+              <img src='https://i.pravatar.cc/300' alt='pravatar' />
+            </div>
 
-          <div className='tool_tip' />
+            {activeIcon === 'avatar' && (
+              <>
+                <div className='the_box'>
+                  <div className='profile flex'>
+                    <AccountCircleRoundedIcon className='ic_profile' />
+                    <span>Profile</span>
+                  </div>
+
+                  <div className='saved flex'>
+                    <BookmarkBorderOutlinedIcon className='ic_saved' />
+                    <span>Saved</span>
+                  </div>
+
+                  <Button
+                    type='button'
+                    padding='10px'
+                    bgColor='transparent'
+                    width='100%'
+                    bSh=''
+                    color='#333'
+                    handleClick={handleLogOut}
+                  >
+                    <span>Log Out</span>
+                  </Button>
+                </div>
+
+                <div className='tool_tip' />
+              </>
+            )}
+          </div>
         </div>
-      </div>
-    </Wrapper>
+      </Wrapper>
+    </>
   );
 };
 
@@ -206,6 +222,8 @@ const Wrapper = styled.nav`
     width: 250px;
     color: #333;
     box-shadow: #344 -1px 1px 5px;
+    background-color: #ffffffaa;
+
     .profile,
     .saved {
       justify-content: flex-start;
@@ -243,15 +261,13 @@ const Wrapper = styled.nav`
     }
   }
 
-  .tool_tip {
+  .the_box:after {
+    content: '';
     position: absolute;
-    right: 8px;
-    top: 36px;
-    width: 20px;
-    height: 20px;
-    transform: rotate(44deg);
-    border-top: 1px solid #88888899;
-    border-left: 1px solid #97969699;
+    top: -20px;
+    right: 70px;
+    border: 10px solid transparent;
+    border-bottom-color: #dadada;
   }
 `;
 
