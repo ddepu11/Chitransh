@@ -53,14 +53,25 @@ const CreatePost = () => {
     const { files: moreImages } = e.target;
 
     Array.from(moreImages).forEach((item) => {
-      setFiles((prevState) => {
-        if (prevState.length < 4) {
-          setPreviews((prevPrev) => [...prevPrev, URL.createObjectURL(item)]);
-          return [...prevState, item];
-        } else {
-          return [...prevState];
+      let doesImageExists = false;
+
+      files.forEach((i) => {
+        if (i.name === item.name) {
+          doesImageExists = true;
+          dispatch(notificationShowInfo({ msg: 'Image Already exists!' }));
         }
       });
+
+      if (!doesImageExists) {
+        setFiles((prevState) => {
+          if (prevState.length < 4) {
+            setPreviews((prevPrev) => [...prevPrev, URL.createObjectURL(item)]);
+            return [...prevState, item];
+          } else {
+            return [...prevState];
+          }
+        });
+      }
     });
   };
 
