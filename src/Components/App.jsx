@@ -20,7 +20,7 @@ import {
 } from '../features/user';
 import {
   notificationShowError,
-  notificationShowInfo,
+  // notificationShowInfo,
 } from '../features/notification';
 import Navbar from '../Screen/Navbar/Navbar';
 

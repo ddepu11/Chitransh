@@ -31,5 +31,15 @@ module.exports = {
     'jsx-a11y/no-static-element-interactions': 'off',
     'jsx-a11y/no-noninteractive-tabindex': 'off',
     'react/jsx-props-no-spreading': 'off',
+    'jsx-a11y/label-has-for': [
+      'error',
+      {
+        required: {
+          some: ['nesting', 'id'],
+        },
+      },
+    ],
+    'jsx-a11y/label-has-associated-control': ['off'],
+    'no-else-return': ['off'],
   },
 };

@@ -3,25 +3,39 @@ import { useCallback, useState } from 'react';
 import styled from 'styled-components';
 import CloseIcon from '@material-ui/icons/Close';
 import PermMediaOutlinedIcon from '@material-ui/icons/PermMediaOutlined';
+import AddBoxOutlinedIcon from '@material-ui/icons/AddBoxOutlined';
+import { useDispatch } from 'react-redux';
 import Button from '../../Components/Button';
+import { notificationShowInfo } from '../../features/notification';
 
 const CreatePost = () => {
+  const dispatch = useDispatch();
+
   const [files, setFiles] = useState([]);
   const [previews, setPreviews] = useState([]);
   const [preview, setPreview] = useState('');
 
-  const onDrop = useCallback((acceptedFile) => {
-    // Do something with the
-    setFiles(acceptedFile);
+  const onDrop = useCallback(
+    (acceptedFile) => {
+      // Do something with the
 
-    acceptedFile.forEach((item, index) => {
-      if (index === 0) {
-        setPreview(URL.createObjectURL(item));
+      acceptedFile.forEach((item, index) => {
+        if (index === 0) {
+          setPreview(URL.createObjectURL(item));
+        }
+
+        if (index < 4) {
+          setPreviews((prevState) => [...prevState, URL.createObjectURL(item)]);
+          setFiles((prevState) => [...prevState, item]);
+        }
+      });
+
+      if (acceptedFile.length > 4) {
+        dispatch(notificationShowInfo({ msg: 'Only 4 images allowed' }));
       }
-
-      setPreviews((prevState) => [...prevState, URL.createObjectURL(item)]);
-    });
-  }, []);
+    },
+    [dispatch]
+  );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
 
@@ -33,6 +47,21 @@ const CreatePost = () => {
 
   const handleViewPreview = (e) => {
     setPreview(e.currentTarget.getAttribute('data-blob'));
+  };
+
+  const handleAddMore = (e) => {
+    const { files: moreImages } = e.target;
+
+    Array.from(moreImages).forEach((item) => {
+      setFiles((prevState) => {
+        if (prevState.length < 4) {
+          setPreviews((prevPrev) => [...prevPrev, URL.createObjectURL(item)]);
+          return [...prevState, item];
+        } else {
+          return [...prevState];
+        }
+      });
+    });
   };
 
   return (
@@ -80,9 +109,31 @@ const CreatePost = () => {
                       <img src={item} alt='blob' />
                     </div>
                   ))}
+
+                {previews.length < 4 && (
+                  <label htmlFor='image'>
+                    <AddBoxOutlinedIcon className='add_more' />
+                  </label>
+                )}
+
+                <input
+                  type='file'
+                  accept='.jpg, .jpeg, .png'
+                  id='image'
+                  style={{ display: 'none' }}
+                  multiple
+                  onChange={handleAddMore}
+                />
               </div>
 
-              <Button handleClick={cancelUpload}>Cancel</Button>
+              <Button
+                handleClick={cancelUpload}
+                padding='8px 16px'
+                margin='20px 0 0 0'
+                borderRadius='15px'
+              >
+                Cancel
+              </Button>
             </PreviewImages>
 
             <div className='caption_and_upload'>{/*  */}</div>
@@ -197,10 +248,24 @@ const PreviewImages = styled.div`
         width: 100%;
         height: 100%;
         border-radius: 5px;
+        object-fit: contain;
       }
     }
     .preview:hover {
       cursor: pointer;
+    }
+
+    .add_more {
+      width: 40px;
+      height: 40px;
+      color: #333;
+      transition: transform 0.5s ease;
+      margin-left: 10px;
+    }
+
+    .add_more:hover {
+      cursor: pointer;
+      transform: scale(1.2);
     }
   }
 `;
