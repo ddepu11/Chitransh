@@ -1,16 +1,22 @@
 import { useDropzone } from 'react-dropzone';
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import CloseIcon from '@material-ui/icons/Close';
 import PermMediaOutlinedIcon from '@material-ui/icons/PermMediaOutlined';
 import AddBoxOutlinedIcon from '@material-ui/icons/AddBoxOutlined';
 import { useDispatch } from 'react-redux';
+import setValidationMessage from '../../utils/setValidationMessage';
+
 import Button from '../../Components/Button';
 import { notificationShowInfo } from '../../features/notification';
 
-const CreatePost = () => {
+const CreatePost = ({ handleCloseCreatePost }) => {
   const dispatch = useDispatch();
 
+  const setTimeOutId = useRef(0);
+  const captionValidationMessageTag = useRef(null);
+  const [caption, setCaption] = useState('');
   const [files, setFiles] = useState([]);
   const [previews, setPreviews] = useState([]);
   const [preview, setPreview] = useState('');
@@ -58,7 +64,9 @@ const CreatePost = () => {
       files.forEach((i) => {
         if (i.name === item.name) {
           doesImageExists = true;
-          dispatch(notificationShowInfo({ msg: 'Image Already exists!' }));
+          dispatch(
+            notificationShowInfo({ msg: 'You already added that image!' })
+          );
         }
       });
 
@@ -75,12 +83,55 @@ const CreatePost = () => {
     });
   };
 
+  const handleCaption = (e) => {
+    setCaption(e.target.value);
+  };
+
+  const handleUpload = () => {
+    let errorFlag = false;
+
+    if (caption.length > 50) {
+      setValidationMessage(
+        'Caption is too lengthy!',
+        'error',
+        setTimeOutId,
+        captionValidationMessageTag
+      );
+      errorFlag = true;
+    }
+
+    if (caption.length < 2) {
+      setValidationMessage(
+        'Caption is too short!',
+        'error',
+        setTimeOutId,
+        captionValidationMessageTag
+      );
+      errorFlag = true;
+    }
+
+    if (caption === '') {
+      setValidationMessage(
+        'Caption cant be empty',
+        'error',
+        setTimeOutId,
+        captionValidationMessageTag
+      );
+      errorFlag = true;
+    }
+
+    if (!errorFlag) {
+      console.log(files);
+      console.log(caption);
+    }
+  };
+
   return (
     <Wrapper>
       <div className='new_post'>
         <div className='top flex'>
           <h1 className='heading'>New Post</h1>
-          <CloseIcon className='ic_close' />
+          <CloseIcon className='ic_close' onClick={handleCloseCreatePost} />
         </div>
 
         {!preview ? (
@@ -140,14 +191,49 @@ const CreatePost = () => {
               <Button
                 handleClick={cancelUpload}
                 padding='8px 16px'
-                margin='20px 0 0 0'
-                borderRadius='15px'
+                margin='40px 0 0 0'
+                borderRadius='5px'
+                width='40%'
+                transform='scale(1.04)'
               >
                 Cancel
               </Button>
             </PreviewImages>
 
-            <div className='caption_and_upload'>{/*  */}</div>
+            <CaptionAndUpload className='flex'>
+              <div className='caption_top'>
+                <div className='user_name_dp flex'>
+                  <div className='dp'>
+                    <img src='https://i.pravatar.cc/300' alt='dp' />
+                  </div>
+
+                  <div className='username'>ddepu11</div>
+                </div>
+
+                <div className='caption_div'>
+                  <textarea
+                    rows='11'
+                    onChange={handleCaption}
+                    value={caption}
+                  />
+                </div>
+
+                <p className='message' ref={captionValidationMessageTag} />
+              </div>
+
+              <Button
+                padding='8px 16px'
+                borderRadius='5px'
+                bgColor='#0095f6'
+                color='#ffffff'
+                width='100%'
+                bSh=''
+                transform='scale(1.03)'
+                handleClick={handleUpload}
+              >
+                Upload
+              </Button>
+            </CaptionAndUpload>
           </div>
         )}
       </div>
@@ -215,15 +301,6 @@ const Wrapper = styled.main`
       cursor: default;
     }
   }
-
-  .image_preview_and_upload {
-  }
-
-  .caption_and_upload {
-    border: 1px solid red;
-    width: 30%;
-    height: 82.5vh;
-  }
 `;
 
 const PreviewImages = styled.div`
@@ -232,8 +309,8 @@ const PreviewImages = styled.div`
   flex-direction: column;
 
   .big_preview {
-    width: 500px;
-    height: 270px;
+    width: 600px;
+    height: 350px;
     /* border: 1px solid red; */
 
     img {
@@ -245,23 +322,23 @@ const PreviewImages = styled.div`
   }
 
   .small_previews {
-    margin-top: 40px;
+    margin-top: 30px;
     width: 60%;
     justify-content: flex-start;
     /* border: 1px solid #333; */
 
     .preview {
-      width: 70px;
-      height: 70px;
+      width: 100px;
+      height: 100px;
       margin-right: 12px;
 
       img {
         width: 100%;
         height: 100%;
-        border-radius: 5px;
         object-fit: contain;
       }
     }
+
     .preview:hover {
       cursor: pointer;
     }
@@ -280,5 +357,60 @@ const PreviewImages = styled.div`
     }
   }
 `;
+
+const CaptionAndUpload = styled.aside`
+  padding: 15px 10px;
+  border-left: 1px solid #d8d8d8;
+  width: 30%;
+  height: 82.5vh;
+  flex-direction: column;
+  justify-content: space-between !important;
+  align-items: flex-start !important;
+
+  .caption_top {
+    width: 100%;
+  }
+
+  .user_name_dp {
+    justify-content: flex-start;
+
+    .dp {
+      width: 34px;
+      height: 34px;
+      /* border: 1px solid red; */
+
+      img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: contain;
+      }
+    }
+
+    .username {
+      margin-left: 12px;
+      font-weight: 700;
+      color: #333;
+    }
+  }
+
+  .caption_div {
+    /* border: 1px solid red; */
+    margin-top: 20px;
+    width: 100%;
+
+    textarea {
+      width: 100%;
+      border: 1px solid #e0dede;
+      padding: 8px 10px;
+      color: #333;
+      font-size: 1.1em;
+    }
+  }
+`;
+
+CreatePost.propTypes = {
+  handleCloseCreatePost: PropTypes.func.isRequired,
+};
 
 export default CreatePost;

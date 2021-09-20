@@ -40,9 +40,14 @@ const Navbar = () => {
       });
   };
 
+  const handleCloseCreatePost = () => setActiveIcon('home');
+
   return (
     <>
-      <CreatePost />
+      {activeIcon === 'add' && (
+        <CreatePost handleCloseCreatePost={handleCloseCreatePost} />
+      )}
+
       <Wrapper activeIcon={activeIcon}>
         <div className='w-960 nav_center_div flex'>
           <Link to='/'>
