@@ -1,6 +1,4 @@
 import styled from 'styled-components';
-import { useDispatch } from 'react-redux';
-import { useState } from 'react';
 import HomeIcon from '@material-ui/icons/Home';
 import AddBoxOutlinedIcon from '@material-ui/icons/AddBoxOutlined';
 import FavoriteBorderOutlinedIcon from '@material-ui/icons/FavoriteBorderOutlined';
@@ -11,36 +9,18 @@ import AddBoxIcon from '@material-ui/icons/AddBox';
 import AccountCircleRoundedIcon from '@material-ui/icons/AccountCircleRounded';
 import BookmarkBorderOutlinedIcon from '@material-ui/icons/BookmarkBorderOutlined';
 import Button from '../../Components/Button';
-import { authInstance } from '../../config/firebase';
-import {
-  notificationShowError,
-  notificationShowInfo,
-} from '../../features/notification';
-import { userLoadingEnds } from '../../features/user';
+
 import CreatePost from '../Create/CreatePost';
+import useNavbarLogic from './Logic/useNavbarLogic';
 
 const Navbar = () => {
-  const dispatch = useDispatch();
-  const [activeIcon, setActiveIcon] = useState('home');
-
-  const handleActiveIcon = (e) => {
-    const icon = e.currentTarget.getAttribute('data-icon');
-    setActiveIcon(icon);
-  };
-
-  const handleLogOut = () => {
-    authInstance
-      .signOut()
-      .then(() => {
-        dispatch(notificationShowInfo({ msg: 'Successfully logged out' }));
-      })
-      .catch((err) => {
-        dispatch(notificationShowError({ msg: err.code.toString().slice(5) }));
-        dispatch(userLoadingEnds());
-      });
-  };
-
-  const handleCloseCreatePost = () => setActiveIcon('home');
+  const {
+    handleCloseCreatePost,
+    handleLogOut,
+    handleActiveIcon,
+    activeIcon,
+    dropDownFromAvatar,
+  } = useNavbarLogic();
 
   return (
     <>
@@ -97,47 +77,43 @@ const Navbar = () => {
               />
             )}
 
-            <div
-              className='avatar'
-              onClick={handleActiveIcon}
-              data-icon='avatar'
-              tabIndex='0'
-              onBlur={() => {
-                setActiveIcon('/');
-              }}
-            >
-              <img src='https://i.pravatar.cc/300' alt='pravatar' />
+            <div className='avatar' data-icon='avatar' tabIndex='0'>
+              <img
+                src='https://i.pravatar.cc/300'
+                alt='pravatar'
+                onClick={handleActiveIcon}
+                tabIndex='0'
+                className='ava_img'
+              />
             </div>
 
-            {activeIcon === 'avatar' && (
-              <>
-                <div className='the_box'>
-                  <div className='profile flex'>
-                    <AccountCircleRoundedIcon className='ic_profile' />
-                    <span>Profile</span>
-                  </div>
+            {/* {activeIcon !== 'avatar' && (
+            )} */}
 
-                  <div className='saved flex'>
-                    <BookmarkBorderOutlinedIcon className='ic_saved' />
-                    <span>Saved</span>
-                  </div>
+            <div ref={dropDownFromAvatar} className='the_box'>
+              <div className='profile flex'>
+                <AccountCircleRoundedIcon className='ic_profile' />
+                <span>Profile</span>
+              </div>
 
-                  <Button
-                    type='button'
-                    padding='10px'
-                    bgColor='transparent'
-                    width='100%'
-                    bSh=''
-                    color='#333'
-                    handleClick={handleLogOut}
-                  >
-                    <span>Log Out</span>
-                  </Button>
-                </div>
+              <div className='saved flex'>
+                <BookmarkBorderOutlinedIcon className='ic_saved' />
+                <span>Saved</span>
+              </div>
 
-                <div className='tool_tip' />
-              </>
-            )}
+              <Button
+                type='button'
+                padding='10px'
+                bgColor='transparent'
+                width='100%'
+                bSh=''
+                color='#333'
+                handleClick={handleLogOut}
+                transform='scale(1)'
+              >
+                <span>Log Out</span>
+              </Button>
+            </div>
           </div>
         </div>
       </Wrapper>
@@ -223,11 +199,16 @@ const Wrapper = styled.nav`
 
   .the_box {
     position: absolute;
-    top: 45px;
+    top: calc(100% + 0.25rem);
     width: 250px;
     color: #333;
-    box-shadow: #344 -1px 1px 5px;
-    background-color: #ffffffaa;
+    background-color: white;
+    border-radius: 0.25rem;
+    box-shadow: 0px 2px 5px 0 rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    pointer-events: none;
 
     .profile,
     .saved {
@@ -241,6 +222,9 @@ const Wrapper = styled.nav`
       background-color: #f0eeee99;
     }
 
+    .saved {
+      border-bottom: 1px solid #d6d6d6;
+    }
     .saved:hover {
       cursor: pointer;
       background-color: #f0eeee99;
@@ -266,14 +250,20 @@ const Wrapper = styled.nav`
     }
   }
 
-  .the_box:after {
+  .the_box.active {
+    opacity: 1;
+    transform: translateY(0px);
+    pointer-events: auto;
+  }
+
+  /* .the_box:after {
     content: '';
     position: absolute;
     top: -20px;
     right: 70px;
     border: 10px solid transparent;
     border-bottom-color: #dadada;
-  }
+  } */
 `;
 
 export default Navbar;
