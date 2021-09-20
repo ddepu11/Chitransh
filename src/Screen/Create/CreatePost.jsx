@@ -1,157 +1,29 @@
-import { useDropzone } from 'react-dropzone';
-import { useCallback, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import CloseIcon from '@material-ui/icons/Close';
 import PermMediaOutlinedIcon from '@material-ui/icons/PermMediaOutlined';
 import AddBoxOutlinedIcon from '@material-ui/icons/AddBoxOutlined';
 import DeleteForeverOutlinedIcon from '@material-ui/icons/DeleteForeverOutlined';
-import { useDispatch } from 'react-redux';
-import setValidationMessage from '../../utils/setValidationMessage';
 
 import Button from '../../Components/Button';
-import { notificationShowInfo } from '../../features/notification';
+import useCreatePostLogic from './Logic/useCreatePostLogic';
 
 const CreatePost = ({ handleCloseCreatePost }) => {
-  const dispatch = useDispatch();
-
-  const setTimeOutId = useRef(0);
-  const captionValidationMessageTag = useRef(null);
-  const [caption, setCaption] = useState('');
-  const [previews, setPreviews] = useState([]);
-  const [preview, setPreview] = useState({ p: '', f: null });
-
-  const onDrop = useCallback(
-    (acceptedFile) => {
-      acceptedFile.forEach((item, index) => {
-        const tempBlob = URL.createObjectURL(item);
-
-        if (index === 0) {
-          setPreview({ p: tempBlob, f: item });
-        }
-
-        if (index < 4) {
-          setPreviews((prevState) => [...prevState, { p: tempBlob, f: item }]);
-        }
-      });
-
-      if (acceptedFile.length > 4) {
-        dispatch(notificationShowInfo({ msg: 'Only 4 images allowed' }));
-      }
-    },
-    [dispatch]
-  );
-
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
-
-  const cancelUpload = () => {
-    setPreviews([]);
-    setPreview({ p: '', f: null });
-  };
-
-  // HANDLE THIS
-  const handleViewPreview = (e) => {
-    const name = e.currentTarget.getAttribute('data-name');
-
-    const file = previews.filter(({ f }) => f.name === name)[0];
-
-    setPreview(file);
-  };
-
-  const handleAddMore = (e) => {
-    const { files: moreImages } = e.target;
-
-    Array.from(moreImages).forEach((item) => {
-      let doesImageExists = false;
-
-      previews.forEach(({ f }) => {
-        if (f.name === item.name) {
-          doesImageExists = true;
-          dispatch(
-            notificationShowInfo({ msg: 'You already added that image!' })
-          );
-        }
-      });
-
-      if (!doesImageExists) {
-        setPreviews((prevState) => {
-          if (prevState.length < 4) {
-            return [...prevState, { p: URL.createObjectURL(item), f: item }];
-          } else {
-            return prevState;
-          }
-        });
-      }
-    });
-  };
-
-  const handleCaption = (e) => {
-    setCaption(e.target.value);
-  };
-
-  const handleUpload = () => {
-    let errorFlag = false;
-
-    if (caption.length > 50) {
-      setValidationMessage(
-        'Caption is too lengthy!',
-        'error',
-        setTimeOutId,
-        captionValidationMessageTag
-      );
-      errorFlag = true;
-    }
-
-    if (caption.length < 2) {
-      setValidationMessage(
-        'Caption is too short!',
-        'error',
-        setTimeOutId,
-        captionValidationMessageTag
-      );
-      errorFlag = true;
-    }
-
-    if (caption === '') {
-      setValidationMessage(
-        'Caption cant be empty',
-        'error',
-        setTimeOutId,
-        captionValidationMessageTag
-      );
-      errorFlag = true;
-    }
-
-    if (!errorFlag) {
-      console.log(caption);
-    }
-  };
-
-  const handleDelete = (e) => {
-    const blobToDelete = e.currentTarget.getAttribute('data-blob');
-
-    setPreviews(
-      previews.filter(({ p }, index, arr) => {
-        if (p !== blobToDelete) {
-          return true;
-        } else {
-          if (index === 0 && arr[index + 1]) {
-            console.log('Increase');
-            setPreview({ p: arr[index + 1].p, f: arr[index + 1].f });
-          } else if (!arr[index - 1] && !arr[index + 1]) {
-            setPreview({ p: '', file: null });
-            setPreviews([]);
-            console.log('Middle');
-          } else {
-            console.log('Decrease');
-            setPreview({ p: arr[index - 1].p, f: arr[index - 1].f });
-          }
-
-          return false;
-        }
-      })
-    );
-  };
+  const {
+    handleRemoveImage,
+    handleUpload,
+    handleCaption,
+    handleAddMore,
+    handleViewPreview,
+    cancelUpload,
+    getRootProps,
+    getInputProps,
+    isDragActive,
+    preview,
+    previews,
+    caption,
+    captionValidationMessageTag,
+  } = useCreatePostLogic();
 
   return (
     <Wrapper>
@@ -186,12 +58,16 @@ const CreatePost = ({ handleCloseCreatePost }) => {
               <div className='big_preview'>
                 <DeleteForeverOutlinedIcon
                   className='delete_btn'
-                  onClick={handleDelete}
+                  onClick={handleRemoveImage}
                   data-blob={preview.p}
                   data-name={JSON.stringify(preview.f.name)}
                 />
 
-                <img src={preview.p} alt='big_preview' />
+                <img
+                  src={preview.p}
+                  alt='big_preview'
+                  onLoad={() => URL.revokeObjectURL(previews.p)}
+                />
               </div>
 
               <div className='small_previews flex'>
@@ -204,7 +80,11 @@ const CreatePost = ({ handleCloseCreatePost }) => {
                       onClick={handleViewPreview}
                       data-name={f.name}
                     >
-                      <img src={p} alt='blob' />
+                      <img
+                        src={p}
+                        alt='blob'
+                        onLoad={() => URL.revokeObjectURL(previews.p)}
+                      />
                     </div>
                   ))}
 
@@ -251,6 +131,7 @@ const CreatePost = ({ handleCloseCreatePost }) => {
                     rows='11'
                     onChange={handleCaption}
                     value={caption}
+                    placeholder='Write a caption...'
                   />
                 </div>
 
@@ -454,7 +335,7 @@ const CaptionAndUpload = styled.aside`
       border: 1px solid #e0dede;
       padding: 8px 10px;
       color: #333;
-      font-size: 1.1em;
+      font-size: 1em;
     }
   }
 `;
