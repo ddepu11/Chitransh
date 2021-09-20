@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import CloseIcon from '@material-ui/icons/Close';
 import PermMediaOutlinedIcon from '@material-ui/icons/PermMediaOutlined';
 import AddBoxOutlinedIcon from '@material-ui/icons/AddBoxOutlined';
+import DeleteForeverOutlinedIcon from '@material-ui/icons/DeleteForeverOutlined';
 import { useDispatch } from 'react-redux';
 import setValidationMessage from '../../utils/setValidationMessage';
 
@@ -19,7 +20,7 @@ const CreatePost = ({ handleCloseCreatePost }) => {
   const [caption, setCaption] = useState('');
   const [files, setFiles] = useState([]);
   const [previews, setPreviews] = useState([]);
-  const [preview, setPreview] = useState('');
+  const [preview, setPreview] = useState({ p: '', file: null });
 
   const onDrop = useCallback(
     (acceptedFile) => {
@@ -27,7 +28,7 @@ const CreatePost = ({ handleCloseCreatePost }) => {
 
       acceptedFile.forEach((item, index) => {
         if (index === 0) {
-          setPreview(URL.createObjectURL(item));
+          setPreview({ p: URL.createObjectURL(item), file: item });
         }
 
         if (index < 4) {
@@ -47,12 +48,20 @@ const CreatePost = ({ handleCloseCreatePost }) => {
 
   const cancelUpload = () => {
     setPreviews([]);
-    setPreview('');
+    setPreview({ p: '', file: null });
     setFiles([]);
   };
 
+  // HANDLE THIS
   const handleViewPreview = (e) => {
-    setPreview(e.currentTarget.getAttribute('data-blob'));
+    const file = files.filter(
+      (i) => i.name === e.currentTarget.getAttribute('data-name')
+    );
+
+    setPreview({
+      p: e.currentTarget.getAttribute('data-blob'),
+      file,
+    });
   };
 
   const handleAddMore = (e) => {
@@ -126,6 +135,41 @@ const CreatePost = ({ handleCloseCreatePost }) => {
     }
   };
 
+  const handleDelete = (e) => {
+    const blobToDelete = e.currentTarget.getAttribute('data-blob');
+    const nameOfFileToDelete = JSON.parse(
+      e.currentTarget.getAttribute('data-name')
+    );
+
+    setFiles(
+      files.filter((item, index, arr) => {
+        if (item.name !== nameOfFileToDelete) {
+          return true;
+        } else {
+          if (arr.length === 0) setPreview({ ...preview, file: null });
+
+          setPreview({ ...preview, file: arr[index - 1] });
+
+          return false;
+        }
+      })
+    );
+
+    setPreviews(
+      previews.filter((item, index, arr) => {
+        if (item !== blobToDelete) {
+          return true;
+        } else {
+          if (arr.length === 0) setPreview({ ...preview, p: '' });
+
+          setPreview({ ...preview, p: arr[index - 1] });
+
+          return false;
+        }
+      })
+    );
+  };
+
   return (
     <Wrapper>
       <div className='new_post'>
@@ -134,7 +178,7 @@ const CreatePost = ({ handleCloseCreatePost }) => {
           <CloseIcon className='ic_close' onClick={handleCloseCreatePost} />
         </div>
 
-        {!preview ? (
+        {!preview.p ? (
           <div className='hero flex' {...getRootProps()}>
             <PermMediaOutlinedIcon className='ic_images' />
 
@@ -154,9 +198,16 @@ const CreatePost = ({ handleCloseCreatePost }) => {
           </div>
         ) : (
           <div className='image_preview_and_upload flex'>
-            <PreviewImages preview={preview} className='flex'>
+            <PreviewImages className='flex'>
               <div className='big_preview'>
-                <img src={preview} alt='big_preview' />
+                <DeleteForeverOutlinedIcon
+                  className='delete_btn'
+                  onClick={handleDelete}
+                  data-blob={preview.p}
+                  data-name={JSON.stringify(preview.file.name)}
+                />
+
+                <img src={preview.p} alt='big_preview' />
               </div>
 
               <div className='small_previews flex'>
@@ -309,6 +360,7 @@ const PreviewImages = styled.div`
   flex-direction: column;
 
   .big_preview {
+    position: relative;
     width: 600px;
     height: 350px;
     /* border: 1px solid red; */
@@ -318,6 +370,19 @@ const PreviewImages = styled.div`
       height: 100%;
       border-radius: 5px;
       object-fit: contain;
+    }
+
+    .delete_btn {
+      position: absolute;
+      right: 0;
+      color: var(--danger-color);
+      font-size: 1.8em;
+      transition: transform 0.5s ease;
+    }
+
+    .delete_btn:hover {
+      cursor: pointer;
+      transform: scale(1.05);
     }
   }
 
