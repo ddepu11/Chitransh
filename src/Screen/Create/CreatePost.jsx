@@ -18,22 +18,16 @@ const CreatePost = ({ handleCloseCreatePost }) => {
   const setTimeOutId = useRef(0);
   const captionValidationMessageTag = useRef(null);
   const [caption, setCaption] = useState('');
-  const [files, setFiles] = useState([]);
   const [previews, setPreviews] = useState([]);
-  const [preview, setPreview] = useState({ p: '', file: null });
 
   const onDrop = useCallback(
     (acceptedFile) => {
-      // Do something with the
-
       acceptedFile.forEach((item, index) => {
-        if (index === 0) {
-          setPreview({ p: URL.createObjectURL(item), file: item });
-        }
-
         if (index < 4) {
-          setPreviews((prevState) => [...prevState, URL.createObjectURL(item)]);
-          setFiles((prevState) => [...prevState, item]);
+          setPreviews((prevState) => [
+            ...prevState,
+            { p: URL.createObjectURL(item), f: item },
+          ]);
         }
       });
 
@@ -48,20 +42,19 @@ const CreatePost = ({ handleCloseCreatePost }) => {
 
   const cancelUpload = () => {
     setPreviews([]);
-    setPreview({ p: '', file: null });
-    setFiles([]);
+    // setPreview({ p: '', file: null });
+    // setFiles([]);
   };
 
   // HANDLE THIS
-  const handleViewPreview = (e) => {
-    const file = files.filter(
-      (i) => i.name === e.currentTarget.getAttribute('data-name')
-    );
-
-    setPreview({
-      p: e.currentTarget.getAttribute('data-blob'),
-      file,
-    });
+  const handleViewPreview = () => {
+    // const file = files.filter(
+    //   (i) => i.name === e.currentTarget.getAttribute('data-name')
+    // );
+    // setPreview({
+    //   p: e.currentTarget.getAttribute('data-blob'),
+    //   file,
+    // });
   };
 
   const handleAddMore = (e) => {
@@ -70,8 +63,8 @@ const CreatePost = ({ handleCloseCreatePost }) => {
     Array.from(moreImages).forEach((item) => {
       let doesImageExists = false;
 
-      files.forEach((i) => {
-        if (i.name === item.name) {
+      previews.forEach(({ f }) => {
+        if (f.name === item.name) {
           doesImageExists = true;
           dispatch(
             notificationShowInfo({ msg: 'You already added that image!' })
@@ -80,12 +73,11 @@ const CreatePost = ({ handleCloseCreatePost }) => {
       });
 
       if (!doesImageExists) {
-        setFiles((prevState) => {
-          if (prevState.length < 4) {
-            setPreviews((prevPrev) => [...prevPrev, URL.createObjectURL(item)]);
-            return [...prevState, item];
+        setPreviews((prevPrev) => {
+          if (prevPrev.length < 4) {
+            return [...prevPrev, { p: URL.createObjectURL(item), f: item }];
           } else {
-            return [...prevState];
+            return [...prevPrev];
           }
         });
       }
@@ -130,7 +122,6 @@ const CreatePost = ({ handleCloseCreatePost }) => {
     }
 
     if (!errorFlag) {
-      console.log(files);
       console.log(caption);
     }
   };
@@ -141,28 +132,30 @@ const CreatePost = ({ handleCloseCreatePost }) => {
       e.currentTarget.getAttribute('data-name')
     );
 
-    setFiles(
-      files.filter((item, index, arr) => {
-        if (item.name !== nameOfFileToDelete) {
-          return true;
-        } else {
-          if (arr.length === 0) setPreview({ ...preview, file: null });
+    console.log(nameOfFileToDelete);
 
-          setPreview({ ...preview, file: arr[index - 1] });
+    // setFiles(
+    //   files.filter((item, index, arr) => {
+    //     if (item.name !== nameOfFileToDelete) {
+    //       return true;
+    //     } else {
+    //       if (arr.length === 0) setPreview({ ...preview, file: null });
 
-          return false;
-        }
-      })
-    );
+    //       setPreview({ ...preview, file: arr[index - 1] });
+
+    //       return false;
+    //     }
+    //   })
+    // );
 
     setPreviews(
-      previews.filter((item, index, arr) => {
+      previews.filter((item) => {
         if (item !== blobToDelete) {
           return true;
         } else {
-          if (arr.length === 0) setPreview({ ...preview, p: '' });
+          // if (arr.length === 0) setPreview({ ...preview, p: '' });
 
-          setPreview({ ...preview, p: arr[index - 1] });
+          // setPreview({ ...preview, p: arr[index - 1] });
 
           return false;
         }
@@ -178,7 +171,7 @@ const CreatePost = ({ handleCloseCreatePost }) => {
           <CloseIcon className='ic_close' onClick={handleCloseCreatePost} />
         </div>
 
-        {!preview.p ? (
+        {previews.length === 0 ? (
           <div className='hero flex' {...getRootProps()}>
             <PermMediaOutlinedIcon className='ic_images' />
 
@@ -203,23 +196,24 @@ const CreatePost = ({ handleCloseCreatePost }) => {
                 <DeleteForeverOutlinedIcon
                   className='delete_btn'
                   onClick={handleDelete}
-                  data-blob={preview.p}
-                  data-name={JSON.stringify(preview.file.name)}
+                  data-blob={previews[0].p}
+                  data-name={JSON.stringify(previews[0].f.name)}
                 />
 
-                <img src={preview.p} alt='big_preview' />
+                <img src={previews[0].p} alt='big_preview' />
               </div>
 
               <div className='small_previews flex'>
                 {previews.length !== 0 &&
-                  previews.map((item) => (
+                  previews.map(({ p, f }) => (
                     <div
                       className='preview'
-                      key={item}
-                      data-blob={item}
+                      key={p}
+                      data-blob={p}
                       onClick={handleViewPreview}
+                      data-name={JSON.stringify(f)}
                     >
-                      <img src={item} alt='blob' />
+                      <img src={p} alt='blob' />
                     </div>
                   ))}
 
