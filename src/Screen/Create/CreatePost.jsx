@@ -19,15 +19,19 @@ const CreatePost = ({ handleCloseCreatePost }) => {
   const captionValidationMessageTag = useRef(null);
   const [caption, setCaption] = useState('');
   const [previews, setPreviews] = useState([]);
+  const [preview, setPreview] = useState({ p: '', f: null });
 
   const onDrop = useCallback(
     (acceptedFile) => {
       acceptedFile.forEach((item, index) => {
+        const tempBlob = URL.createObjectURL(item);
+
+        if (index === 0) {
+          setPreview({ p: tempBlob, f: item });
+        }
+
         if (index < 4) {
-          setPreviews((prevState) => [
-            ...prevState,
-            { p: URL.createObjectURL(item), f: item },
-          ]);
+          setPreviews((prevState) => [...prevState, { p: tempBlob, f: item }]);
         }
       });
 
@@ -42,19 +46,16 @@ const CreatePost = ({ handleCloseCreatePost }) => {
 
   const cancelUpload = () => {
     setPreviews([]);
-    // setPreview({ p: '', file: null });
-    // setFiles([]);
+    setPreview({ p: '', f: null });
   };
 
   // HANDLE THIS
-  const handleViewPreview = () => {
-    // const file = files.filter(
-    //   (i) => i.name === e.currentTarget.getAttribute('data-name')
-    // );
-    // setPreview({
-    //   p: e.currentTarget.getAttribute('data-blob'),
-    //   file,
-    // });
+  const handleViewPreview = (e) => {
+    const name = e.currentTarget.getAttribute('data-name');
+
+    const file = previews.filter(({ f }) => f.name === name)[0];
+
+    setPreview(file);
   };
 
   const handleAddMore = (e) => {
@@ -73,11 +74,11 @@ const CreatePost = ({ handleCloseCreatePost }) => {
       });
 
       if (!doesImageExists) {
-        setPreviews((prevPrev) => {
-          if (prevPrev.length < 4) {
-            return [...prevPrev, { p: URL.createObjectURL(item), f: item }];
+        setPreviews((prevState) => {
+          if (prevState.length < 4) {
+            return [...prevState, { p: URL.createObjectURL(item), f: item }];
           } else {
-            return [...prevPrev];
+            return prevState;
           }
         });
       }
@@ -128,34 +129,23 @@ const CreatePost = ({ handleCloseCreatePost }) => {
 
   const handleDelete = (e) => {
     const blobToDelete = e.currentTarget.getAttribute('data-blob');
-    const nameOfFileToDelete = JSON.parse(
-      e.currentTarget.getAttribute('data-name')
-    );
-
-    console.log(nameOfFileToDelete);
-
-    // setFiles(
-    //   files.filter((item, index, arr) => {
-    //     if (item.name !== nameOfFileToDelete) {
-    //       return true;
-    //     } else {
-    //       if (arr.length === 0) setPreview({ ...preview, file: null });
-
-    //       setPreview({ ...preview, file: arr[index - 1] });
-
-    //       return false;
-    //     }
-    //   })
-    // );
 
     setPreviews(
-      previews.filter((item) => {
-        if (item !== blobToDelete) {
+      previews.filter(({ p }, index, arr) => {
+        if (p !== blobToDelete) {
           return true;
         } else {
-          // if (arr.length === 0) setPreview({ ...preview, p: '' });
-
-          // setPreview({ ...preview, p: arr[index - 1] });
+          if (index === 0 && arr[index + 1]) {
+            console.log('Increase');
+            setPreview({ p: arr[index + 1].p, f: arr[index + 1].f });
+          } else if (!arr[index - 1] && !arr[index + 1]) {
+            setPreview({ p: '', file: null });
+            setPreviews([]);
+            console.log('Middle');
+          } else {
+            console.log('Decrease');
+            setPreview({ p: arr[index - 1].p, f: arr[index - 1].f });
+          }
 
           return false;
         }
@@ -171,13 +161,14 @@ const CreatePost = ({ handleCloseCreatePost }) => {
           <CloseIcon className='ic_close' onClick={handleCloseCreatePost} />
         </div>
 
-        {previews.length === 0 ? (
+        {!preview.p ? (
           <div className='hero flex' {...getRootProps()}>
             <PermMediaOutlinedIcon className='ic_images' />
 
             <input
               {...getInputProps({
                 accept: '.jpg, .jpeg, .png',
+                max: 4,
               })}
             />
 
@@ -196,11 +187,11 @@ const CreatePost = ({ handleCloseCreatePost }) => {
                 <DeleteForeverOutlinedIcon
                   className='delete_btn'
                   onClick={handleDelete}
-                  data-blob={previews[0].p}
-                  data-name={JSON.stringify(previews[0].f.name)}
+                  data-blob={preview.p}
+                  data-name={JSON.stringify(preview.f.name)}
                 />
 
-                <img src={previews[0].p} alt='big_preview' />
+                <img src={preview.p} alt='big_preview' />
               </div>
 
               <div className='small_previews flex'>
@@ -211,7 +202,7 @@ const CreatePost = ({ handleCloseCreatePost }) => {
                       key={p}
                       data-blob={p}
                       onClick={handleViewPreview}
-                      data-name={JSON.stringify(f)}
+                      data-name={f.name}
                     >
                       <img src={p} alt='blob' />
                     </div>
