@@ -58,11 +58,16 @@ const useProfileLogic = () => {
         { merge: true }
       );
 
+      const userDocRef = doc(firestoreInstance, 'users', id);
+      const docSnap = await getDoc(userDocRef);
+
+      dispatch(updateInfo(docSnap.data()));
+
       dispatch(userLoadingEnds());
 
       dispatch(
         notificationShowSuccess({
-          msg: 'Successfully chnaged display picture!',
+          msg: 'Successfully changed display picture!',
         })
       );
     } catch (err) {
@@ -102,13 +107,11 @@ const useProfileLogic = () => {
       const userDocRef = doc(firestoreInstance, 'users', id);
       const docSnap = await getDoc(userDocRef);
 
-      console.log(docSnap.data());
-
       dispatch(updateInfo(docSnap.data()));
 
-      // dispatch(
-      //   notificationShowSuccess({ msg: 'Successfully uploaded new dp' })
-      // );
+      dispatch(
+        notificationShowSuccess({ msg: 'Successfully uploaded new dp' })
+      );
     } catch (err) {
       dispatch(notificationShowError({ msg: err.code.toString().slice(5) }));
       dispatch(userLoadingEnds());
@@ -129,6 +132,38 @@ const useProfileLogic = () => {
     }
   };
 
+  const removeDp = async () => {
+    cancelChangeDp();
+    const dpRef = ref(storage, `display_pictures/${info.dp.fileName}`);
+
+    dispatch(userLoadingBegins());
+
+    try {
+      await deleteObject(dpRef);
+
+      await setDoc(
+        doc(firestoreInstance, 'users', id),
+        {
+          dp: {
+            fileName: 'dummyDp',
+            url: '',
+          },
+        },
+        { merge: true }
+      );
+
+      const userDocRef = doc(firestoreInstance, 'users', id);
+      const docSnap = await getDoc(userDocRef);
+
+      dispatch(updateInfo(docSnap.data()));
+
+      dispatch(notificationShowSuccess({ msg: 'Successfully removed  dp!' }));
+    } catch (err) {
+      dispatch(notificationShowError({ msg: err.code.toString().slice(5) }));
+      dispatch(userLoadingEnds());
+    }
+  };
+
   return {
     info,
     openChangeDpDialog,
@@ -136,6 +171,7 @@ const useProfileLogic = () => {
     cancelChangeDp,
     handleDpChange,
     userLoading,
+    removeDp,
   };
 };
 

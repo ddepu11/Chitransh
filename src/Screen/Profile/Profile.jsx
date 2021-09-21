@@ -14,6 +14,7 @@ const Profile = () => {
     cancelChangeDp,
     handleDpChange,
     userLoading,
+    removeDp,
   } = useProfileLogic();
 
   const closeDialog = (e) => {
@@ -59,6 +60,7 @@ const Profile = () => {
                   color='#ee1f1f'
                   fWeight='700'
                   fs='0.9em'
+                  handleClick={removeDp}
                 >
                   Remove Current Photo
                 </Button>
