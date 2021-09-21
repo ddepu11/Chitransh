@@ -15,13 +15,8 @@ const Profile = () => {
     handleDpChange,
     userLoading,
     removeDp,
+    closeDialog,
   } = useProfileLogic();
-
-  const closeDialog = (e) => {
-    if (e.target.matches('.ChangeDpDialog')) {
-      cancelChangeDp();
-    }
-  };
 
   if (userLoading) {
     return <Loader />;
@@ -138,13 +133,13 @@ const Profile = () => {
           </div>
         </div>
 
-        <nav>
-          <div className='posts'>
+        <nav className='flex'>
+          <div className='posts flex'>
             <GridOnOutlinedIcon className='ic_posts' />
             <span>POSTS</span>
           </div>
 
-          <div className='posts'>
+          <div className='saved flex'>
             <BookmarkBorderOutlinedIcon className='ic_saved' />
             <span>SAVED</span>
           </div>
@@ -156,7 +151,6 @@ const Profile = () => {
 
 const Wrapper = styled.main`
   padding: 40px 5px 20px;
-
   .dp_and_details {
     justify-content: flex-start;
     padding: 0 60px 30px;
@@ -241,6 +235,32 @@ const Wrapper = styled.main`
           font-size: 0.95em;
         }
       }
+    }
+  }
+
+  nav {
+    padding: 20px 0;
+    color: #a5a4a4;
+
+    .posts {
+      margin-right: 50px;
+    }
+
+    .posts,
+    .saved:hover {
+      cursor: pointer;
+    }
+
+    .ic_posts,
+    .ic_saved {
+      font-size: 0.9em;
+      margin-right: 5px;
+    }
+
+    span {
+      font-size: 0.9em;
+      letter-spacing: 1px;
+      font-weight: 700;
     }
   }
 `;

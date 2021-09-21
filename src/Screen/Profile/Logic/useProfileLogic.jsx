@@ -32,6 +32,12 @@ const useProfileLogic = () => {
     setHandlingChangeDp(false);
   };
 
+  const closeDialog = (e) => {
+    if (e.target.matches('.ChangeDpDialog')) {
+      cancelChangeDp();
+    }
+  };
+
   // If Display was never set
   const uploadPicAndUpdateUserDoc = async (imageToUpload) => {
     const randomlyGeneratedName = `${info.email}_${Math.floor(
@@ -172,6 +178,7 @@ const useProfileLogic = () => {
     handleDpChange,
     userLoading,
     removeDp,
+    closeDialog,
   };
 };
 

@@ -23,6 +23,8 @@ const Wrapper = styled.main`
   h2 {
     padding: 10px 0;
     font-size: 1.15em;
+    color: #6b6969;
+    letter-spacing: 1px;
   }
 
   .lds-roller {
