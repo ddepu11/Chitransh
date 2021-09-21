@@ -18,7 +18,9 @@ const useNavbarLogic = () => {
 
   useEffect(() => {
     setActiveIcon('home');
+  }, []);
 
+  useEffect(() => {
     const handleOnDocumentClick = (e) => {
       e.target.matches('.profile');
 
@@ -29,10 +31,13 @@ const useNavbarLogic = () => {
       ) {
         dropDownFromAvatar.current.classList.remove('active');
 
+        console.log(activeIcon);
+
         if (
           !e.target.matches('.ic_add') &&
           !e.target.matches('.ic_liked') &&
-          history.location.pathname === '/'
+          history.location.pathname === '/' &&
+          activeIcon !== 'add'
         )
           setActiveIcon('home');
       }
@@ -43,7 +48,7 @@ const useNavbarLogic = () => {
     return () => {
       document.removeEventListener('click', handleOnDocumentClick);
     };
-  }, [history]);
+  }, [history, activeIcon]);
 
   const handleActiveIcon = (e) => {
     const icon = e.currentTarget.getAttribute('data-icon');

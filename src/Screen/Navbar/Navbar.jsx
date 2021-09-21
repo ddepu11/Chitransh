@@ -77,6 +77,7 @@ const Navbar = () => {
                 className='ic_add'
                 data-icon='add'
                 onClick={handleActiveIcon}
+                // style={{ border: '1px solid red' }}
               />
             )}
 
