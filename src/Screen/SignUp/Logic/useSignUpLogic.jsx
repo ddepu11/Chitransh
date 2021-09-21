@@ -72,6 +72,10 @@ const useSignUpLogic = () => {
         fullName: userCredentials.fullName,
         userName: userCredentials.userName,
         photoURL: '',
+        dp: {
+          fileName: 'dummyDp',
+          url: '',
+        },
       });
 
       if (docRef) {

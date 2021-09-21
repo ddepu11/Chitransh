@@ -2,15 +2,17 @@ import GridOnOutlinedIcon from '@material-ui/icons/GridOnOutlined';
 import BookmarkBorderOutlinedIcon from '@material-ui/icons/BookmarkBorderOutlined';
 import styled from 'styled-components';
 import Button from '../../Components/Button';
+import useProfileLogic from './Logic/useProfileLogic';
+import dummyDp from '../../images/dummyDp.png';
 
 const Profile = () => {
-  console.log('Profile');
+  const { info } = useProfileLogic();
 
   return (
     <Wrapper className='w-960'>
       <div className='dp_and_details flex'>
         <div className='dp'>
-          <img src='https://i.pravatar.cc/300' alt='dp' />
+          <img src={info.dp.fileName === 'dummyDp' && dummyDp} alt='dp' />
         </div>
 
         <div className='details'>
@@ -88,6 +90,10 @@ const Wrapper = styled.main`
         height: 100%;
         border-radius: 50%;
       }
+    }
+
+    .dp:hover {
+      cursor: pointer;
     }
 
     .details {
