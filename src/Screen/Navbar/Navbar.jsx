@@ -20,6 +20,8 @@ const Navbar = () => {
     handleActiveIcon,
     activeIcon,
     dropDownFromAvatar,
+    info,
+    handleCloseAvatarDrop,
   } = useNavbarLogic();
 
   return (
@@ -87,19 +89,24 @@ const Navbar = () => {
               />
             </div>
 
-            {/* {activeIcon !== 'avatar' && (
-            )} */}
-
             <div ref={dropDownFromAvatar} className='the_box'>
-              <div className='profile flex'>
+              <Link
+                to={`/${info.userName}`}
+                className='profile flex'
+                onClick={handleCloseAvatarDrop}
+              >
                 <AccountCircleRoundedIcon className='ic_profile' />
                 <span>Profile</span>
-              </div>
+              </Link>
 
-              <div className='saved flex'>
+              <Link
+                to={`/${info.userName}/saved/`}
+                className='saved flex'
+                onClick={handleCloseAvatarDrop}
+              >
                 <BookmarkBorderOutlinedIcon className='ic_saved' />
                 <span>Saved</span>
-              </div>
+              </Link>
 
               <Button
                 type='button'
@@ -217,6 +224,11 @@ const Wrapper = styled.nav`
       font-size: 1em;
     }
 
+    .profile,
+    .saved {
+      color: #333;
+    }
+
     .profile:hover {
       cursor: pointer;
       background-color: #f0eeee99;
@@ -225,6 +237,7 @@ const Wrapper = styled.nav`
     .saved {
       border-bottom: 1px solid #d6d6d6;
     }
+
     .saved:hover {
       cursor: pointer;
       background-color: #f0eeee99;

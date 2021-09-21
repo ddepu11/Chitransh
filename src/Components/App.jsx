@@ -23,6 +23,8 @@ import {
   // notificationShowInfo,
 } from '../features/notification';
 import Navbar from '../Screen/Navbar/Navbar';
+import Profile from '../Screen/Profile/Profile';
+import Saved from '../Screen/Saved/Saved';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -118,6 +120,14 @@ const App = () => {
 
             <Route path='/signup' exact>
               <SignUp />
+            </Route>
+
+            <Route path='/:userName/' exact>
+              <Profile />
+            </Route>
+
+            <Route path='/:userName/saved/' exact>
+              <Saved />
             </Route>
 
             <Route path='/privacy-policy' exact>

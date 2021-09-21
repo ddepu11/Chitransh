@@ -41,7 +41,6 @@ const useCreatePostLogic = () => {
     setPreview({ p: '', f: null });
   };
 
-  // HANDLE THIS
   const handleViewPreview = (e) => {
     const name = e.currentTarget.getAttribute('data-name');
 
@@ -116,6 +115,7 @@ const useCreatePostLogic = () => {
 
     if (!errorFlag) {
       console.log(previews);
+      //
     }
   };
 

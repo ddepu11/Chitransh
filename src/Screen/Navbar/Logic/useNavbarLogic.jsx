@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { authInstance } from '../../../config/firebase';
 import {
   notificationShowError,
@@ -11,6 +11,8 @@ const useNavbarLogic = () => {
   const dispatch = useDispatch();
   const [activeIcon, setActiveIcon] = useState('home');
   const dropDownFromAvatar = useRef(null);
+
+  const { info } = useSelector((state) => state.user.value);
 
   const handleOnDocumentClick = (e) => {
     e.target.matches('.profile');
@@ -29,6 +31,7 @@ const useNavbarLogic = () => {
   const handleActiveIcon = (e) => {
     const icon = e.currentTarget.getAttribute('data-icon');
     setActiveIcon(icon);
+    // Show Drop Down
     dropDownFromAvatar.current.classList.add('active');
   };
 
@@ -46,6 +49,10 @@ const useNavbarLogic = () => {
 
   const handleCloseCreatePost = () => setActiveIcon('home');
 
+  const handleCloseAvatarDrop = () => {
+    dropDownFromAvatar.current.classList.remove('active');
+  };
+
   useEffect(() => {
     console.log('');
     return () => {
@@ -59,6 +66,8 @@ const useNavbarLogic = () => {
     handleActiveIcon,
     activeIcon,
     dropDownFromAvatar,
+    info,
+    handleCloseAvatarDrop,
   };
 };
 
