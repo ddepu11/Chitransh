@@ -23,6 +23,9 @@ const useNavbarLogic = () => {
       dropDownFromAvatar.current !== null
     ) {
       dropDownFromAvatar.current.classList.remove('active');
+
+      if (!e.target.matches('.ic_add') && !e.target.matches('.ic_liked'))
+        setActiveIcon('home');
     }
   };
 

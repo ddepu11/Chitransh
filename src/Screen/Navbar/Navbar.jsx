@@ -79,13 +79,14 @@ const Navbar = () => {
               />
             )}
 
-            <div className='avatar' data-icon='avatar' tabIndex='0'>
+            <div className='avatar'>
               <img
                 src='https://i.pravatar.cc/300'
                 alt='pravatar'
                 onClick={handleActiveIcon}
                 tabIndex='0'
                 className='ava_img'
+                data-icon='avatar'
               />
             </div>
 
@@ -129,7 +130,6 @@ const Navbar = () => {
 };
 
 const Wrapper = styled.nav`
-  /* border: 1px solid red; */
   padding: 10px 0;
   box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px,
     rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
