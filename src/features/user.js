@@ -40,6 +40,14 @@ const userSlice = createSlice({
     userLoadingEnds: (state = initialState) => {
       state.value = { ...state.value, userLoading: false };
     },
+
+    updateInfo: (state = initialState, action) => {
+      state.value = {
+        ...state.value,
+        userLoading: false,
+        info: action.payload,
+      };
+    },
   },
 });
 
@@ -48,6 +56,7 @@ export const {
   userLoadingEnds,
   userLoggedIn,
   userLoggedOut,
+  updateInfo,
 } = userSlice.actions;
 
 export default userSlice.reducer;

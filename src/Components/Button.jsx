@@ -8,6 +8,7 @@ const Button = ({
   padding,
   margin,
   fs,
+  fWeight,
   color,
   bgColor,
   handleClick,
@@ -37,6 +38,7 @@ const Button = ({
       padding={padding}
       margin={margin}
       fontSize={fs}
+      fWeight={fWeight}
       bgColor={bgColor}
       color={color}
       transition={transition}
@@ -68,6 +70,7 @@ Button.propTypes = {
   padding: PropTypes.string,
   margin: PropTypes.string,
   fs: PropTypes.string,
+  fWeight: PropTypes.string,
   color: PropTypes.string,
   bgColor: PropTypes.string,
   transition: PropTypes.string,
@@ -93,6 +96,7 @@ Button.defaultProps = {
   padding: '0px',
   margin: '0px',
   fs: '1em',
+  fWeight: 'auto',
   color: 'white',
   bgColor: '#222',
   transition: 'transform 0.5s ease',
@@ -117,6 +121,7 @@ const ButtonWrapper = styled.button`
   padding: ${({ padding }) => padding && padding};
   margin: ${({ margin }) => margin && margin};
   font-size: ${({ fontSize }) => fontSize && fontSize};
+  font-weight: ${({ fWeight }) => fWeight && fWeight};
 
   background-color: ${({ bgColor }) => bgColor && bgColor};
 

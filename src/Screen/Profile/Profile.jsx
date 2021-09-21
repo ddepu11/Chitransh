@@ -4,71 +4,151 @@ import styled from 'styled-components';
 import Button from '../../Components/Button';
 import useProfileLogic from './Logic/useProfileLogic';
 import dummyDp from '../../images/dummyDp.png';
+import Loader from '../../Components/Loader';
 
 const Profile = () => {
-  const { info } = useProfileLogic();
+  const {
+    info,
+    openChangeDpDialog,
+    handlingChangeDp,
+    cancelChangeDp,
+    handleDpChange,
+    userLoading,
+  } = useProfileLogic();
+
+  const closeDialog = (e) => {
+    if (e.target.matches('.ChangeDpDialog')) {
+      cancelChangeDp();
+    }
+  };
+
+  if (userLoading) {
+    return <Loader />;
+  }
 
   return (
-    <Wrapper className='w-960'>
-      <div className='dp_and_details flex'>
-        <div className='dp'>
-          <img src={info.dp.fileName === 'dummyDp' && dummyDp} alt='dp' />
-        </div>
+    <>
+      {handlingChangeDp && (
+        <ChangeDpDialog onClick={closeDialog} className='ChangeDpDialog'>
+          <div className='center_box flex'>
+            <h2 className='heading'>Change Profile Photo</h2>
 
-        <div className='details'>
-          <div className='top flex'>
-            <h3 className='username'>ddepu11</h3>
-            <Button
-              type='button'
-              borderRadius='5px'
-              padding='5px 10px'
-              margin='0 0 0 22px'
-              fs='0.95em'
-              bgColor='transparent'
-              color='#333'
-              bSh='rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgb(209, 213, 219) 0px 0px 0px 1px inset'
-              transform=''
-            >
-              Edit Profile
-            </Button>
-          </div>
+            <div className='btn'>
+              <label htmlFor='dp' className='upload_label_btn'>
+                Upload Photo
+              </label>
 
-          <div className='middle flex'>
-            <div className='posts flex'>
-              <h3>65</h3>
-              <span>posts</span>
+              <input
+                type='file'
+                accept='.jpg, .jpeg, .png'
+                id='dp'
+                style={{ display: 'none' }}
+                onChange={handleDpChange}
+              />
             </div>
 
-            <div className='followers flex'>
-              <h3>140</h3>
-              <span>followers</span>
-            </div>
+            {info.dp.fileName !== 'dummyDp' && (
+              <div className='btn'>
+                <Button
+                  type='button'
+                  bSh=''
+                  transform='scale(1)'
+                  bgColor='transparent'
+                  padding='14px 0'
+                  width='100%'
+                  color='#ee1f1f'
+                  fWeight='700'
+                  fs='0.9em'
+                >
+                  Remove Current Photo
+                </Button>
+              </div>
+            )}
 
-            <div className='following flex'>
-              <h3>185</h3>
-              <span>following</span>
+            <div className='btn cancel'>
+              <Button
+                type='button'
+                bSh=''
+                transform='scale(1)'
+                bgColor='transparent'
+                width='100%'
+                padding='14px 00'
+                color='#000'
+                fWeight='400'
+                fs='0.9em'
+                handleClick={cancelChangeDp}
+              >
+                Cancel
+              </Button>
             </div>
           </div>
+        </ChangeDpDialog>
+      )}
 
-          <div className='bottom'>
-            <h2 className='name'>Deepanshu Tiwari</h2>
-            <span>keeps it real.</span>
+      <Wrapper className='w-960'>
+        <div className='dp_and_details flex'>
+          <div className='dp' onClick={openChangeDpDialog}>
+            <img
+              src={info.dp.fileName === 'dummyDp' ? dummyDp : info.dp.url}
+              alt='dp'
+            />
+          </div>
+
+          <div className='details'>
+            <div className='top flex'>
+              <h3 className='username'>ddepu11</h3>
+              <Button
+                type='button'
+                borderRadius='5px'
+                padding='5px 10px'
+                margin='0 0 0 22px'
+                fs='0.95em'
+                bgColor='transparent'
+                color='#333'
+                bSh='rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgb(209, 213, 219) 0px 0px 0px 1px inset'
+                transform=''
+              >
+                Edit Profile
+              </Button>
+            </div>
+
+            <div className='middle flex'>
+              <div className='posts flex'>
+                <h3>65</h3>
+                <span>posts</span>
+              </div>
+
+              <div className='followers flex'>
+                <h3>140</h3>
+                <span>followers</span>
+              </div>
+
+              <div className='following flex'>
+                <h3>185</h3>
+                <span>following</span>
+              </div>
+            </div>
+
+            <div className='bottom'>
+              <h2 className='name'>Deepanshu Tiwari</h2>
+              <span>keeps it real.</span>
+            </div>
           </div>
         </div>
-      </div>
 
-      <nav>
-        <div className='posts'>
-          <GridOnOutlinedIcon className='ic_posts' />
-          <span>POSTS</span>
-        </div>
+        <nav>
+          <div className='posts'>
+            <GridOnOutlinedIcon className='ic_posts' />
+            <span>POSTS</span>
+          </div>
 
-        <div className='posts'>
-          <BookmarkBorderOutlinedIcon className='ic_saved' />
-          <span>SAVED</span>
-        </div>
-      </nav>
-    </Wrapper>
+          <div className='posts'>
+            <BookmarkBorderOutlinedIcon className='ic_saved' />
+            <span>SAVED</span>
+          </div>
+        </nav>
+      </Wrapper>
+    </>
   );
 };
 
@@ -160,6 +240,60 @@ const Wrapper = styled.main`
         }
       }
     }
+  }
+`;
+
+const ChangeDpDialog = styled.div`
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.65);
+  display: grid;
+  place-content: center;
+  z-index: 9;
+
+  .center_box {
+    width: 29vw;
+    height: auto;
+    background-color: #fbfbfb;
+    border-radius: 12px;
+    flex-direction: column;
+    justify-content: flex-start;
+    color: #333;
+    font-size: 0.95em;
+  }
+
+  .heading {
+    width: 100%;
+    font-size: 1.2em;
+    padding: 22px 0;
+    border-bottom: 1px solid #cac9c9;
+    text-align: center;
+  }
+
+  .btn {
+    /* padding: 14px 0; */
+    border-bottom: 1px solid #cac9c9;
+    width: 100%;
+    text-align: center;
+
+    .upload_label_btn {
+      display: inline-block;
+      padding: 15px 0;
+      width: 100%;
+      font-size: 0.9em;
+      font-weight: 700;
+      color: #0095f6;
+    }
+
+    .upload_label_btn:hover {
+      cursor: pointer;
+    }
+  }
+
+  .cancel {
+    border-bottom: none;
   }
 `;
 
