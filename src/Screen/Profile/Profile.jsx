@@ -1,3 +1,5 @@
+import GridOnOutlinedIcon from '@material-ui/icons/GridOnOutlined';
+import BookmarkBorderOutlinedIcon from '@material-ui/icons/BookmarkBorderOutlined';
 import styled from 'styled-components';
 import Button from '../../Components/Button';
 
@@ -52,6 +54,18 @@ const Profile = () => {
           </div>
         </div>
       </div>
+
+      <nav>
+        <div className='posts'>
+          <GridOnOutlinedIcon className='ic_posts' />
+          <span>POSTS</span>
+        </div>
+
+        <div className='posts'>
+          <BookmarkBorderOutlinedIcon className='ic_saved' />
+          <span>SAVED</span>
+        </div>
+      </nav>
     </Wrapper>
   );
 };

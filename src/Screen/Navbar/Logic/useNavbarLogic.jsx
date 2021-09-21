@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import { authInstance } from '../../../config/firebase';
 import {
   notificationShowError,
@@ -9,27 +10,40 @@ import { userLoadingEnds } from '../../../features/user';
 
 const useNavbarLogic = () => {
   const dispatch = useDispatch();
+  const history = useHistory();
   const [activeIcon, setActiveIcon] = useState('home');
   const dropDownFromAvatar = useRef(null);
 
   const { info } = useSelector((state) => state.user.value);
 
-  const handleOnDocumentClick = (e) => {
-    e.target.matches('.profile');
+  useEffect(() => {
+    setActiveIcon('home');
 
-    if (
-      e.target.closest('.the_box') === null &&
-      !e.target.matches('.ava_img') &&
-      dropDownFromAvatar.current !== null
-    ) {
-      dropDownFromAvatar.current.classList.remove('active');
+    const handleOnDocumentClick = (e) => {
+      e.target.matches('.profile');
 
-      if (!e.target.matches('.ic_add') && !e.target.matches('.ic_liked'))
-        setActiveIcon('home');
-    }
-  };
+      if (
+        e.target.closest('.the_box') === null &&
+        !e.target.matches('.ava_img') &&
+        dropDownFromAvatar.current !== null
+      ) {
+        dropDownFromAvatar.current.classList.remove('active');
 
-  document.addEventListener('click', handleOnDocumentClick);
+        if (
+          !e.target.matches('.ic_add') &&
+          !e.target.matches('.ic_liked') &&
+          history.location.pathname === '/'
+        )
+          setActiveIcon('home');
+      }
+    };
+
+    document.addEventListener('click', handleOnDocumentClick);
+
+    return () => {
+      document.removeEventListener('click', handleOnDocumentClick);
+    };
+  }, [history]);
 
   const handleActiveIcon = (e) => {
     const icon = e.currentTarget.getAttribute('data-icon');
@@ -56,13 +70,6 @@ const useNavbarLogic = () => {
     dropDownFromAvatar.current.classList.remove('active');
   };
 
-  useEffect(() => {
-    console.log('');
-    return () => {
-      document.removeEventListener('click', handleOnDocumentClick);
-    };
-  }, []);
-
   return {
     handleCloseCreatePost,
     handleLogOut,
@@ -71,6 +78,7 @@ const useNavbarLogic = () => {
     dropDownFromAvatar,
     info,
     handleCloseAvatarDrop,
+    setActiveIcon,
   };
 };
 
