@@ -1,10 +1,13 @@
 import GridOnOutlinedIcon from '@material-ui/icons/GridOnOutlined';
 import BookmarkBorderOutlinedIcon from '@material-ui/icons/BookmarkBorderOutlined';
 import styled from 'styled-components';
+import { Link, Route } from 'react-router-dom';
 import Button from '../../Components/Button';
 import useProfileLogic from './Logic/useProfileLogic';
 import dummyDp from '../../images/dummyDp.png';
 import Loader from '../../Components/Loader';
+import Saved from '../Saved/Saved';
+import Posts from '../Posts/Posts';
 
 const Profile = () => {
   const {
@@ -16,6 +19,8 @@ const Profile = () => {
     userLoading,
     removeDp,
     closeDialog,
+    postsLinkRef,
+    savedLinkRef,
   } = useProfileLogic();
 
   if (userLoading) {
@@ -134,16 +139,33 @@ const Profile = () => {
         </div>
 
         <nav className='flex'>
-          <div className='posts flex'>
+          {/* postsLinkRef, savedLinkRef, */}
+          <Link
+            to={`/${info.email}/`}
+            className='posts  flex'
+            ref={postsLinkRef}
+          >
             <GridOnOutlinedIcon className='ic_posts' />
             <span>POSTS</span>
-          </div>
-
-          <div className='saved flex'>
+          </Link>
+          <Link
+            to={`/${info.email}/saved/`}
+            className='saved  flex'
+            ref={savedLinkRef}
+          >
             <BookmarkBorderOutlinedIcon className='ic_saved' />
             <span>SAVED</span>
-          </div>
+          </Link>
         </nav>
+
+        {/*  */}
+        <Route path='/:userName/' exact>
+          <Posts />
+        </Route>
+
+        <Route path='/:userName/saved/' exact>
+          <Saved />
+        </Route>
       </Wrapper>
     </>
   );
@@ -239,16 +261,27 @@ const Wrapper = styled.main`
   }
 
   nav {
-    padding: 20px 0;
     color: #a5a4a4;
 
     .posts {
       margin-right: 50px;
+      padding: 20px 0;
+      color: #a5a4a4;
+    }
+    .saved {
+      padding: 20px 0;
+      color: #a5a4a4;
     }
 
     .posts,
     .saved:hover {
       cursor: pointer;
+    }
+
+    .posts.active,
+    .saved.active {
+      color: #414141;
+      border-top: 1px solid #2e2e2e;
     }
 
     .ic_posts,
@@ -258,7 +291,7 @@ const Wrapper = styled.main`
     }
 
     span {
-      font-size: 0.9em;
+      font-size: 0.8em;
       letter-spacing: 1px;
       font-weight: 700;
     }

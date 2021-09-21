@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   ref,
@@ -6,6 +6,7 @@ import {
   getDownloadURL,
   deleteObject,
 } from 'firebase/storage';
+import { useHistory } from 'react-router-dom';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { firestoreInstance, storage } from '../../../config/firebase';
 import {
@@ -24,6 +25,7 @@ const useProfileLogic = () => {
   const { info, id, userLoading } = useSelector((state) => state.user.value);
   const [handlingChangeDp, setHandlingChangeDp] = useState(false);
 
+  // #@@#@#@#@#@@## All Dp Related #$#$$#$#$#$#$##$#$
   const openChangeDpDialog = () => {
     setHandlingChangeDp(true);
   };
@@ -169,6 +171,22 @@ const useProfileLogic = () => {
       dispatch(userLoadingEnds());
     }
   };
+  // #@@#@#@#@#@@## All Dp Related Ends #$#$$#$#$#$#$##$#$
+
+  // handling nav
+  const history = useHistory();
+  const postsLinkRef = useRef(null);
+  const savedLinkRef = useRef(null);
+
+  useEffect(() => {
+    if (history.location.pathname === '/ddepu11@gmail.com/') {
+      postsLinkRef.current.classList.add('active');
+      savedLinkRef.current.classList.remove('active');
+    } else {
+      postsLinkRef.current.classList.remove('active');
+      savedLinkRef.current.classList.add('active');
+    }
+  }, [history.location.pathname]);
 
   return {
     info,
@@ -179,6 +197,8 @@ const useProfileLogic = () => {
     userLoading,
     removeDp,
     closeDialog,
+    postsLinkRef,
+    savedLinkRef,
   };
 };
 
