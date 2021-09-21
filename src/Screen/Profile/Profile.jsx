@@ -84,7 +84,7 @@ const Wrapper = styled.main`
     .dp {
       width: 160px;
       height: 160px;
-
+      position: relative;
       img {
         width: 100%;
         height: 100%;
@@ -94,6 +94,17 @@ const Wrapper = styled.main`
 
     .dp:hover {
       cursor: pointer;
+    }
+    .dp:hover::after {
+      content: 'Change profile photo';
+      background-color: #333;
+      color: #f3f0f0;
+      font-size: 0.8em;
+      padding: 4px 5px;
+      border-radius: 5px;
+      position: absolute;
+      top: 20px;
+      right: 00px;
     }
 
     .details {
