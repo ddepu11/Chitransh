@@ -24,6 +24,7 @@ import {
 } from '../features/notification';
 import Navbar from '../Screen/Navbar/Navbar';
 import Profile from '../Screen/Profile/Profile';
+import EditAccount from '../Screen/EditAccount/EditAccount';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -123,6 +124,10 @@ const App = () => {
 
             <Route path='/:userName/saved/' exact>
               <Profile />
+            </Route>
+
+            <Route path='/accounts/edit/' exact>
+              <EditAccount />
             </Route>
 
             <Route path='/signup' exact>

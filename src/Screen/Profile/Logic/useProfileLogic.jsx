@@ -178,6 +178,7 @@ const useProfileLogic = () => {
   const postsLinkRef = useRef(null);
   const savedLinkRef = useRef(null);
 
+  // Handling active nav
   useEffect(() => {
     if (history.location.pathname.includes('saved')) {
       postsLinkRef.current.classList.remove('active');

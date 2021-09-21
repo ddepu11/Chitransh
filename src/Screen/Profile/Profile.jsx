@@ -99,19 +99,21 @@ const Profile = () => {
           <div className='details'>
             <div className='top flex'>
               <h3 className='username'>ddepu11</h3>
-              <Button
-                type='button'
-                borderRadius='5px'
-                padding='5px 10px'
-                margin='0 0 0 22px'
-                fs='0.95em'
-                bgColor='transparent'
-                color='#333'
-                bSh='rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgb(209, 213, 219) 0px 0px 0px 1px inset'
-                transform=''
-              >
-                Edit Profile
-              </Button>
+              <Link to='/accounts/edit/'>
+                <Button
+                  type='button'
+                  borderRadius='5px'
+                  padding='5px 10px'
+                  margin='0 0 0 22px'
+                  fs='0.95em'
+                  bgColor='transparent'
+                  color='#333'
+                  bSh='rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgb(209, 213, 219) 0px 0px 0px 1px inset'
+                  transform='scale(1)'
+                >
+                  Edit Profile
+                </Button>
+              </Link>
             </div>
 
             <div className='middle flex'>
