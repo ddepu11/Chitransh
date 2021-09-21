@@ -139,7 +139,6 @@ const Profile = () => {
         </div>
 
         <nav className='flex'>
-          {/* postsLinkRef, savedLinkRef, */}
           <Link
             to={`/${info.email}/`}
             className='posts  flex'

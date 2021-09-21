@@ -179,12 +179,12 @@ const useProfileLogic = () => {
   const savedLinkRef = useRef(null);
 
   useEffect(() => {
-    if (history.location.pathname === '/ddepu11@gmail.com/') {
-      postsLinkRef.current.classList.add('active');
-      savedLinkRef.current.classList.remove('active');
-    } else {
+    if (history.location.pathname.includes('saved')) {
       postsLinkRef.current.classList.remove('active');
       savedLinkRef.current.classList.add('active');
+    } else {
+      postsLinkRef.current.classList.add('active');
+      savedLinkRef.current.classList.remove('active');
     }
   }, [history.location.pathname]);
 
