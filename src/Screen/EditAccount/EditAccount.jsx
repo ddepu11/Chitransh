@@ -3,6 +3,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import UpdateFormField from '../../Components/UpdateFormField';
 import useEditAccount from './Logic/useEditAccount';
 import Button from '../../Components/Button';
+import Loader from '../../Components/Loader';
 
 const EditAccount = () => {
   const {
@@ -11,12 +12,26 @@ const EditAccount = () => {
     validationMessageTags,
     handlingChangeGender,
     closeDialogBox,
+    handleGender,
     openDialogBox,
+    changeGender,
+    info,
+    userLoading,
   } = useEditAccount();
+
+  let { gender } = info;
+
+  if (gender === 'no_to_say') {
+    gender = 'Gender';
+  }
+
+  if (userLoading) {
+    return <Loader />;
+  }
 
   return (
     <>
-      {!handlingChangeGender && (
+      {handlingChangeGender && (
         <ChangeGenderDialog>
           <div className='center_box flex'>
             <h2 className='heading'>Gender</h2>
@@ -24,14 +39,49 @@ const EditAccount = () => {
 
             <div className='genders flex'>
               <div className='male flex'>
-                <input type='radio' id='male' name='gender' />
+                <input
+                  type='radio'
+                  id='male'
+                  name='gender'
+                  onClick={handleGender}
+                />
                 <label htmlFor='male'>Male</label>
               </div>
 
               <div className='female flex'>
-                <input type='radio' id='female' name='gender' />
+                <input
+                  type='radio'
+                  id='female'
+                  name='gender'
+                  onClick={handleGender}
+                />
                 <label htmlFor='female'>Female</label>
               </div>
+
+              <div className='not_to_say flex'>
+                <input
+                  type='radio'
+                  id='no_to_say'
+                  onClick={handleGender}
+                  name='gender'
+                />
+                <label htmlFor='no_to_say'>Prefer Not To Say</label>
+              </div>
+            </div>
+
+            <div className='done_btn'>
+              <Button
+                type='button'
+                bgColor='#0095f6'
+                width='100%'
+                padding='8px 00px'
+                bSh=''
+                transform='scale(1)'
+                borderRadius='5px'
+                handleClick={changeGender}
+              >
+                Done
+              </Button>
             </div>
           </div>
         </ChangeGenderDialog>
@@ -86,7 +136,7 @@ const EditAccount = () => {
             <input
               type='text'
               readOnly
-              value={userInfo.gender ? userInfo.gender : 'click here to choose'}
+              value={gender !== '' ? gender : 'click here to choose'}
               onClick={openDialogBox}
             />
           </div>
@@ -239,11 +289,23 @@ const ChangeGenderDialog = styled.div`
       margin-bottom: 4px;
     }
 
+    .female {
+      margin-bottom: 4px;
+    }
+
+    .not_to_say {
+    }
+
     label {
       font-weight: 700;
       margin-left: 10px;
       color: #444343;
     }
+  }
+
+  .done_btn {
+    width: 100%;
+    padding: 15px 15px;
   }
 `;
 

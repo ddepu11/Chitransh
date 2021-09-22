@@ -47,7 +47,7 @@ UpdateFormField.propTypes = {
   wannaEdit: PropTypes.bool.isRequired,
   htmlFor: PropTypes.string.isRequired,
   heading: PropTypes.string.isRequired,
-  inputValue: PropTypes.string.isRequired,
+  inputValue: PropTypes.string,
   type: PropTypes.string.isRequired,
   inputName: PropTypes.string.isRequired,
   handleInput: PropTypes.func.isRequired,
@@ -61,6 +61,7 @@ UpdateFormField.defaultProps = {
   numberInputMax: '100',
   numberInputMin: '0',
   spanInnerText: '',
+  inputValue: 'XYZ',
 };
 
 const Wrapper = styled.div`
