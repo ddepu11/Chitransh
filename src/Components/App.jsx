@@ -18,6 +18,7 @@ import {
   userLoggedIn,
   userLoggedOut,
 } from '../features/user';
+
 import {
   notificationShowError,
   // notificationShowInfo,
@@ -43,7 +44,6 @@ const App = () => {
           // dispatch(
           //   notificationShowInfo({ msg: `Welcome back ${doc.data().fullName}` })
           // );
-
           dispatch(userLoggedIn({ id: doc.id, info: doc.data() }));
           dispatch(userLoadingEnds());
         });
@@ -110,12 +110,16 @@ const App = () => {
         <Router>
           {hasUserLoggedIn && <Navbar />}
           <Switch>
+            <Route path='/' exact>
+              <Home />
+            </Route>
+
             <Route path='/login' exact>
               <LogIn />
             </Route>
 
-            <Route path='/' exact>
-              <Home />
+            <Route path='/signup' exact>
+              <SignUp />
             </Route>
 
             <Route path='/:userName/' exact>
@@ -128,10 +132,6 @@ const App = () => {
 
             <Route path='/accounts/edit/' exact>
               <EditAccount />
-            </Route>
-
-            <Route path='/signup' exact>
-              <SignUp />
             </Route>
 
             <Route path='/privacy-policy' exact>

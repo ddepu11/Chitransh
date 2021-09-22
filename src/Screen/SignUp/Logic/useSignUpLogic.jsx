@@ -3,7 +3,8 @@ import {
   fetchSignInMethodsForEmail,
   createUserWithEmailAndPassword,
 } from 'firebase/auth';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import { collection, addDoc } from 'firebase/firestore';
 import { v4 as uuidv4 } from 'uuid';
 import clearAllSetTimeoutOrSetInterval from '../../../utils/clearAllSetTimeoutOrSetInterval';
@@ -17,7 +18,9 @@ import {
 
 const useSignUpLogic = () => {
   const dispatch = useDispatch();
+  const history = useHistory();
 
+  const { hasUserLoggedIn } = useSelector((state) => state.user.value);
   const [userCredentials, setUserCredentials] = useState({
     email: '',
     fullName: '',
@@ -28,12 +31,16 @@ const useSignUpLogic = () => {
   const setTimeOutId = useRef(0);
 
   useEffect(() => {
-    console.log('SignUp');
+    console.log(hasUserLoggedIn);
+
+    if (hasUserLoggedIn) {
+      history.push('/');
+    }
 
     return () => {
       clearAllSetTimeoutOrSetInterval(setTimeOutId);
     };
-  }, []);
+  }, [history, hasUserLoggedIn]);
 
   const validationMessageTags = {
     emailValidationMessageTag: useRef(null),
@@ -71,11 +78,14 @@ const useSignUpLogic = () => {
         email: userCredentials.email,
         fullName: userCredentials.fullName,
         userName: userCredentials.userName,
-        photoURL: '',
         dp: {
           fileName: 'dummyDp',
           url: '',
         },
+        bio: '',
+        website: '',
+        phoneNumber: '',
+        gender: '',
       });
 
       if (docRef) {

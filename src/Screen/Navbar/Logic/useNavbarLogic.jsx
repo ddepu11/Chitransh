@@ -31,8 +31,6 @@ const useNavbarLogic = () => {
       ) {
         dropDownFromAvatar.current.classList.remove('active');
 
-        console.log(activeIcon);
-
         if (
           !e.target.matches('.ic_add') &&
           !e.target.matches('.ic_liked') &&
