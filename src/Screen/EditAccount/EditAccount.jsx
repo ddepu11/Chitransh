@@ -17,6 +17,7 @@ const EditAccount = () => {
     changeGender,
     gender,
     userLoading,
+    handleUpdateInfo,
   } = useEditAccount();
 
   let newGender = gender;
@@ -130,6 +131,19 @@ const EditAccount = () => {
           />
         </div>
 
+        <div className='row'>
+          <UpdateFormField
+            type='tel'
+            wannaEdit={true}
+            htmlFor='phoneNumber'
+            inputName='phoneNumber'
+            inputValue={userInfo.phoneNumber}
+            heading='Phone number:'
+            handleInput={handleInput}
+            refObj={validationMessageTags.phoneNumberVMTag}
+          />
+        </div>
+
         <div className='row gender_row_outer flex'>
           <div className='gender_row_inner flex'>
             <label htmlFor='gender' onClick={openDialogBox}>
@@ -185,7 +199,8 @@ const EditAccount = () => {
             borderRadius='5px'
             bSh=''
             transform='scale(1)'
-            bgColor='#0095f6;'
+            bgColor='#0095f6'
+            handleClick={handleUpdateInfo}
           >
             Submit
           </Button>

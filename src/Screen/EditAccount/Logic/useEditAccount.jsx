@@ -1,6 +1,10 @@
 import { useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
+import isEmpty from 'validator/lib/isEmpty';
+import isLength from 'validator/lib/isLength';
+import setValidationMessage from '../../../utils/setValidationMessage';
+
 import { firestoreInstance } from '../../../config/firebase';
 import {
   notificationShowError,
@@ -14,6 +18,8 @@ import {
 
 const useEditAccount = () => {
   const dispatch = useDispatch();
+  const setTimeOutId = useRef(0);
+
   const { info, id, userLoading } = useSelector((state) => state.user.value);
 
   const [userInfo, setUserInfo] = useState({
@@ -24,6 +30,7 @@ const useEditAccount = () => {
     bio: info.bio,
     email: info.email,
   });
+
   const [gender, setGender] = useState(info.gender);
 
   const validationMessageTags = {
@@ -31,6 +38,7 @@ const useEditAccount = () => {
     userNameVMTag: useRef(null),
     websiteVMTag: useRef(null),
     genderVMTag: useRef(null),
+    phoneNumberVMTag: useRef(null),
     bioVMTag: useRef(null),
     emailVMTag: useRef(null),
   };
@@ -88,6 +96,97 @@ const useEditAccount = () => {
     }
   };
 
+  const validateUserInfo = () => {
+    const { phoneNumber, userName, website, fullName, bio, email } = userInfo;
+
+    let errorFlag = false;
+
+    // Essentials Validations
+    // Full Name Validation
+    if (!isLength(fullName, 0, 30)) {
+      setValidationMessage(
+        'name is too lenthy!',
+        'error',
+        setTimeOutId,
+        validationMessageTags.fullNameVMTag
+      );
+
+      errorFlag = true;
+    }
+
+    if (isLength(fullName, 0, 5)) {
+      setValidationMessage(
+        'name is too short!',
+        'error',
+        setTimeOutId,
+        validationMessageTags.fullNameVMTag
+      );
+
+      errorFlag = true;
+    }
+
+    if (isEmpty(fullName)) {
+      setValidationMessage(
+        "name can't be empty!",
+        'error',
+        setTimeOutId,
+        validationMessageTags.fullNameVMTag
+      );
+
+      errorFlag = true;
+    }
+
+    // User Name Validation
+    if (!isLength(userName, 0, 25)) {
+      setValidationMessage(
+        'use name is too lengthy!',
+        'error',
+        setTimeOutId,
+        validationMessageTags.userNameVMTag
+      );
+
+      errorFlag = true;
+    }
+
+    if (isLength(userName, 0, 1)) {
+      setValidationMessage(
+        'use name is too short!',
+        'error',
+        setTimeOutId,
+        validationMessageTags.userNameVMTag
+      );
+
+      errorFlag = true;
+    }
+
+    if (isEmpty(userName)) {
+      setValidationMessage(
+        'use name cant be empty!',
+        'error',
+        setTimeOutId,
+        validationMessageTags.userNameVMTag
+      );
+
+      errorFlag = true;
+    }
+
+    return errorFlag;
+  };
+
+  const handleUpdateInfo = () => {
+    if (
+      userInfo.bio === info.bio &&
+      userInfo.website === info.website &&
+      userInfo.fullName === info.fullName &&
+      userInfo.userName === info.userName
+    ) {
+      dispatch(notificationShowInfo({ msg: 'Sorry nothing to update!' }));
+    } else {
+      console.log(userInfo);
+      validateUserInfo();
+    }
+  };
+
   return {
     userInfo,
     handleInput,
@@ -100,6 +199,7 @@ const useEditAccount = () => {
     handleGender,
     changeGender,
     userLoading,
+    handleUpdateInfo,
   };
 };
 
