@@ -98,7 +98,8 @@ const Profile = () => {
 
           <div className='details'>
             <div className='top flex'>
-              <h3 className='username'>ddepu11</h3>
+              <h3 className='username'>{info.userName}</h3>
+
               <Link to='/accounts/edit/'>
                 <Button
                   type='button'
@@ -134,8 +135,9 @@ const Profile = () => {
             </div>
 
             <div className='bottom'>
-              <h2 className='name'>Deepanshu Tiwari</h2>
-              <span>keeps it real.</span>
+              <h2 className='name'>{info.fullName}</h2>
+              {info.bio && <span>keeps it real.</span>}
+              {info.website && <a href={info.website}>info.website</a>}
             </div>
           </div>
         </div>

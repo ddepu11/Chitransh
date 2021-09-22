@@ -9,7 +9,7 @@ import AddBoxIcon from '@material-ui/icons/AddBox';
 import AccountCircleRoundedIcon from '@material-ui/icons/AccountCircleRounded';
 import BookmarkBorderOutlinedIcon from '@material-ui/icons/BookmarkBorderOutlined';
 import Button from '../../Components/Button';
-
+import dummyDp from '../../images/dummyDp.png';
 import CreatePost from '../Create/CreatePost';
 import useNavbarLogic from './Logic/useNavbarLogic';
 
@@ -83,7 +83,7 @@ const Navbar = () => {
 
             <div className='avatar'>
               <img
-                src='https://i.pravatar.cc/300'
+                src={info.dp.fileName === 'dummyDp' ? dummyDp : info.dp.url}
                 alt='pravatar'
                 onClick={handleActiveIcon}
                 tabIndex='0'
@@ -197,8 +197,7 @@ const Wrapper = styled.nav`
       border-radius: 50%;
       width: 100%;
       height: 100%;
-      /* border: ${({ activeIcon }) =>
-        activeIcon === 'avatar' ? '0.01px solid #444' : ''}; */
+      object-fit: cover;
     }
   }
 

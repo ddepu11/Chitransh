@@ -26,6 +26,7 @@ import {
 import Navbar from '../Screen/Navbar/Navbar';
 import Profile from '../Screen/Profile/Profile';
 import EditAccount from '../Screen/EditAccount/EditAccount';
+import ProtectedRoute from './ProtectedRoute';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -109,6 +110,7 @@ const App = () => {
       <Wrapper>
         <Router>
           {hasUserLoggedIn && <Navbar />}
+
           <Switch>
             <Route path='/' exact>
               <Home />
@@ -122,17 +124,23 @@ const App = () => {
               <SignUp />
             </Route>
 
-            <Route path='/:userName/' exact>
-              <Profile />
-            </Route>
+            <ProtectedRoute
+              path='/accounts/edit/'
+              isAuthenticated={hasUserLoggedIn}
+              component={EditAccount}
+            />
 
-            <Route path='/:userName/saved/' exact>
-              <Profile />
-            </Route>
+            <ProtectedRoute
+              path='/:userName/'
+              isAuthenticated={hasUserLoggedIn}
+              component={Profile}
+            />
 
-            <Route path='/accounts/edit/' exact>
-              <EditAccount />
-            </Route>
+            <ProtectedRoute
+              path='/:userName/saved/'
+              isAuthenticated={hasUserLoggedIn}
+              component={Profile}
+            />
 
             <Route path='/privacy-policy' exact>
               <PrivacyPolicy />
