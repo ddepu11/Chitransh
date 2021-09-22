@@ -42,5 +42,6 @@ module.exports = {
     ],
     'jsx-a11y/label-has-associated-control': ['off'],
     'no-else-return': ['off'],
+    'react/jsx-boolean-value': ['off'],
   },
 };

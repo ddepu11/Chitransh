@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import TwitterIcon from '@material-ui/icons/Twitter';
+import SupervisedUserCircleOutlinedIcon from '@material-ui/icons/SupervisedUserCircleOutlined';
 import FormControl from '../../Components/FormControl';
 import Button from '../../Components/Button';
 import useLogInLogic from './Logic/useLogInLogic';
@@ -99,7 +99,7 @@ const LogIn = () => {
             handleClick={loginAsRandomUser}
           >
             <div className='center flex'>
-              <TwitterIcon className='ic_twitter' />
+              <SupervisedUserCircleOutlinedIcon className='ic_twitter' />
               <span>Log in as random user</span>
             </div>
           </Button>
