@@ -31,7 +31,20 @@ const useEditAccount = () => {
     setUserInfo({ ...userInfo, [name]: value });
   };
 
-  return { userInfo, handleInput, validationMessageTags };
+  const [handlingChangeGender, setHandlingChangeGender] = useState(false);
+
+  const closeDialogBox = () => setHandlingChangeGender(false);
+  const openDialogBox = () => setHandlingChangeGender(true);
+
+  return {
+    userInfo,
+    handleInput,
+    validationMessageTags,
+    handlingChangeGender,
+    setHandlingChangeGender,
+    closeDialogBox,
+    openDialogBox,
+  };
 };
 
 export default useEditAccount;
