@@ -51,7 +51,11 @@ const useEditAccount = () => {
 
   const [handlingChangeGender, setHandlingChangeGender] = useState(false);
 
-  const closeDialogBox = () => setHandlingChangeGender(false);
+  const closeDialogBox = () => {
+    setGender(info.gender);
+    setHandlingChangeGender(false);
+  };
+
   const openDialogBox = () => setHandlingChangeGender(true);
 
   const changeGender = async () => {
@@ -67,6 +71,8 @@ const useEditAccount = () => {
         const docSnap = await getDoc(userRef);
 
         dispatch(updateInfo(docSnap.data()));
+        setGender(gender);
+
         dispatch(
           notificationShowInfo({
             msg: 'successfully updated gender!!!',
@@ -93,7 +99,6 @@ const useEditAccount = () => {
     gender,
     handleGender,
     changeGender,
-    info,
     userLoading,
   };
 };

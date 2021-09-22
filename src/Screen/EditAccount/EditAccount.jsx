@@ -15,14 +15,14 @@ const EditAccount = () => {
     handleGender,
     openDialogBox,
     changeGender,
-    info,
+    gender,
     userLoading,
   } = useEditAccount();
 
-  let { gender } = info;
+  let newGender = gender;
 
-  if (gender === 'no_to_say') {
-    gender = 'Gender';
+  if (newGender === 'no_to_say') {
+    newGender = 'Gender';
   }
 
   if (userLoading) {
@@ -43,7 +43,8 @@ const EditAccount = () => {
                   type='radio'
                   id='male'
                   name='gender'
-                  onClick={handleGender}
+                  onChange={handleGender}
+                  checked={gender === 'male' && true}
                 />
                 <label htmlFor='male'>Male</label>
               </div>
@@ -53,7 +54,8 @@ const EditAccount = () => {
                   type='radio'
                   id='female'
                   name='gender'
-                  onClick={handleGender}
+                  onChange={handleGender}
+                  checked={gender === 'female' && true}
                 />
                 <label htmlFor='female'>Female</label>
               </div>
@@ -62,8 +64,9 @@ const EditAccount = () => {
                 <input
                   type='radio'
                   id='no_to_say'
-                  onClick={handleGender}
+                  onChange={handleGender}
                   name='gender'
+                  checked={gender === 'no_to_say' && true}
                 />
                 <label htmlFor='no_to_say'>Prefer Not To Say</label>
               </div>
@@ -136,7 +139,7 @@ const EditAccount = () => {
             <input
               type='text'
               readOnly
-              value={gender !== '' ? gender : 'click here to choose'}
+              value={newGender !== '' ? newGender : 'click here to choose'}
               onClick={openDialogBox}
             />
           </div>
