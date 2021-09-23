@@ -3,6 +3,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 import isEmpty from 'validator/lib/isEmpty';
 import isLength from 'validator/lib/isLength';
+import contains from 'validator/lib/contains';
+import isAlpha from 'validator/lib/isAlpha';
+import isMobilePhone from 'validator/lib/isMobilePhone';
 import setValidationMessage from '../../../utils/setValidationMessage';
 
 import { firestoreInstance } from '../../../config/firebase';
@@ -51,6 +54,7 @@ const useEditAccount = () => {
     setUserInfo({ ...userInfo, [name]: value });
   };
 
+  // #$##$#$##$#$##$#$#$#$  Handling Gender  #$#$#$#$$$#$#$#$#$#$
   const handleGender = (e) => {
     const newGender = e.currentTarget.getAttribute('id');
 
@@ -95,13 +99,14 @@ const useEditAccount = () => {
       dispatch(notificationShowInfo({ msg: 'Please select any gender!' }));
     }
   };
+  // #$##$#$##$#$##$#$#$#$  Handling Gender Ends #$#$#$#$$$#$#$#$#$#$
 
   const validateUserInfo = () => {
-    const { phoneNumber, userName, website, fullName, bio, email } = userInfo;
+    const { phoneNumber, userName, website, fullName } = userInfo;
 
     let errorFlag = false;
 
-    // Essentials Validations
+    // Essential Validations
     // Full Name Validation
     if (!isLength(fullName, 0, 30)) {
       setValidationMessage(
@@ -170,7 +175,161 @@ const useEditAccount = () => {
       errorFlag = true;
     }
 
+    // If Website is not empty then validate
+    if (!isEmpty(website)) {
+      if (!contains(website, 'http://')) {
+        if (!contains(website, 'https://')) {
+          setValidationMessage(
+            'invalid website',
+            'error',
+            setTimeOutId,
+            validationMessageTags.websiteVMTag
+          );
+          errorFlag = true;
+        }
+      }
+
+      if (!contains(website, '.com')) {
+        if (!contains(website, '.in')) {
+          if (!contains(website, '.netlify.app')) {
+            if (!contains(website, '.io')) {
+              setValidationMessage(
+                'invalid website',
+                'error',
+                setTimeOutId,
+                validationMessageTags.websiteVMTag
+              );
+              errorFlag = true;
+            }
+          }
+        }
+      }
+
+      const invalidChars = [
+        '%',
+        '!',
+        '~',
+        '$',
+        '%',
+        '^',
+        '&',
+        '*',
+        '(',
+        ')',
+        '+',
+        '_',
+        '\\',
+        '=',
+        '|',
+        '`',
+        '~',
+        '#',
+        ',',
+        '?',
+        ';',
+        '{',
+        '}',
+        '*',
+        '@',
+      ];
+
+      invalidChars.forEach((item) => {
+        if (contains(website, item)) {
+          setValidationMessage(
+            `invalid website, ${item} not allowed!`,
+            'error',
+            setTimeOutId,
+            validationMessageTags.websiteVMTag
+          );
+          errorFlag = true;
+        }
+      });
+
+      if (isLength(website, 0, 11)) {
+        setValidationMessage(
+          'invalid website',
+          'error',
+          setTimeOutId,
+          validationMessageTags.websiteVMTag
+        );
+        errorFlag = true;
+      }
+    }
+
+    // If phoneNumber is not empty then validate
+    if (!isEmpty(phoneNumber)) {
+      if (phoneNumber.length < 10) {
+        setValidationMessage(
+          'phone nuber should be 10 numbers!',
+          'error',
+          setTimeOutId,
+          validationMessageTags.phoneNumberVMTag
+        );
+
+        errorFlag = true;
+      }
+
+      if (!isLength(phoneNumber, 0, 10)) {
+        setValidationMessage(
+          'phone nuber should be 10 numbers!',
+          'error',
+          setTimeOutId,
+          validationMessageTags.phoneNumberVMTag
+        );
+
+        errorFlag = true;
+      }
+
+      if (isAlpha(phoneNumber, ['en-IN'])) {
+        setValidationMessage(
+          'invalid, alphabates not allowd!',
+          'error',
+          setTimeOutId,
+          validationMessageTags.phoneNumberVMTag
+        );
+
+        errorFlag = true;
+      }
+
+      if (!isMobilePhone(phoneNumber, ['en-IN'])) {
+        setValidationMessage(
+          'invalid, phone number!',
+          'error',
+          setTimeOutId,
+          validationMessageTags.phoneNumberVMTag
+        );
+
+        errorFlag = true;
+      }
+    }
+
     return errorFlag;
+  };
+
+  const updateInfoInFirebase = async (doesErrorExists) => {
+    if (!doesErrorExists) {
+      dispatch(userLoadingBegins());
+
+      const userRef = doc(firestoreInstance, 'users', id);
+
+      try {
+        await setDoc(userRef, userInfo, { merge: true });
+
+        const docSnap = await getDoc(userRef);
+
+        dispatch(updateInfo(docSnap.data()));
+        setGender(gender);
+
+        dispatch(
+          notificationShowInfo({
+            msg: 'successfully updated information!!!',
+          })
+        );
+      } catch (err) {
+        dispatch(notificationShowError({ msg: err.code.toString().slice(5) }));
+        dispatch(userLoadingEnds());
+      }
+    }
   };
 
   const handleUpdateInfo = () => {
@@ -178,12 +337,13 @@ const useEditAccount = () => {
       userInfo.bio === info.bio &&
       userInfo.website === info.website &&
       userInfo.fullName === info.fullName &&
-      userInfo.userName === info.userName
+      userInfo.userName === info.userName &&
+      userInfo.phoneNumber === info.phoneNumber
     ) {
       dispatch(notificationShowInfo({ msg: 'Sorry nothing to update!' }));
     } else {
-      console.log(userInfo);
-      validateUserInfo();
+      const error = validateUserInfo();
+      if (!error) updateInfoInFirebase(error);
     }
   };
 
