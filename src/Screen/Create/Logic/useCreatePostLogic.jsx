@@ -21,6 +21,7 @@ import setValidationMessage from '../../../utils/setValidationMessage';
 
 const useCreatePostLogic = (handleCloseCreatePost) => {
   const dispatch = useDispatch();
+  
   const { id, info, userLoading } = useSelector((state) => state.user.value);
 
   const setTimeOutId = useRef(0);

@@ -12,6 +12,7 @@ import { firestoreInstance } from '../../../config/firebase';
 import {
   notificationShowError,
   notificationShowInfo,
+  notificationShowSuccess,
 } from '../../../features/notification';
 import {
   updateInfo,
@@ -95,7 +96,7 @@ const useEditAccount = () => {
         setGender(gender);
 
         dispatch(
-          notificationShowInfo({
+          notificationShowSuccess({
             msg: 'successfully updated gender!!!',
           })
         );
@@ -331,7 +332,7 @@ const useEditAccount = () => {
         setGender(gender);
 
         dispatch(
-          notificationShowInfo({
+          notificationShowSuccess({
             msg: 'successfully updated information!!!',
           })
         );
