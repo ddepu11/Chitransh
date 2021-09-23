@@ -69,7 +69,7 @@ const useSignUpLogic = () => {
       });
   };
 
-  const saveUserInfoInFireStore = async () => {
+  const saveUserDoc = async () => {
     try {
       const docRef = await addDoc(collection(firestoreInstance, 'users'), {
         id: uuidv4(),
@@ -84,6 +84,7 @@ const useSignUpLogic = () => {
         website: '',
         phoneNumber: '',
         gender: '',
+        createdOn: Date.now(),
       });
 
       if (docRef) {
@@ -109,7 +110,7 @@ const useSignUpLogic = () => {
         } else {
           // Email is not being used by someone else
           // signUp();
-          saveUserInfoInFireStore();
+          saveUserDoc();
         }
       })
       .catch((err) => {

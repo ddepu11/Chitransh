@@ -7,7 +7,6 @@ import {
   arrayUnion,
   collection,
   addDoc,
-  serverTimestamp,
 } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
@@ -15,6 +14,7 @@ import { firestoreInstance, storage } from '../../../config/firebase';
 import {
   notificationShowError,
   notificationShowInfo,
+  notificationShowSuccess,
 } from '../../../features/notification';
 import { userLoadingBegins, userLoadingEnds } from '../../../features/user';
 import setValidationMessage from '../../../utils/setValidationMessage';
@@ -105,25 +105,34 @@ const useCreatePostLogic = (handleCloseCreatePost) => {
         userDpUrl: info.dp.url,
         caption,
         images: [],
-        createdOn: serverTimestamp(),
+        createdOn: Date.now(),
       });
       if (docRef) {
         previews.forEach(async ({ f }, index) => {
           const randomName = `${info.userName}_${Math.floor(
             Math.random() * Date.now()
           )}`;
+
           const imageRef = ref(storage, `posts_images/${id}/${randomName}`);
           await uploadBytes(imageRef, f);
+
           const url = await getDownloadURL(imageRef);
+
           await updateDoc(doc(firestoreInstance, 'posts', docRef.id), {
             images: arrayUnion({
               fileName: randomName,
               url,
             }),
           });
+
           if (index === previews.length - 1) {
             dispatch(userLoadingEnds());
             handleCloseCreatePost();
+            dispatch(
+              notificationShowSuccess({
+                msg: 'Successfully created your post!',
+              })
+            );
           }
         });
       }

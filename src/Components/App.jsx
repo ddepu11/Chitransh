@@ -20,6 +20,7 @@ import {
 } from '../features/user';
 
 import {
+  notificationClear,
   notificationShowError,
   // notificationShowInfo,
 } from '../features/notification';
@@ -83,14 +84,17 @@ const App = () => {
   // For Showing notification
   useEffect(() => {
     if (message && success) {
+      dispatch(notificationClear());
       successNotification(message);
     }
 
-    if (message && error) {
+    if (error) {
+      dispatch(notificationClear());
       errorNotification(message);
     }
 
     if (message && info) {
+      dispatch(notificationClear());
       infoNotification(message);
     }
   }, [
@@ -101,6 +105,7 @@ const App = () => {
     successNotification,
     errorNotification,
     infoNotification,
+    dispatch,
   ]);
 
   return (
