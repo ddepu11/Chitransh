@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 import isEmpty from 'validator/lib/isEmpty';
@@ -18,10 +18,19 @@ import {
   userLoadingBegins,
   userLoadingEnds,
 } from '../../../features/user';
+import clearAllSetTimeoutOrSetInterval from '../../../utils/clearAllSetTimeoutOrSetInterval';
 
 const useEditAccount = () => {
   const dispatch = useDispatch();
+
   const setTimeOutId = useRef(0);
+
+  useEffect(() => {
+    console.log('');
+    return () => {
+      clearAllSetTimeoutOrSetInterval(setTimeOutId);
+    };
+  }, []);
 
   const { info, id, userLoading } = useSelector((state) => state.user.value);
 
@@ -99,6 +108,7 @@ const useEditAccount = () => {
       dispatch(notificationShowInfo({ msg: 'Please select any gender!' }));
     }
   };
+
   // #$##$#$##$#$##$#$#$#$  Handling Gender Ends #$#$#$#$$$#$#$#$#$#$
 
   const validateUserInfo = () => {

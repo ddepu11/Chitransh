@@ -31,8 +31,6 @@ const useSignUpLogic = () => {
   const setTimeOutId = useRef(0);
 
   useEffect(() => {
-    console.log(hasUserLoggedIn);
-
     if (hasUserLoggedIn) {
       history.push('/');
     }

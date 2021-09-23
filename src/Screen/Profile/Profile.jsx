@@ -134,10 +134,18 @@ const Profile = () => {
               </div>
             </div>
 
-            <div className='bottom'>
+            <div className='bottom flex'>
               <h2 className='name'>{info.fullName}</h2>
-              {info.bio && <span>keeps it real.</span>}
-              {info.website && <a href={info.website}>info.website</a>}
+
+              {info.bio && <span className='bio_text'>{info.bio}</span>}
+
+              {info.website && (
+                <a href={info.website} className='bio_website'>
+                  {info.website.includes('https')
+                    ? info.website.slice(8)
+                    : info.website.slice(7)}
+                </a>
+              )}
             </div>
           </div>
         </div>
@@ -250,15 +258,25 @@ const Wrapper = styled.main`
       }
 
       .bottom {
-        h2 {
+        flex-direction: column;
+        align-items: flex-start;
+
+        .name {
           font-size: 1em;
           color: #344;
           margin-bottom: 2px;
         }
 
-        span {
+        .bio_text {
           color: #344;
           font-size: 0.95em;
+        }
+
+        .bio_website {
+          color: #00376b;
+          font-size: 0.9em;
+          font-weight: 700;
+          letter-spacing: 0.5px;
         }
       }
     }
