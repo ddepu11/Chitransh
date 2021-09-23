@@ -269,15 +269,6 @@ const Wrapper = styled.nav`
     transform: translateY(0px);
     pointer-events: auto;
   }
-
-  /* .the_box:after {
-    content: '';
-    position: absolute;
-    top: -20px;
-    right: 70px;
-    border: 10px solid transparent;
-    border-bottom-color: #dadada;
-  } */
 `;
 
 export default Navbar;

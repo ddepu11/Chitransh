@@ -4,7 +4,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import PermMediaOutlinedIcon from '@material-ui/icons/PermMediaOutlined';
 import AddBoxOutlinedIcon from '@material-ui/icons/AddBoxOutlined';
 import DeleteForeverOutlinedIcon from '@material-ui/icons/DeleteForeverOutlined';
-
+import Loader from '../../Components/Loader';
 import Button from '../../Components/Button';
 import useCreatePostLogic from './Logic/useCreatePostLogic';
 
@@ -23,7 +23,12 @@ const CreatePost = ({ handleCloseCreatePost }) => {
     previews,
     caption,
     captionValidationMessageTag,
+    userLoading,
   } = useCreatePostLogic();
+
+  if (userLoading) {
+    return <Loader />;
+  }
 
   return (
     <Wrapper>

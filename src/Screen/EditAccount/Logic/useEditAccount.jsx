@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import isEmpty from 'validator/lib/isEmpty';
 import isLength from 'validator/lib/isLength';
 import contains from 'validator/lib/contains';
@@ -87,7 +87,7 @@ const useEditAccount = () => {
       const userRef = doc(firestoreInstance, 'users', id);
 
       try {
-        await setDoc(userRef, { gender }, { merge: true });
+        await updateDoc(userRef, { gender });
 
         const docSnap = await getDoc(userRef);
 
@@ -323,7 +323,7 @@ const useEditAccount = () => {
       const userRef = doc(firestoreInstance, 'users', id);
 
       try {
-        await setDoc(userRef, userInfo, { merge: true });
+        await updateDoc(userRef, userInfo);
 
         const docSnap = await getDoc(userRef);
 

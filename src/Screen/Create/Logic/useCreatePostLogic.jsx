@@ -1,14 +1,30 @@
 import { useCallback, useRef, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { useDispatch } from 'react-redux';
-import { notificationShowInfo } from '../../../features/notification';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  doc,
+  updateDoc,
+  arrayUnion,
+  collection,
+  addDoc,
+} from 'firebase/firestore';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+
+import { firestoreInstance, storage } from '../../../config/firebase';
+import {
+  notificationShowError,
+  notificationShowInfo,
+} from '../../../features/notification';
+import { userLoadingBegins, userLoadingEnds } from '../../../features/user';
 import setValidationMessage from '../../../utils/setValidationMessage';
 
 const useCreatePostLogic = () => {
   const dispatch = useDispatch();
+  const { id, info, userLoading } = useSelector((state) => state.user.value);
 
   const setTimeOutId = useRef(0);
   const captionValidationMessageTag = useRef(null);
+
   const [caption, setCaption] = useState('');
   const [previews, setPreviews] = useState([]);
   const [preview, setPreview] = useState({ p: '', f: null });
@@ -80,6 +96,43 @@ const useCreatePostLogic = () => {
     setCaption(e.target.value);
   };
 
+  const createPost = async () => {
+    try {
+      const docRef = await addDoc(collection(firestoreInstance, 'posts'), {
+        userId: id,
+        caption,
+        images: [],
+      });
+
+      if (docRef) {
+        previews.forEach(async ({ f }, index) => {
+          const randomName = `${info.userName}_${Math.floor(
+            Math.random() * Date.now()
+          )}`;
+
+          const imageRef = ref(storage, `posts_images/${randomName}`);
+          await uploadBytes(imageRef, f);
+
+          const url = await getDownloadURL(imageRef);
+          // REST Client for Visual Studio Code
+          await updateDoc(doc(firestoreInstance, 'posts', docRef.id), {
+            images: arrayUnion({
+              fileName: randomName,
+              url,
+            }),
+          });
+
+          if (index === previews.length - 1) {
+            dispatch(userLoadingEnds());
+          }
+        });
+      }
+    } catch (err) {
+      dispatch(notificationShowError({ msg: err.code.toString().slice(5) }));
+      dispatch(userLoadingEnds());
+    }
+  };
+
   const handleUpload = () => {
     let errorFlag = false;
 
@@ -114,8 +167,8 @@ const useCreatePostLogic = () => {
     }
 
     if (!errorFlag) {
-      console.log(previews);
-      //
+      createPost();
+      dispatch(userLoadingBegins());
     }
   };
 
@@ -155,6 +208,7 @@ const useCreatePostLogic = () => {
     preview,
     previews,
     caption,
+    userLoading,
     captionValidationMessageTag,
   };
 };
