@@ -67,7 +67,9 @@ const useNavbarLogic = () => {
       });
   };
 
-  const handleCloseCreatePost = () => setActiveIcon('home');
+  const handleCloseCreatePost = () => {
+    setActiveIcon('home');
+  };
 
   const handleCloseAvatarDrop = () => {
     dropDownFromAvatar.current.classList.remove('active');

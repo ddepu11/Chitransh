@@ -7,6 +7,7 @@ import {
   arrayUnion,
   collection,
   addDoc,
+  serverTimestamp,
 } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
@@ -18,7 +19,7 @@ import {
 import { userLoadingBegins, userLoadingEnds } from '../../../features/user';
 import setValidationMessage from '../../../utils/setValidationMessage';
 
-const useCreatePostLogic = () => {
+const useCreatePostLogic = (handleCloseCreatePost) => {
   const dispatch = useDispatch();
   const { id, info, userLoading } = useSelector((state) => state.user.value);
 
@@ -100,36 +101,36 @@ const useCreatePostLogic = () => {
     try {
       const docRef = await addDoc(collection(firestoreInstance, 'posts'), {
         userId: id,
+        userName: info.userName,
+        userDpUrl: info.dp.url,
         caption,
         images: [],
+        createdOn: serverTimestamp(),
       });
-
       if (docRef) {
         previews.forEach(async ({ f }, index) => {
           const randomName = `${info.userName}_${Math.floor(
             Math.random() * Date.now()
           )}`;
-
-          const imageRef = ref(storage, `posts_images/${randomName}`);
+          const imageRef = ref(storage, `posts_images/${id}/${randomName}`);
           await uploadBytes(imageRef, f);
-
           const url = await getDownloadURL(imageRef);
-          // REST Client for Visual Studio Code
           await updateDoc(doc(firestoreInstance, 'posts', docRef.id), {
             images: arrayUnion({
               fileName: randomName,
               url,
             }),
           });
-
           if (index === previews.length - 1) {
             dispatch(userLoadingEnds());
+            handleCloseCreatePost();
           }
         });
       }
     } catch (err) {
       dispatch(notificationShowError({ msg: err.code.toString().slice(5) }));
       dispatch(userLoadingEnds());
+      handleCloseCreatePost();
     }
   };
 

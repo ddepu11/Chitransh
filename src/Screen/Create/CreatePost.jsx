@@ -24,7 +24,7 @@ const CreatePost = ({ handleCloseCreatePost }) => {
     caption,
     captionValidationMessageTag,
     userLoading,
-  } = useCreatePostLogic();
+  } = useCreatePostLogic(handleCloseCreatePost);
 
   if (userLoading) {
     return <Loader />;
