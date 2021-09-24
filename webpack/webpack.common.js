@@ -13,6 +13,7 @@ module.exports = {
     assetModuleFilename: 'images/[hash][ext][query]',
     publicPath: '/',
   },
+  
   resolve: {
     extensions: ['*', '.js', '.jsx'],
   },
@@ -33,6 +34,7 @@ module.exports = {
       },
       {
         test: /\.(png|svg|jpg|jpeg|gif)$/i,
+        exclude: /\node_modules/,
         type: 'asset/resource',
       },
     ],

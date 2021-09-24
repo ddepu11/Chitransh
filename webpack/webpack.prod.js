@@ -1,13 +1,16 @@
-const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
-const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
+const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = {
-  mode: "production",
+  mode: 'production',
+
   plugins: [new CleanWebpackPlugin()],
 
+  devtool: 'source-map',
+
   optimization: {
-    minimizer: [new CssMinimizerPlugin()],
+    moduleIds: 'deterministic',
+    minimize: true,
   },
 };
-
