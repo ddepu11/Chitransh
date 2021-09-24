@@ -171,7 +171,7 @@ const Wrapper = styled.main`
   background: rgba(0, 0, 0, 0.65);
   display: grid;
   place-content: center;
-  z-index: 9;
+  z-index: 10;
 
   .heading {
     font-size: 1.1em;

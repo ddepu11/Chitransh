@@ -1,6 +1,7 @@
 import { useCallback, useRef, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useDispatch, useSelector } from 'react-redux';
+import { v4 as uuidv4 } from 'uuid';
 import {
   doc,
   updateDoc,
@@ -9,7 +10,6 @@ import {
   addDoc,
 } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-
 import { firestoreInstance, storage } from '../../../config/firebase';
 import {
   notificationShowError,
@@ -21,7 +21,7 @@ import setValidationMessage from '../../../utils/setValidationMessage';
 
 const useCreatePostLogic = (handleCloseCreatePost) => {
   const dispatch = useDispatch();
-  
+
   const { id, info, userLoading } = useSelector((state) => state.user.value);
 
   const setTimeOutId = useRef(0);
@@ -101,12 +101,15 @@ const useCreatePostLogic = (handleCloseCreatePost) => {
   const createPost = async () => {
     try {
       const docRef = await addDoc(collection(firestoreInstance, 'posts'), {
+        id: uuidv4(),
         userId: id,
         userName: info.userName,
         userDpUrl: info.dp.url,
         caption,
         images: [],
         createdOn: Date.now(),
+        comments: [],
+        likes: 0,
       });
       if (docRef) {
         previews.forEach(async ({ f }, index) => {

@@ -67,8 +67,7 @@ const Home = () => {
   return (
     <Wrapper className='w-960 '>
       <HomeDiv className='home'>
-        <Post />
-        <Post />
+        {allPosts && allPosts.map((post) => <Post key={post.id} post={post} />)}
       </HomeDiv>
 
       <Feed />

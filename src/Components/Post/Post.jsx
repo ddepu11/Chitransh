@@ -4,28 +4,78 @@ import FavoriteBorderOutlinedIcon from '@material-ui/icons/FavoriteBorderOutline
 import FavoriteOutlinedIcon from '@material-ui/icons/FavoriteOutlined';
 import ModeCommentOutlinedIcon from '@material-ui/icons/ModeCommentOutlined';
 import BookmarkIcon from '@material-ui/icons/Bookmark';
+import NavigateNextIcon from '@material-ui/icons/NavigateNext';
+import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
+import PropsType from 'prop-types';
 import BookmarkBorderOutlinedIcon from '@material-ui/icons/BookmarkBorderOutlined';
 import Button from '../Button';
+import { useState } from 'react';
 
-const Post = () => {
-  console.log('Post');
+const Post = ({ post }) => {
+  const { caption, comments, createdOn, images, likes, userDpUrl, userName } =
+    post;
+
+  const currentTimeInMs = new Date().getTime() - createdOn;
+
+  // 1s  = 1000ms
+  // 1m  = 60 * 1000
+  // 1hr = 60 * 60 * 1000
+  // 1day =  24 *60 * 60 *1000
+
+  const msInAMinute = 60 * 1000;
+  const msInAHour = 60 * 60 * 1000;
+  const msInADay = 24 * 60 * 60 * 1000;
+
+  const hours = Math.floor((currentTimeInMs % msInADay) / msInAHour);
+  const minutes = Math.floor((currentTimeInMs % msInAHour) / msInAMinute);
+  const seconds = Math.floor((currentTimeInMs % msInAMinute) / 1000);
+
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  const showPreviousImage = () => {
+    if (currentImageIndex === 0) {
+      setCurrentImageIndex(images.length - 1);
+    } else {
+      setCurrentImageIndex(currentImageIndex - 1);
+    }
+  };
+
+  const showNextImage = () => {
+    setCurrentImageIndex((prevState) => {
+      if (prevState === images.length - 1) {
+        return 0;
+      } else {
+        return prevState + 1;
+      }
+    });
+  };
 
   return (
     <Wrapper>
       <div className='post_top flex'>
         <div className='left flex'>
           <div className='dp'>
-            <img src='https://i.pravatar.cc/300' alt='' />
+            <img src={userDpUrl} alt='' />
           </div>
 
-          <h3 className='username'>ddepu11</h3>
+          <h3 className='username'>{userName}</h3>
         </div>
 
         <MoreHorizIcon className='more_btn' />
       </div>
 
       <div className='hero'>
-        <img src='https://i.pravatar.cc/300' alt='s' />
+        {images.length > 1 && (
+          <>
+            <NavigateBeforeIcon
+              className='previous'
+              onClick={showPreviousImage}
+            />
+
+            <NavigateNextIcon className='next' onClick={showNextImage} />
+          </>
+        )}
+        <img src={images[currentImageIndex].url} alt='s' />
       </div>
 
       <div className='btns flex'>
@@ -43,18 +93,25 @@ const Post = () => {
           {/* <BookmarkIcon className='ic_saved' /> */}
         </div>
       </div>
-      <div className='likes'>1,267 likes</div>
+      <div className='likes'>{likes} likes</div>
 
       <div className='username_and_caption'>
         <p className='caption'>
-          <span className='username'>ddepu11</span>
-          It&apos;s famous for its roundabouts and statues of concrete cows. But
-          the English town of Milton Keynes now has another claim to fame -- a
-          trundling army of shopping delivery robots. The six-wheeled automated
-          vehicles, launched three years ago, barely get a second glance as they
-          ply the residential streets, some 80 kilometres north of London.
+          <span className='username'>{userName}</span>
+          {caption}
         </p>
       </div>
+
+      {comments.length !== 0 && (
+        <div className='comments'>
+          <p className='comment'>
+            <span className='user_name'>singh.shares</span>
+            So Nikhil Is Bigger Than Burj Khalifa 😂
+          </p>
+        </div>
+      )}
+
+      <span className='when_uploaded'>{`${hours}h ${minutes}m and ${seconds}s ago `}</span>
 
       <div className='comment_box flex'>
         <input type='text' placeholder='Add a comment...' />
@@ -117,11 +174,33 @@ const Wrapper = styled.main`
   .hero {
     width: 100%;
     height: 600px;
+    border: 1px solid #dbdbdb85;
 
     img {
       width: 100%;
       height: 100%;
       object-fit: cover;
+    }
+    position: relative;
+
+    .previous,
+    .next {
+      position: absolute;
+      top: 50%;
+      width: 0.6em;
+      height: 0.6em;
+      font-size: 2.2em;
+      color: #252525;
+      border-radius: 50%;
+      background-color: #b3b3b3;
+    }
+
+    .previous {
+      left: 5px;
+    }
+
+    .next {
+      right: 5px;
     }
   }
 
@@ -188,10 +267,30 @@ const Wrapper = styled.main`
     }
   }
 
+  .comments {
+    padding: 0px 0px 10px 14px;
+    color: #444;
+    font-size: 0.84em;
+    line-height: 1.4;
+    margin-bottom: 1px;
+
+    .user_name {
+      font-weight: 700;
+      color: #344;
+      margin-right: 5px;
+    }
+  }
+
+  .when_uploaded {
+    padding: 0px 0px 0px 14px;
+    color: #777777;
+    font-size: 0.68em;
+  }
+
   .comment_box {
     justify-content: space-between;
     padding: 20px 14px;
-    margin-top: 14px;
+    margin-top: 5px;
     border-top: 1px solid #ebe9e9;
 
     input {
@@ -203,5 +302,9 @@ const Wrapper = styled.main`
     }
   }
 `;
+
+Post.propTypes = {
+  post: PropsType.object.isRequired,
+};
 
 export default Post;
