@@ -7,7 +7,7 @@ import {
   deleteObject,
 } from 'firebase/storage';
 import { useHistory } from 'react-router-dom';
-import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { firestoreInstance, storage } from '../../../config/firebase';
 import {
   notificationShowError,
@@ -55,16 +55,12 @@ const useProfileLogic = () => {
       await uploadBytes(dpStorageRef, imageToUpload);
       const downloadURL = await getDownloadURL(dpStorageRef);
 
-      await setDoc(
-        doc(firestoreInstance, 'users', id),
-        {
-          dp: {
-            fileName: randomlyGeneratedName,
-            url: downloadURL,
-          },
+      await updateDoc(doc(firestoreInstance, 'users', id), {
+        dp: {
+          fileName: randomlyGeneratedName,
+          url: downloadURL,
         },
-        { merge: true }
-      );
+      });
 
       const userDocRef = doc(firestoreInstance, 'users', id);
       const docSnap = await getDoc(userDocRef);
@@ -101,16 +97,13 @@ const useProfileLogic = () => {
 
       const downloadURL = await getDownloadURL(newDpRef);
 
-      await setDoc(
-        doc(firestoreInstance, 'users', id),
-        {
-          dp: {
-            fileName: randomlyGeneratedName,
-            url: downloadURL,
-          },
+      // Updating Doc
+      await updateDoc(doc(firestoreInstance, 'users', id), {
+        dp: {
+          fileName: randomlyGeneratedName,
+          url: downloadURL,
         },
-        { merge: true }
-      );
+      });
 
       const userDocRef = doc(firestoreInstance, 'users', id);
       const docSnap = await getDoc(userDocRef);
@@ -149,16 +142,12 @@ const useProfileLogic = () => {
     try {
       await deleteObject(dpRef);
 
-      await setDoc(
-        doc(firestoreInstance, 'users', id),
-        {
-          dp: {
-            fileName: 'dummyDp',
-            url: '',
-          },
+      await updateDoc(doc(firestoreInstance, 'users', id), {
+        dp: {
+          fileName: 'dummyDp',
+          url: '',
         },
-        { merge: true }
-      );
+      });
 
       const userDocRef = doc(firestoreInstance, 'users', id);
       const docSnap = await getDoc(userDocRef);
