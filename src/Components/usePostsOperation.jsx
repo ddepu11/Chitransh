@@ -10,7 +10,7 @@ import { useDispatch } from 'react-redux';
 import { firestoreInstance } from '../config/firebase';
 import { storeAllPosts } from '../features/posts';
 
-const usePostsOperation = (userIdInPostDocs) => {
+const usePostsOperation = () => {
   const dispatch = useDispatch();
 
   const postsCollectionReference = collection(firestoreInstance, 'posts');
@@ -33,11 +33,17 @@ const usePostsOperation = (userIdInPostDocs) => {
     });
   };
 
-  const updatePostsDocFields = async (dataToUpdate) => {
+  const updatePostsDocFields = async (
+    fieldName,
+    operator,
+    value,
+    dataToUpdate
+  ) => {
     const q = query(
       postsCollectionReference,
-      where('userId', '==', userIdInPostDocs)
+      where(fieldName, operator, value)
     );
+
     const querySnapshot = await getDocs(q);
 
     querySnapshot.forEach(async (p) => {

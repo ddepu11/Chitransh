@@ -87,6 +87,7 @@ const useSignUpLogic = () => {
         following: [],
         followers: [],
         createdOn: Date.now(),
+        likedPostsIds: [],
       });
 
       if (docRef) {

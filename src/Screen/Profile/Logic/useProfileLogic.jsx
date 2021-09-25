@@ -63,7 +63,9 @@ const useProfileLogic = () => {
         },
       });
 
-      await updatePostsDocFields({ userDpUrl: downloadURL });
+      await updatePostsDocFields('userId', '==', id, {
+        userDpUrl: downloadURL,
+      });
 
       await getUpdatedUserDoc();
 
@@ -106,7 +108,9 @@ const useProfileLogic = () => {
       });
 
       // $##$#$#$#$#$#$ Update useDpUrl field in all his posts ##############
-      await updatePostsDocFields({ userDpUrl: downloadURL });
+      await updatePostsDocFields('userId', '==', id, {
+        userDpUrl: downloadURL,
+      });
 
       await getUpdatedUserDoc();
 
@@ -152,7 +156,7 @@ const useProfileLogic = () => {
       });
 
       // $##$#$#$#$#$#$ Update useDpUrl field in all his posts ##############
-      await updatePostsDocFields({ userDpUrl: '' });
+      await updatePostsDocFields('userId', '==', id, { userDpUrl: '' });
 
       await getUpdatedUserDoc();
 

@@ -6,10 +6,14 @@ import FavoriteBorderOutlinedIcon from '@material-ui/icons/FavoriteBorderOutline
 import ModeCommentOutlinedIcon from '@material-ui/icons/ModeCommentOutlined';
 import FiberManualRecordRounded from '@material-ui/icons/FiberManualRecordRounded';
 // import BookmarkIcon from '@material-ui/icons/Bookmark';
+
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
 import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
+
 import PropsType from 'prop-types';
 import BookmarkBorderOutlinedIcon from '@material-ui/icons/BookmarkBorderOutlined';
+import { updateDoc, doc, increment } from 'firebase/firestore';
+import { firestoreInstance } from '../../config/firebase';
 import Button from '../Button';
 import dummyDp from '../../images/dummyDp.png';
 
@@ -52,6 +56,19 @@ const Post = ({ post }) => {
     });
   };
 
+  const likeThePost = async () => {
+    // usePostsOperation;
+    console.log('like the post');
+    console.log(post);
+
+    const postRef = doc(firestoreInstance, 'posts', 'DC');
+
+    // Atomically increment the population of the city by 50.
+    await updateDoc(postRef, {
+      population: increment(50),
+    });
+  };
+
   return (
     <Wrapper>
       <div className='post_top flex'>
@@ -66,7 +83,7 @@ const Post = ({ post }) => {
         <MoreHorizIcon className='more_btn' />
       </div>
 
-      <div className='hero'>
+      <div className='hero' onDoubleClick={likeThePost}>
         {images.length > 1 && (
           <>
             <NavigateBeforeIcon
@@ -104,6 +121,7 @@ const Post = ({ post }) => {
           {/* <BookmarkIcon className='ic_saved' /> */}
         </div>
       </div>
+
       <div className='likes'>{likes} likes</div>
 
       <div className='username_and_caption'>
@@ -154,7 +172,7 @@ const Wrapper = styled.main`
         width: 40px;
         height: 40px;
         border: 1px solid #949494;
-        padding: 0.5px;
+        padding: 1px;
         border-radius: 50%;
 
         img {
@@ -201,9 +219,9 @@ const Wrapper = styled.main`
       width: 0.6em;
       height: 0.6em;
       font-size: 2.2em;
-      color: #252525;
+      color: #3b3b3b;
       border-radius: 50%;
-      background-color: #b3b3b3;
+      background-color: #d6d6d6;
     }
 
     .previous {

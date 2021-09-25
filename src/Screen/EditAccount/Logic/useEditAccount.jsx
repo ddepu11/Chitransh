@@ -312,7 +312,7 @@ const useEditAccount = () => {
     return errorFlag;
   };
 
-  const { updatePostsDocFields, getUpdatedPosts } = usePostsOperation(id);
+  const { updatePostsDocFields, getUpdatedPosts } = usePostsOperation();
 
   const updateInfoInFirebase = async (doesErrorExists) => {
     if (!doesErrorExists) {
@@ -322,7 +322,11 @@ const useEditAccount = () => {
         await updateUserDoc(userInfo);
 
         if (info.userName !== userInfo.userName) {
-          await updatePostsDocFields({ userName: userInfo.userName });
+          await updatePostsDocFields('userId', '==', id, {
+            userName: userInfo.userName,
+          });
+
+          // await updatePostsDocFields({ userName: userInfo.userName });
           await getUpdatedPosts();
         }
 
