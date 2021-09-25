@@ -5,11 +5,9 @@ import FavoriteBorderOutlinedIcon from '@material-ui/icons/FavoriteBorderOutline
 import FavoriteOutlinedIcon from '@material-ui/icons/FavoriteOutlined';
 import ModeCommentOutlinedIcon from '@material-ui/icons/ModeCommentOutlined';
 import FiberManualRecordRounded from '@material-ui/icons/FiberManualRecordRounded';
-// import BookmarkIcon from '@material-ui/icons/Bookmark';
-
+import BookmarkIcon from '@material-ui/icons/Bookmark';
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
 import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
-
 import PropsType from 'prop-types';
 import BookmarkBorderOutlinedIcon from '@material-ui/icons/BookmarkBorderOutlined';
 import { useDispatch, useSelector } from 'react-redux';
@@ -129,8 +127,60 @@ const Post = ({ post }) => {
         dispatch(userLoadingEnds());
 
         dispatch(
-          notificationShowSuccess({ msg: 'Successfully liked the song!' })
+          notificationShowSuccess({ msg: 'Successfully disliked the song!' })
         );
+      } catch (err) {
+        dispatch(notificationShowError({ msg: err.code.toString().slice(5) }));
+        dispatch(userLoadingEnds());
+      }
+    }
+  };
+
+  let didYouSavedThePost = false;
+
+  if (info.savedPostsIds.filter((item) => item === post.id).length === 1) {
+    didYouSavedThePost = true;
+  }
+
+  const savePost = async () => {
+    if (!didYouSavedThePost) {
+      console.log('Save Post: ');
+
+      dispatch(userLoadingBegins());
+
+      try {
+        const userDocRef = doc(firestoreInstance, 'users', id);
+
+        await updateDoc(userDocRef, { savedPostsIds: arrayUnion(post.id) });
+
+        await getUpdatedUserDoc();
+
+        dispatch(userLoadingEnds());
+
+        dispatch(
+          notificationShowSuccess({ msg: 'Successfully saved the song!' })
+        );
+      } catch (err) {
+        dispatch(notificationShowError({ msg: err.code.toString().slice(5) }));
+        dispatch(userLoadingEnds());
+      }
+    }
+  };
+
+  const unSavePost = async () => {
+    if (didYouSavedThePost) {
+      dispatch(userLoadingBegins());
+
+      try {
+        console.log('Unsaved');
+
+        const userDocRef = doc(firestoreInstance, 'users', id);
+
+        await updateDoc(userDocRef, { savedPostsIds: arrayRemove(post.id) });
+
+        await getUpdatedUserDoc();
+
+        dispatch(userLoadingEnds());
       } catch (err) {
         dispatch(notificationShowError({ msg: err.code.toString().slice(5) }));
         dispatch(userLoadingEnds());
@@ -168,7 +218,6 @@ const Post = ({ post }) => {
 
       <div className='btns flex'>
         <div className='btn_left flex'>
-          {/* {console.log(didYouLikedThePost)} */}
           {didYouLikedThePost ? (
             <FavoriteOutlinedIcon
               className='ic_dislike'
@@ -195,8 +244,14 @@ const Post = ({ post }) => {
         )}
 
         <div className='btn_save'>
-          <BookmarkBorderOutlinedIcon className='ic_save' />
-          {/* <BookmarkIcon className='ic_saved' /> */}
+          {didYouSavedThePost ? (
+            <BookmarkIcon className='ic_saved' onClick={unSavePost} />
+          ) : (
+            <BookmarkBorderOutlinedIcon
+              className='ic_save'
+              onClick={savePost}
+            />
+          )}
         </div>
       </div>
 
