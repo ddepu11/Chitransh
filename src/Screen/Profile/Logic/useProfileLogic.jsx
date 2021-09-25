@@ -7,15 +7,7 @@ import {
   deleteObject,
 } from 'firebase/storage';
 import { useHistory } from 'react-router-dom';
-import {
-  doc,
-  updateDoc,
-  where,
-  query,
-  getDocs,
-  collection,
-} from 'firebase/firestore';
-import { firestoreInstance, storage } from '../../../config/firebase';
+import { storage } from '../../../config/firebase';
 import {
   notificationShowError,
   notificationShowSuccess,
@@ -45,24 +37,9 @@ const useProfileLogic = () => {
     }
   };
 
-  const { getUpdatedUserDoc } = useUserOperation(id);
+  const { getUpdatedUserDoc, updateUserDoc } = useUserOperation(id);
 
-  const { getUpdatedPosts } = usePostsOperation();
-
-  // $##$#$#$#$#$#$ Update userDpUrl field in all his posts ##############
-  const updateUserDpUrlInAllPosts = async (useDpUrl) => {
-    const q = query(
-      collection(firestoreInstance, 'posts'),
-      where('userId', '==', id)
-    );
-    const querySnapshot = await getDocs(q);
-
-    querySnapshot.forEach(async (p) => {
-      await updateDoc(doc(firestoreInstance, 'posts', p.id), {
-        userDpUrl: useDpUrl,
-      });
-    });
-  };
+  const { getUpdatedPosts, updatePostsDocFields } = usePostsOperation(id);
 
   // If Display was never set
   const uploadPicAndUpdateUserDoc = async (imageToUpload) => {
@@ -79,14 +56,14 @@ const useProfileLogic = () => {
       await uploadBytes(dpStorageRef, imageToUpload);
       const downloadURL = await getDownloadURL(dpStorageRef);
 
-      await updateDoc(doc(firestoreInstance, 'users', id), {
+      await updateUserDoc({
         dp: {
           fileName: randomlyGeneratedName,
           url: downloadURL,
         },
       });
 
-      await updateUserDpUrlInAllPosts(downloadURL);
+      await updatePostsDocFields({ userDpUrl: downloadURL });
 
       await getUpdatedUserDoc();
 
@@ -121,7 +98,7 @@ const useProfileLogic = () => {
       const downloadURL = await getDownloadURL(newDpRef);
 
       // Updating user Doc
-      await updateDoc(doc(firestoreInstance, 'users', id), {
+      await updateUserDoc({
         dp: {
           fileName: randomlyGeneratedName,
           url: downloadURL,
@@ -129,7 +106,7 @@ const useProfileLogic = () => {
       });
 
       // $##$#$#$#$#$#$ Update useDpUrl field in all his posts ##############
-      await updateUserDpUrlInAllPosts(downloadURL);
+      await updatePostsDocFields({ userDpUrl: downloadURL });
 
       await getUpdatedUserDoc();
 
@@ -167,7 +144,7 @@ const useProfileLogic = () => {
     try {
       await deleteObject(dpRef);
 
-      await updateDoc(doc(firestoreInstance, 'users', id), {
+      await updateUserDoc({
         dp: {
           fileName: 'dummyDp',
           url: '',
@@ -175,7 +152,7 @@ const useProfileLogic = () => {
       });
 
       // $##$#$#$#$#$#$ Update useDpUrl field in all his posts ##############
-      await updateUserDpUrlInAllPosts('');
+      await updatePostsDocFields({ userDpUrl: '' });
 
       await getUpdatedUserDoc();
 
