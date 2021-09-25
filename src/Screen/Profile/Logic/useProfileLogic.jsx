@@ -9,7 +9,6 @@ import {
 import { useHistory } from 'react-router-dom';
 import {
   doc,
-  getDoc,
   updateDoc,
   where,
   query,
@@ -21,11 +20,9 @@ import {
   notificationShowError,
   notificationShowSuccess,
 } from '../../../features/notification';
-import {
-  updateInfo,
-  userLoadingBegins,
-  userLoadingEnds,
-} from '../../../features/user';
+import { userLoadingBegins, userLoadingEnds } from '../../../features/user';
+import useUserOperation from '../../../Components/useUserOperations';
+import usePostsOperation from '../../../Components/usePostsOperation';
 
 const useProfileLogic = () => {
   const dispatch = useDispatch();
@@ -47,6 +44,10 @@ const useProfileLogic = () => {
       cancelChangeDp();
     }
   };
+
+  const { getUpdatedUserDoc } = useUserOperation(id);
+
+  const { getUpdatedPosts } = usePostsOperation();
 
   // $##$#$#$#$#$#$ Update userDpUrl field in all his posts ##############
   const updateUserDpUrlInAllPosts = async (useDpUrl) => {
@@ -85,15 +86,11 @@ const useProfileLogic = () => {
         },
       });
 
-      updateUserDpUrlInAllPosts(downloadURL);
+      await updateUserDpUrlInAllPosts(downloadURL);
 
-      // Getting Updated user doc
-      const userDocRef = doc(firestoreInstance, 'users', id);
-      const docSnap = await getDoc(userDocRef);
+      await getUpdatedUserDoc();
 
-      dispatch(updateInfo(docSnap.data()));
-
-      dispatch(userLoadingEnds());
+      await getUpdatedPosts();
 
       dispatch(
         notificationShowSuccess({
@@ -132,13 +129,11 @@ const useProfileLogic = () => {
       });
 
       // $##$#$#$#$#$#$ Update useDpUrl field in all his posts ##############
-      updateUserDpUrlInAllPosts(downloadURL);
+      await updateUserDpUrlInAllPosts(downloadURL);
 
-      // Getting updated user doc
-      const userDocRef = doc(firestoreInstance, 'users', id);
-      const docSnap = await getDoc(userDocRef);
+      await getUpdatedUserDoc();
 
-      dispatch(updateInfo(docSnap.data()));
+      await getUpdatedPosts();
 
       dispatch(
         notificationShowSuccess({ msg: 'Successfully uploaded new dp' })
@@ -180,12 +175,11 @@ const useProfileLogic = () => {
       });
 
       // $##$#$#$#$#$#$ Update useDpUrl field in all his posts ##############
-      updateUserDpUrlInAllPosts('');
+      await updateUserDpUrlInAllPosts('');
 
-      const userDocRef = doc(firestoreInstance, 'users', id);
-      const docSnap = await getDoc(userDocRef);
+      await getUpdatedUserDoc();
 
-      dispatch(updateInfo(docSnap.data()));
+      await getUpdatedPosts();
 
       dispatch(notificationShowSuccess({ msg: 'Successfully removed  dp!' }));
     } catch (err) {
