@@ -26,6 +26,7 @@ const Button = ({
   fromBottom,
   fromLeft,
   isDisabled,
+  cursorOnHover,
 }) => {
   useEffect(() => {});
 
@@ -53,6 +54,7 @@ const Button = ({
       bottom={fromBottom}
       left={fromLeft}
       right={fromRight}
+      cursorOnHover={cursorOnHover}
     >
       {children}
     </ButtonWrapper>
@@ -86,7 +88,8 @@ Button.propTypes = {
   fromTop: PropTypes.string,
   fromLeft: PropTypes.string,
   fromRight: PropTypes.string,
-  isDisabled: PropTypes.bool,
+  isDisabled: PropTypes.number,
+  cursorOnHover: PropTypes.string,
 };
 
 Button.defaultProps = {
@@ -112,7 +115,8 @@ Button.defaultProps = {
   fromLeft: '',
   fromBottom: '',
   fromTop: '',
-  isDisabled: false,
+  isDisabled: 0,
+  cursorOnHover: 'pointer',
 };
 
 const ButtonWrapper = styled.button`
@@ -141,6 +145,7 @@ const ButtonWrapper = styled.button`
 
   :hover {
     transform: ${({ transform }) => transform && transform};
+    cursor: ${({ cursorOnHover }) => cursorOnHover && cursorOnHover};
   }
 `;
 

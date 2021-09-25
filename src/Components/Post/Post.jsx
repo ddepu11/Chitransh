@@ -19,6 +19,7 @@ const Post = ({ post }) => {
   const {
     unSavePost,
     savePost,
+    comment,
     dislikeThePost,
     didYouSavedThePost,
     likeThePost,
@@ -27,6 +28,8 @@ const Post = ({ post }) => {
     showPreviousImage,
     whenWasThePostCreated,
     currentImageIndex,
+    handleComment,
+    postComment,
   } = usePostLogic(post);
 
   return (
@@ -117,15 +120,23 @@ const Post = ({ post }) => {
       <span className='when_uploaded'>{whenWasThePostCreated}</span>
 
       <div className='comment_box flex'>
-        <input type='text' placeholder='Add a comment...' />
+        <input
+          type='text'
+          placeholder='Add a comment...'
+          value={comment}
+          onChange={handleComment}
+        />
 
         <Button
           type='button'
           bgColor='transparent'
-          transform='scale(1)'
-          color='#0095f6'
+          color={comment ? '#0095f6' : '#92c9ee'}
           fs='0.9em'
-          isDisabled={false}
+          isDisabled={comment ? 0 : 1}
+          handleClick={postComment}
+          transform='scale(1)'
+          transition='all 0.5s ease'
+          cursorOnHover={comment ? 'pointer' : 'default'}
         >
           <span style={{ fontWeight: '700' }}>Post</span>
         </Button>

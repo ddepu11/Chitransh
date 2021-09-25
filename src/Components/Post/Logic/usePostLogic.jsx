@@ -13,10 +13,11 @@ import useUserOperation from '../../useUserOperations';
 const usePostLogic = (post) => {
   const dispatch = useDispatch();
 
-  const { createdOn, images } = post;
-
   const { id, info } = useSelector((state) => state.user.value);
 
+  const { createdOn, images } = post;
+
+  // Calculating when was the post was created
   const currentTimeInMs = new Date().getTime() - createdOn;
 
   // 1s  = 1000ms
@@ -50,7 +51,9 @@ const usePostLogic = (post) => {
   if (days !== 0) {
     whenWasThePostCreated = `${days}d ago`;
   }
+  // ################## Calculating when was the post created  Ends #####################
 
+  // Navigate through images if there are more then 1 image
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const showPreviousImage = () => {
@@ -70,7 +73,9 @@ const usePostLogic = (post) => {
       }
     });
   };
+  // ########################## Navigate through images ends #############################
 
+  // like/dislike Post
   const { updatePostsDocFields, getUpdatedPosts } = usePostsOperation();
   const { getUpdatedUserDoc } = useUserOperation(id);
 
@@ -137,7 +142,9 @@ const usePostLogic = (post) => {
       }
     }
   };
+  // ############################### like/dislike Post ends #####################################
 
+  // Saving/Unsaving Post
   let didYouSavedThePost = false;
 
   if (info.savedPostsIds.filter((item) => item === post.id).length === 1) {
@@ -185,6 +192,17 @@ const usePostLogic = (post) => {
       }
     }
   };
+  // ################################ Saving/Unsaving Post Ends ###################################
+
+  const [comment, setComment] = useState('');
+
+  const handleComment = (e) => {
+    setComment(e.target.value);
+  };
+
+  const postComment = () => {
+    console.log(comment);
+  };
 
   return {
     unSavePost,
@@ -197,6 +215,9 @@ const usePostLogic = (post) => {
     showPreviousImage,
     whenWasThePostCreated,
     currentImageIndex,
+    comment,
+    postComment,
+    handleComment,
   };
 };
 
