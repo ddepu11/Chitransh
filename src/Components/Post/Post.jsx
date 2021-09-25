@@ -122,6 +122,14 @@ const Post = ({ post }) => {
             <p className='comment' key={item.id}>
               <span className='user_name'>{item.userName}</span>
               {item.comment}
+
+              <div className='dp' style={{ width: '20px', height: '20px' }}>
+                <img
+                  src={item.userDpUrl === '' ? dummyDp : item.userDpUrl}
+                  alt='s'
+                  style={{ width: '100%', height: '100%', borderRadius: '50%' }}
+                />
+              </div>
             </p>
           ))}
         </div>

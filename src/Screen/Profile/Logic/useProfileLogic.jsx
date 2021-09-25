@@ -15,6 +15,7 @@ import {
 import { userLoadingBegins, userLoadingEnds } from '../../../features/user';
 import useUserOperation from '../../../Components/useUserOperations';
 import usePostsOperation from '../../../Components/usePostsOperation';
+import useCommentOperation from '../../../Components/useCommentOperation';
 
 const useProfileLogic = () => {
   const dispatch = useDispatch();
@@ -40,6 +41,7 @@ const useProfileLogic = () => {
   const { getUpdatedUserDoc, updateUserDoc } = useUserOperation();
 
   const { getUpdatedPosts, updatePostsDocFields } = usePostsOperation();
+  const { updateCommentPostFields } = useCommentOperation();
 
   // If Display was never set
   const uploadPicAndUpdateUserDoc = async (imageToUpload) => {
@@ -67,6 +69,10 @@ const useProfileLogic = () => {
       );
 
       await updatePostsDocFields('userId', '==', id, {
+        userDpUrl: downloadURL,
+      });
+
+      await updateCommentPostFields('userId', '==', id, {
         userDpUrl: downloadURL,
       });
 
@@ -115,6 +121,10 @@ const useProfileLogic = () => {
 
       // $##$#$#$#$#$#$ Update useDpUrl field in all his posts ##############
       await updatePostsDocFields('userId', '==', id, {
+        userDpUrl: downloadURL,
+      });
+
+      await updateCommentPostFields('userId', '==', id, {
         userDpUrl: downloadURL,
       });
 
@@ -167,6 +177,10 @@ const useProfileLogic = () => {
       // $##$#$#$#$#$#$ Update useDpUrl field in all his posts ##############
       await updatePostsDocFields('userId', '==', id, { userDpUrl: '' });
 
+      await updateCommentPostFields('userId', '==', id, {
+        userDpUrl: '',
+      });
+
       await getUpdatedUserDoc(id);
 
       await getUpdatedPosts();
@@ -177,6 +191,7 @@ const useProfileLogic = () => {
       dispatch(userLoadingEnds());
     }
   };
+
   // #@@#@#@#@#@@## All Dp Related Ends #$#$$#$#$#$#$##$#$
 
   // handling nav
