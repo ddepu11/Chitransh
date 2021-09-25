@@ -1,11 +1,11 @@
 import styled from 'styled-components';
 import HomeIcon from '@material-ui/icons/Home';
-import AddBoxOutlinedIcon from '@material-ui/icons/AddBoxOutlined';
+import AddPhotoAlternateOutlinedIcon from '@material-ui/icons/AddPhotoAlternateOutlined';
+import AddPhotoAlternate from '@material-ui/icons/AddPhotoAlternate';
 import FavoriteBorderOutlinedIcon from '@material-ui/icons/FavoriteBorderOutlined';
 import { Link } from 'react-router-dom';
 import HomeOutlinedIcon from '@material-ui/icons/HomeOutlined';
 import FavoriteOutlinedIcon from '@material-ui/icons/FavoriteOutlined';
-import AddBoxIcon from '@material-ui/icons/AddBox';
 import AccountCircleRoundedIcon from '@material-ui/icons/AccountCircleRounded';
 import BookmarkBorderOutlinedIcon from '@material-ui/icons/BookmarkBorderOutlined';
 import Button from '../../Components/Button';
@@ -71,13 +71,12 @@ const Navbar = () => {
             )}
 
             {activeIcon === 'add' ? (
-              <AddBoxIcon className='ic_add' />
+              <AddPhotoAlternate className='ic_add' />
             ) : (
-              <AddBoxOutlinedIcon
+              <AddPhotoAlternateOutlinedIcon
                 className='ic_add'
                 data-icon='add'
                 onClick={handleActiveIcon}
-                // style={{ border: '1px solid red' }}
               />
             )}
 

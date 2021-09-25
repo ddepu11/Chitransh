@@ -23,7 +23,7 @@ const useNavbarLogic = () => {
   useEffect(() => {
     const handleOnDocumentClick = (e) => {
       e.target.matches('.profile');
-
+      console.log(e.target);
       if (
         e.target.closest('.the_box') === null &&
         !e.target.matches('.ava_img') &&
@@ -43,6 +43,8 @@ const useNavbarLogic = () => {
 
     document.addEventListener('click', handleOnDocumentClick);
 
+    console.log(activeIcon);
+
     return () => {
       document.removeEventListener('click', handleOnDocumentClick);
     };
@@ -50,9 +52,13 @@ const useNavbarLogic = () => {
 
   const handleActiveIcon = (e) => {
     const icon = e.currentTarget.getAttribute('data-icon');
+
     setActiveIcon(icon);
-    // Show Drop Down
-    dropDownFromAvatar.current.classList.add('active');
+
+    if (icon === 'avatar') {
+      // Show Drop Down
+      dropDownFromAvatar.current.classList.add('active');
+    }
   };
 
   const handleLogOut = () => {
