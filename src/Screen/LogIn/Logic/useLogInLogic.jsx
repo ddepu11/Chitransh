@@ -75,7 +75,17 @@ const useLogInLogic = () => {
   const loginAsRandomUser = () => {
     dispatch(userLoadingBegins());
 
-    signInWithEmailAndPassword(authInstance, 'ddepu11@gmail.com', 'aaaaaa')
+    const users = [
+      { email: 'ddepu11@gmail.com', password: 'aaaaaa' },
+      { email: 'mohan11@gmail.com', password: '111111' },
+    ];
+    const randomUsers = Math.floor(Math.random() * users.length);
+
+    signInWithEmailAndPassword(
+      authInstance,
+      users[randomUsers].email,
+      users[randomUsers].password
+    )
       .then(() => {})
       .catch((err) => {
         dispatch(notificationShowError({ msg: err.code.toString().slice(5) }));

@@ -22,8 +22,6 @@ const useNavbarLogic = () => {
 
   useEffect(() => {
     const handleOnDocumentClick = (e) => {
-      e.target.matches('.profile');
-      console.log(e.target);
       if (
         e.target.closest('.the_box') === null &&
         !e.target.matches('.ava_img') &&
@@ -42,8 +40,6 @@ const useNavbarLogic = () => {
     };
 
     document.addEventListener('click', handleOnDocumentClick);
-
-    console.log(activeIcon);
 
     return () => {
       document.removeEventListener('click', handleOnDocumentClick);
