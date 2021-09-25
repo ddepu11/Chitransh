@@ -4,6 +4,7 @@ import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import FavoriteBorderOutlinedIcon from '@material-ui/icons/FavoriteBorderOutlined';
 // import FavoriteOutlinedIcon from '@material-ui/icons/FavoriteOutlined';
 import ModeCommentOutlinedIcon from '@material-ui/icons/ModeCommentOutlined';
+import FiberManualRecordRounded from '@material-ui/icons/FiberManualRecordRounded';
 // import BookmarkIcon from '@material-ui/icons/Bookmark';
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
 import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
@@ -87,7 +88,16 @@ const Post = ({ post }) => {
           <ModeCommentOutlinedIcon className='ic_comment' />
         </div>
 
-        <div className='which_no_of_image'>a</div>
+        {images.length > 1 && (
+          <div className='which_no_of_image'>
+            {images.map(({ url }, index) => (
+              <FiberManualRecordRounded
+                key={url}
+                className={`${index === currentImageIndex && `active`} dots`}
+              />
+            ))}
+          </div>
+        )}
 
         <div className='btn_save'>
           <BookmarkBorderOutlinedIcon className='ic_save' />
@@ -210,9 +220,9 @@ const Wrapper = styled.main`
   }
 
   .btns {
-    padding: 10px 10px 5px;
+    padding: 8px 10px 5px;
     justify-content: space-between;
-
+    align-items: flex-start;
     .btn_left {
       .ic_like,
       .ic_comment {
@@ -228,6 +238,15 @@ const Wrapper = styled.main`
       .ic_comment {
         margin-left: 15px;
       }
+    }
+
+    .dots {
+      color: #8a8a8a;
+      font-size: 0.6em;
+    }
+
+    .dots.active {
+      color: #12a1e4;
     }
 
     .btn_save {

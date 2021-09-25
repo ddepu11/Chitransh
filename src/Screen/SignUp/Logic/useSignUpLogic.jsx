@@ -84,6 +84,8 @@ const useSignUpLogic = () => {
         website: '',
         phoneNumber: '',
         gender: '',
+        following: [],
+        followers: [],
         createdOn: Date.now(),
       });
 
