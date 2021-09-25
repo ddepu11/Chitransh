@@ -2,7 +2,7 @@ import { useState } from 'react';
 import styled from 'styled-components';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import FavoriteBorderOutlinedIcon from '@material-ui/icons/FavoriteBorderOutlined';
-// import FavoriteOutlinedIcon from '@material-ui/icons/FavoriteOutlined';
+import FavoriteOutlinedIcon from '@material-ui/icons/FavoriteOutlined';
 import ModeCommentOutlinedIcon from '@material-ui/icons/ModeCommentOutlined';
 import FiberManualRecordRounded from '@material-ui/icons/FiberManualRecordRounded';
 // import BookmarkIcon from '@material-ui/icons/Bookmark';
@@ -12,14 +12,26 @@ import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
 
 import PropsType from 'prop-types';
 import BookmarkBorderOutlinedIcon from '@material-ui/icons/BookmarkBorderOutlined';
-import { updateDoc, doc, increment } from 'firebase/firestore';
+import { useDispatch, useSelector } from 'react-redux';
+import { doc, arrayUnion, updateDoc, arrayRemove } from 'firebase/firestore';
 import { firestoreInstance } from '../../config/firebase';
+import { userLoadingBegins, userLoadingEnds } from '../../features/user';
+import {
+  notificationShowError,
+  notificationShowSuccess,
+} from '../../features/notification';
+import usePostsOperation from '../usePostsOperation';
+import useUserOperation from '../useUserOperations';
 import Button from '../Button';
 import dummyDp from '../../images/dummyDp.png';
 
 const Post = ({ post }) => {
+  const dispatch = useDispatch();
+
   const { caption, comments, createdOn, images, likes, userDpUrl, userName } =
     post;
+
+  const { id, info } = useSelector((state) => state.user.value);
 
   const currentTimeInMs = new Date().getTime() - createdOn;
 
@@ -56,17 +68,74 @@ const Post = ({ post }) => {
     });
   };
 
+  const { updatePostsDocFields, getUpdatedPosts } = usePostsOperation();
+  const { getUpdatedUserDoc } = useUserOperation(id);
+
+  let didYouLikedThePost = false;
+
+  if (info.likedPostsIds.filter((item) => item === post.id).length === 1) {
+    didYouLikedThePost = true;
+  }
+
   const likeThePost = async () => {
-    // usePostsOperation;
-    console.log('like the post');
-    console.log(post);
+    if (!didYouLikedThePost) {
+      console.log('LIke');
+      dispatch(userLoadingBegins());
 
-    const postRef = doc(firestoreInstance, 'posts', 'DC');
+      try {
+        const userDocRef = doc(firestoreInstance, 'users', id);
 
-    // Atomically increment the population of the city by 50.
-    await updateDoc(postRef, {
-      population: increment(50),
-    });
+        await updateDoc(userDocRef, { likedPostsIds: arrayUnion(post.id) });
+
+        await updatePostsDocFields('id', '==', post.id, {
+          likes: post.likes + 1,
+        });
+
+        await getUpdatedUserDoc();
+
+        await getUpdatedPosts();
+
+        dispatch(userLoadingEnds());
+
+        dispatch(
+          notificationShowSuccess({ msg: 'Successfully liked the song!' })
+        );
+      } catch (err) {
+        dispatch(notificationShowError({ msg: err.code.toString().slice(5) }));
+        dispatch(userLoadingEnds());
+      }
+    }
+  };
+
+  const dislikeThePost = async () => {
+    if (didYouLikedThePost) {
+      dispatch(userLoadingBegins());
+
+      try {
+        console.log('dislike');
+
+        const userDocRef = doc(firestoreInstance, 'users', id);
+
+        await updateDoc(userDocRef, { likedPostsIds: arrayRemove(post.id) });
+
+        await updatePostsDocFields('id', '==', post.id, {
+          likes: post.likes - 1,
+        });
+
+        await getUpdatedUserDoc();
+
+        await getUpdatedPosts();
+
+        dispatch(userLoadingEnds());
+
+        dispatch(
+          notificationShowSuccess({ msg: 'Successfully liked the song!' })
+        );
+      } catch (err) {
+        dispatch(notificationShowError({ msg: err.code.toString().slice(5) }));
+        dispatch(userLoadingEnds());
+      }
+    }
   };
 
   return (
@@ -99,9 +168,18 @@ const Post = ({ post }) => {
 
       <div className='btns flex'>
         <div className='btn_left flex'>
-          <FavoriteBorderOutlinedIcon className='ic_like' />
-          {/* <FavoriteOutlinedIcon className='ic_dislike' /> */}
-
+          {/* {console.log(didYouLikedThePost)} */}
+          {didYouLikedThePost ? (
+            <FavoriteOutlinedIcon
+              className='ic_dislike'
+              onClick={dislikeThePost}
+            />
+          ) : (
+            <FavoriteBorderOutlinedIcon
+              className='ic_like'
+              onClick={likeThePost}
+            />
+          )}
           <ModeCommentOutlinedIcon className='ic_comment' />
         </div>
 
@@ -248,7 +326,13 @@ const Wrapper = styled.main`
         color: #333;
       }
 
+      .ic_dislike {
+        font-size: 2em;
+        color: rgb(230, 57, 71);
+      }
+
       .ic_like,
+      .ic_dislike,
       .ic_comment:hover {
         cursor: pointer;
       }

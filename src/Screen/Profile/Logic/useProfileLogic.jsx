@@ -164,7 +164,6 @@ const useProfileLogic = () => {
 
       dispatch(notificationShowSuccess({ msg: 'Successfully removed  dp!' }));
     } catch (err) {
-      console.log(err.code);
       dispatch(notificationShowError({ msg: err.code.toString().slice(5) }));
       dispatch(userLoadingEnds());
     }
