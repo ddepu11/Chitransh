@@ -15,7 +15,6 @@ import {
   notificationShowError,
   notificationShowSuccess,
 } from '../../../features/notification';
-import { userLoadingBegins, userLoadingEnds } from '../../../features/user';
 import usePostsOperation from '../../usePostsOperation';
 import useUserOperation from '../../useUserOperations';
 
@@ -115,11 +114,10 @@ const usePostLogic = (post) => {
         setLoading(false);
 
         dispatch(
-          notificationShowSuccess({ msg: 'Successfully liked the song!' })
+          notificationShowSuccess({ msg: 'Successfully liked the post!' })
         );
       } catch (err) {
         dispatch(notificationShowError({ msg: err.code.toString().slice(5) }));
-        dispatch(userLoadingEnds());
         setLoading(false);
       }
     }
@@ -145,11 +143,10 @@ const usePostLogic = (post) => {
         setLoading(false);
 
         dispatch(
-          notificationShowSuccess({ msg: 'Successfully disliked the song!' })
+          notificationShowSuccess({ msg: 'Successfully disliked the post!' })
         );
       } catch (err) {
         dispatch(notificationShowError({ msg: err.code.toString().slice(5) }));
-        dispatch(userLoadingEnds());
         setLoading(false);
       }
     }
@@ -177,11 +174,10 @@ const usePostLogic = (post) => {
         setLoading(false);
 
         dispatch(
-          notificationShowSuccess({ msg: 'Successfully saved the song!' })
+          notificationShowSuccess({ msg: 'Successfully saved the post!' })
         );
       } catch (err) {
         dispatch(notificationShowError({ msg: err.code.toString().slice(5) }));
-        dispatch(userLoadingEnds());
         setLoading(false);
       }
     }
@@ -189,7 +185,7 @@ const usePostLogic = (post) => {
 
   const unSavePost = async () => {
     if (didYouSavedThePost) {
-      dispatch(userLoadingBegins());
+      setLoading(true);
 
       try {
         const userDocRef = doc(firestoreInstance, 'users', id);
@@ -198,10 +194,10 @@ const usePostLogic = (post) => {
 
         await getUpdatedUserDoc();
 
-        dispatch(userLoadingEnds());
+        setLoading(false);
       } catch (err) {
         dispatch(notificationShowError({ msg: err.code.toString().slice(5) }));
-        dispatch(userLoadingEnds());
+        setLoading(false);
       }
     }
   };
@@ -239,10 +235,10 @@ const usePostLogic = (post) => {
 
       await getUpdatedPosts();
 
+      dispatch(notificationShowSuccess({ msg: 'successfully commented!' }));
       setLoading(false);
     } catch (err) {
       dispatch(notificationShowError({ msg: err.code.toString().slice(5) }));
-      dispatch(userLoadingEnds());
       setComment('');
       setLoading(false);
     }
