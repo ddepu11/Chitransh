@@ -138,7 +138,7 @@ const Wrapper = styled.nav`
   position: sticky;
   top: 0px;
   background-color: #fff;
-  z-index: 9;
+  z-index: 11;
 
   .instagram {
     font-family: 'Cookie', cursive;

@@ -30,10 +30,17 @@ const Post = ({ post }) => {
     currentImageIndex,
     handleComment,
     postComment,
+    loading,
   } = usePostLogic(post);
 
   return (
     <Wrapper>
+      {loading && (
+        <PostLoader>
+          <h3>Loading...</h3>
+        </PostLoader>
+      )}
+
       <div className='post_top flex'>
         <div className='left flex'>
           <div className='dp'>
@@ -110,10 +117,12 @@ const Post = ({ post }) => {
 
       {comments.length !== 0 && (
         <div className='comments'>
-          <p className='comment'>
-            <span className='user_name'>singh.shares</span>
-            So Nikhil Is Bigger Than Burj Khalifa 😂
-          </p>
+          {comments.map((item) => (
+            <p className='comment' key={item.userId}>
+              <span className='user_name'>{item.userName}</span>
+              {item.comment}
+            </p>
+          ))}
         </div>
       )}
 
@@ -148,6 +157,7 @@ const Post = ({ post }) => {
 const Wrapper = styled.main`
   margin-bottom: 30px;
   border: 1px solid #c7c7c786;
+  position: relative;
 
   .post_top {
     justify-content: space-between;
@@ -330,6 +340,23 @@ const Wrapper = styled.main`
       font-size: 0.8em;
       color: #5d5d5d;
     }
+  }
+`;
+
+const PostLoader = styled.main`
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  background-color: #333333;
+  opacity: 0.6;
+  z-index: 10;
+  display: grid;
+  place-items: center;
+
+  h3 {
+    color: #eeeeee;
+    font-size: 2.5em;
   }
 `;
 

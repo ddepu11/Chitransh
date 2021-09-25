@@ -1,6 +1,15 @@
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { doc, arrayUnion, updateDoc, arrayRemove } from 'firebase/firestore';
+import {
+  doc,
+  arrayUnion,
+  arrayRemove,
+  collection,
+  getDocs,
+  updateDoc,
+  where,
+  query,
+} from 'firebase/firestore';
 import { firestoreInstance } from '../../../config/firebase';
 import {
   notificationShowError,
@@ -11,6 +20,7 @@ import usePostsOperation from '../../usePostsOperation';
 import useUserOperation from '../../useUserOperations';
 
 const usePostLogic = (post) => {
+  const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
 
   const { id, info } = useSelector((state) => state.user.value);
@@ -200,11 +210,43 @@ const usePostLogic = (post) => {
     setComment(e.target.value);
   };
 
-  const postComment = () => {
-    console.log(comment);
+  const postComment = async () => {
+    setLoading(true);
+    const finalComment = {
+      userName: info.userName,
+      userId: id,
+      userDpUrl: info.dp.url,
+      comment,
+    };
+
+    try {
+      const postsCollectionReference = collection(firestoreInstance, 'posts');
+
+      const q = query(postsCollectionReference, where('id', '==', post.id));
+
+      const querySnapshot = await getDocs(q);
+
+      querySnapshot.forEach(async (p) => {
+        await updateDoc(doc(firestoreInstance, 'posts', p.id), {
+          comments: arrayUnion(finalComment),
+        });
+      });
+
+      setComment('');
+
+      await getUpdatedPosts();
+
+      setLoading(false);
+    } catch (err) {
+      dispatch(notificationShowError({ msg: err.code.toString().slice(5) }));
+      dispatch(userLoadingEnds());
+      setComment('');
+      setLoading(false);
+    }
   };
 
   return {
+    loading,
     unSavePost,
     savePost,
     dislikeThePost,
