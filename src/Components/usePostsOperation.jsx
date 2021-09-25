@@ -13,8 +13,10 @@ import { storeAllPosts } from '../features/posts';
 const usePostsOperation = (userIdInPostDocs) => {
   const dispatch = useDispatch();
 
+  const postsCollectionReference = collection(firestoreInstance, 'posts');
+
   const getUpdatedPosts = async () => {
-    const postsSnapshot = await getDocs(collection(firestoreInstance, 'posts'));
+    const postsSnapshot = await getDocs(postsCollectionReference);
 
     let index = 0;
 
@@ -33,7 +35,7 @@ const usePostsOperation = (userIdInPostDocs) => {
 
   const updatePostsDocFields = async (dataToUpdate) => {
     const q = query(
-      collection(firestoreInstance, 'posts'),
+      postsCollectionReference,
       where('userId', '==', userIdInPostDocs)
     );
     const querySnapshot = await getDocs(q);

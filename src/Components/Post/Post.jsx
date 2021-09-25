@@ -1,15 +1,15 @@
+import { useState } from 'react';
 import styled from 'styled-components';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import FavoriteBorderOutlinedIcon from '@material-ui/icons/FavoriteBorderOutlined';
-import FavoriteOutlinedIcon from '@material-ui/icons/FavoriteOutlined';
+// import FavoriteOutlinedIcon from '@material-ui/icons/FavoriteOutlined';
 import ModeCommentOutlinedIcon from '@material-ui/icons/ModeCommentOutlined';
-import BookmarkIcon from '@material-ui/icons/Bookmark';
+// import BookmarkIcon from '@material-ui/icons/Bookmark';
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
 import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
 import PropsType from 'prop-types';
 import BookmarkBorderOutlinedIcon from '@material-ui/icons/BookmarkBorderOutlined';
 import Button from '../Button';
-import { useState } from 'react';
 import dummyDp from '../../images/dummyDp.png';
 
 const Post = ({ post }) => {

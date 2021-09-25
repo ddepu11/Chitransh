@@ -1,24 +1,20 @@
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import isEmpty from 'validator/lib/isEmpty';
 import isLength from 'validator/lib/isLength';
 import contains from 'validator/lib/contains';
 import isAlpha from 'validator/lib/isAlpha';
 import isMobilePhone from 'validator/lib/isMobilePhone';
+import useUserOperation from '../../../Components/useUserOperations';
+import usePostsOperation from '../../../Components/usePostsOperation';
 import setValidationMessage from '../../../utils/setValidationMessage';
 
-import { firestoreInstance } from '../../../config/firebase';
 import {
   notificationShowError,
   notificationShowInfo,
   notificationShowSuccess,
 } from '../../../features/notification';
-import {
-  updateInfo,
-  userLoadingBegins,
-  userLoadingEnds,
-} from '../../../features/user';
+import { userLoadingBegins, userLoadingEnds } from '../../../features/user';
 import clearAllSetTimeoutOrSetInterval from '../../../utils/clearAllSetTimeoutOrSetInterval';
 
 const useEditAccount = () => {
@@ -80,19 +76,17 @@ const useEditAccount = () => {
 
   const openDialogBox = () => setHandlingChangeGender(true);
 
+  const { getUpdatedUserDoc, updateUserDoc } = useUserOperation(id);
+
   const changeGender = async () => {
     if (gender) {
       dispatch(userLoadingBegins());
       closeDialogBox();
 
-      const userRef = doc(firestoreInstance, 'users', id);
-
       try {
-        await updateDoc(userRef, { gender });
+        await updateUserDoc({ gender });
+        await getUpdatedUserDoc();
 
-        const docSnap = await getDoc(userRef);
-
-        dispatch(updateInfo(docSnap.data()));
         setGender(gender);
 
         dispatch(
@@ -107,6 +101,7 @@ const useEditAccount = () => {
       }
     } else {
       dispatch(notificationShowInfo({ msg: 'Please select any gender!' }));
+      closeDialogBox();
     }
   };
 
@@ -317,18 +312,22 @@ const useEditAccount = () => {
     return errorFlag;
   };
 
+  const { updatePostsDocFields, getUpdatedPosts } = usePostsOperation(id);
+
   const updateInfoInFirebase = async (doesErrorExists) => {
     if (!doesErrorExists) {
       dispatch(userLoadingBegins());
 
-      const userRef = doc(firestoreInstance, 'users', id);
-
       try {
-        await updateDoc(userRef, userInfo);
+        await updateUserDoc(userInfo);
 
-        const docSnap = await getDoc(userRef);
+        if (info.userName !== userInfo.userName) {
+          await updatePostsDocFields({ userName: userInfo.userName });
+          await getUpdatedPosts();
+        }
 
-        dispatch(updateInfo(docSnap.data()));
+        await getUpdatedUserDoc();
+
         setGender(gender);
 
         dispatch(
