@@ -1,20 +1,32 @@
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { useDispatch } from 'react-redux';
 import { firestoreInstance } from '../config/firebase';
-import { updateInfo } from '../features/user';
+import { notificationShowError } from '../features/notification';
+import { updateInfo, userLoadingEnds } from '../features/user';
 
-const useUserOperation = (docId) => {
+const useUserOperation = () => {
   const dispatch = useDispatch();
 
-  const userDocRef = doc(firestoreInstance, 'users', docId);
+  const getUpdatedUserDoc = async (docId) => {
+    try {
+      const userDocRef = doc(firestoreInstance, 'users', docId);
 
-  const getUpdatedUserDoc = async () => {
-    const docSnap = await getDoc(userDocRef);
-    dispatch(updateInfo(docSnap.data()));
+      const docSnap = await getDoc(userDocRef);
+      dispatch(updateInfo(docSnap.data()));
+    } catch (err) {
+      dispatch(notificationShowError({ msg: err.code.toString().slice(5) }));
+      dispatch(userLoadingEnds());
+    }
   };
 
-  const updateUserDoc = async (data) => {
-    await updateDoc(userDocRef, data);
+  const updateUserDoc = async (data, docId) => {
+    try {
+      const userDocRef = doc(firestoreInstance, 'users', docId);
+      await updateDoc(userDocRef, data);
+    } catch (err) {
+      dispatch(notificationShowError({ msg: err.code.toString().slice(5) }));
+      dispatch(userLoadingEnds());
+    }
   };
 
   return { getUpdatedUserDoc, updateUserDoc };

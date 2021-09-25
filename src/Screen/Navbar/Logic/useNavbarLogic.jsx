@@ -59,6 +59,8 @@ const useNavbarLogic = () => {
     authInstance
       .signOut()
       .then(() => {
+        history.push('/login');
+
         dispatch(notificationShowInfo({ msg: 'Successfully logged out' }));
       })
       .catch((err) => {

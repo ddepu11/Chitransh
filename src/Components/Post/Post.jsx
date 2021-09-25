@@ -14,7 +14,7 @@ import dummyDp from '../../images/dummyDp.png';
 import usePostLogic from './Logic/usePostLogic';
 
 const Post = ({ post }) => {
-  const { caption, comments, images, likes, userDpUrl, userName } = post;
+  const { caption, images, likes, userDpUrl, userName } = post;
 
   const {
     unSavePost,
@@ -31,6 +31,7 @@ const Post = ({ post }) => {
     handleComment,
     postComment,
     loading,
+    comments,
   } = usePostLogic(post);
 
   return (
@@ -118,7 +119,7 @@ const Post = ({ post }) => {
       {comments.length !== 0 && (
         <div className='comments'>
           {comments.map((item) => (
-            <p className='comment' key={item.comment}>
+            <p className='comment' key={item.id}>
               <span className='user_name'>{item.userName}</span>
               {item.comment}
             </p>

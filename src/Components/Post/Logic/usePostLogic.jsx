@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   doc,
@@ -9,7 +9,10 @@ import {
   updateDoc,
   where,
   query,
+  addDoc,
+  getDoc,
 } from 'firebase/firestore';
+import { v4 as uuidv4 } from 'uuid';
 import { firestoreInstance } from '../../../config/firebase';
 import {
   notificationShowError,
@@ -20,6 +23,7 @@ import useUserOperation from '../../useUserOperations';
 
 const usePostLogic = (post) => {
   const [loading, setLoading] = useState(false);
+
   const dispatch = useDispatch();
 
   const { id, info } = useSelector((state) => state.user.value);
@@ -90,7 +94,10 @@ const usePostLogic = (post) => {
 
   let didYouLikedThePost = false;
 
-  if (info.likedPostsIds.filter((item) => item === post.id).length === 1) {
+  if (
+    info &&
+    info.likedPostsIds.filter((item) => item === post.id).length === 1
+  ) {
     didYouLikedThePost = true;
   }
 
@@ -107,7 +114,7 @@ const usePostLogic = (post) => {
           likes: post.likes + 1,
         });
 
-        await getUpdatedUserDoc();
+        await getUpdatedUserDoc(id);
 
         await getUpdatedPosts();
 
@@ -136,7 +143,7 @@ const usePostLogic = (post) => {
           likes: post.likes - 1,
         });
 
-        await getUpdatedUserDoc();
+        await getUpdatedUserDoc(id);
 
         await getUpdatedPosts();
 
@@ -156,7 +163,10 @@ const usePostLogic = (post) => {
   // Saving/Unsaving Post
   let didYouSavedThePost = false;
 
-  if (info.savedPostsIds.filter((item) => item === post.id).length === 1) {
+  if (
+    info &&
+    info.savedPostsIds.filter((item) => item === post.id).length === 1
+  ) {
     didYouSavedThePost = true;
   }
 
@@ -169,7 +179,7 @@ const usePostLogic = (post) => {
 
         await updateDoc(userDocRef, { savedPostsIds: arrayUnion(post.id) });
 
-        await getUpdatedUserDoc();
+        await getUpdatedUserDoc(id);
 
         setLoading(false);
 
@@ -192,7 +202,7 @@ const usePostLogic = (post) => {
 
         await updateDoc(userDocRef, { savedPostsIds: arrayRemove(post.id) });
 
-        await getUpdatedUserDoc();
+        await getUpdatedUserDoc(id);
 
         setLoading(false);
       } catch (err) {
@@ -201,8 +211,10 @@ const usePostLogic = (post) => {
       }
     }
   };
+
   // ################################ Saving/Unsaving Post Ends ###################################
 
+  const [comments, setComments] = useState([]);
   const [comment, setComment] = useState('');
 
   const handleComment = (e) => {
@@ -211,7 +223,9 @@ const usePostLogic = (post) => {
 
   const postComment = async () => {
     setLoading(true);
+
     const finalComment = {
+      id: uuidv4(),
       userName: info.userName,
       userId: id,
       userDpUrl: info.dp.url,
@@ -219,22 +233,31 @@ const usePostLogic = (post) => {
     };
 
     try {
+      const commentRef = await addDoc(
+        collection(firestoreInstance, 'comments'),
+        finalComment
+      );
+
+      // Add id in post comment array
       const postsCollectionReference = collection(firestoreInstance, 'posts');
-
       const q = query(postsCollectionReference, where('id', '==', post.id));
-
       const querySnapshot = await getDocs(q);
 
       querySnapshot.forEach(async (p) => {
         await updateDoc(doc(firestoreInstance, 'posts', p.id), {
-          comments: arrayUnion(finalComment),
+          comments: arrayUnion(commentRef.id),
         });
       });
 
+      // $%$$#$#$##$#$# Seperation #$#$$##$##$#
+      const docRef = doc(firestoreInstance, 'comments', commentRef.id);
+      const commentSnap = await getDoc(docRef);
+
+      if (commentSnap.exists()) {
+        setComments((prevState) => [...prevState, commentSnap.data()]);
+      }
+
       setComment('');
-
-      await getUpdatedPosts();
-
       dispatch(notificationShowSuccess({ msg: 'successfully commented!' }));
       setLoading(false);
     } catch (err) {
@@ -243,6 +266,30 @@ const usePostLogic = (post) => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    const getComments = async () => {
+      const newComments = [];
+
+      post.comments.forEach(async (item, index) => {
+        const commentRef = doc(firestoreInstance, 'comments', item);
+
+        const cmtSnap = await getDoc(commentRef);
+
+        if (cmtSnap.exists()) {
+          newComments.push(cmtSnap.data());
+        }
+
+        if (index === post.comments.length - 1) {
+          setComments(newComments);
+        }
+      });
+    };
+
+    if (post.comments.length !== 0 && comments.length === 0) {
+      getComments();
+    }
+  }, [comments.length, post.comments]);
 
   return {
     loading,
@@ -257,6 +304,7 @@ const usePostLogic = (post) => {
     whenWasThePostCreated,
     currentImageIndex,
     comment,
+    comments,
     postComment,
     handleComment,
   };

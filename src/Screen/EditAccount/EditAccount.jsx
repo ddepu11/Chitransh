@@ -263,7 +263,7 @@ const ChangeGenderDialog = styled.div`
   background: rgba(0, 0, 0, 0.65);
   display: grid;
   place-content: center;
-  z-index: 9;
+  z-index: 13;
 
   .center_box {
     width: 30vw;

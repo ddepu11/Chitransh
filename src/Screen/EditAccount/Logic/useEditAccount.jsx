@@ -16,6 +16,7 @@ import {
 } from '../../../features/notification';
 import { userLoadingBegins, userLoadingEnds } from '../../../features/user';
 import clearAllSetTimeoutOrSetInterval from '../../../utils/clearAllSetTimeoutOrSetInterval';
+import useCommentOperation from '../../../Components/useCommentOperation';
 
 const useEditAccount = () => {
   const dispatch = useDispatch();
@@ -55,8 +56,6 @@ const useEditAccount = () => {
   const handleInput = (e) => {
     const { name, value } = e.target;
 
-    // console.log({ name, value });
-
     setUserInfo({ ...userInfo, [name]: value });
   };
 
@@ -81,11 +80,13 @@ const useEditAccount = () => {
   const changeGender = async () => {
     if (gender) {
       dispatch(userLoadingBegins());
+
       closeDialogBox();
 
       try {
-        await updateUserDoc({ gender });
-        await getUpdatedUserDoc();
+        await updateUserDoc({ gender }, id);
+
+        await getUpdatedUserDoc(id);
 
         setGender(gender);
 
@@ -313,24 +314,28 @@ const useEditAccount = () => {
   };
 
   const { updatePostsDocFields, getUpdatedPosts } = usePostsOperation();
+  const { updateCommentPostFields } = useCommentOperation();
 
   const updateInfoInFirebase = async (doesErrorExists) => {
     if (!doesErrorExists) {
       dispatch(userLoadingBegins());
 
       try {
-        await updateUserDoc(userInfo);
+        await updateUserDoc(userInfo, id);
 
         if (info.userName !== userInfo.userName) {
           await updatePostsDocFields('userId', '==', id, {
             userName: userInfo.userName,
           });
 
-          // await updatePostsDocFields({ userName: userInfo.userName });
-          await getUpdatedPosts();
+          await updateCommentPostFields('userId', '==', id, {
+            userName: userInfo.userName,
+          });
         }
 
-        await getUpdatedUserDoc();
+        await getUpdatedUserDoc(id);
+
+        await getUpdatedPosts();
 
         setGender(gender);
 

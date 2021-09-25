@@ -37,9 +37,9 @@ const useProfileLogic = () => {
     }
   };
 
-  const { getUpdatedUserDoc, updateUserDoc } = useUserOperation(id);
+  const { getUpdatedUserDoc, updateUserDoc } = useUserOperation();
 
-  const { getUpdatedPosts, updatePostsDocFields } = usePostsOperation(id);
+  const { getUpdatedPosts, updatePostsDocFields } = usePostsOperation();
 
   // If Display was never set
   const uploadPicAndUpdateUserDoc = async (imageToUpload) => {
@@ -56,18 +56,21 @@ const useProfileLogic = () => {
       await uploadBytes(dpStorageRef, imageToUpload);
       const downloadURL = await getDownloadURL(dpStorageRef);
 
-      await updateUserDoc({
-        dp: {
-          fileName: randomlyGeneratedName,
-          url: downloadURL,
+      await updateUserDoc(
+        {
+          dp: {
+            fileName: randomlyGeneratedName,
+            url: downloadURL,
+          },
         },
-      });
+        id
+      );
 
       await updatePostsDocFields('userId', '==', id, {
         userDpUrl: downloadURL,
       });
 
-      await getUpdatedUserDoc();
+      await getUpdatedUserDoc(id);
 
       await getUpdatedPosts();
 
@@ -100,19 +103,22 @@ const useProfileLogic = () => {
       const downloadURL = await getDownloadURL(newDpRef);
 
       // Updating user Doc
-      await updateUserDoc({
-        dp: {
-          fileName: randomlyGeneratedName,
-          url: downloadURL,
+      await updateUserDoc(
+        {
+          dp: {
+            fileName: randomlyGeneratedName,
+            url: downloadURL,
+          },
         },
-      });
+        id
+      );
 
       // $##$#$#$#$#$#$ Update useDpUrl field in all his posts ##############
       await updatePostsDocFields('userId', '==', id, {
         userDpUrl: downloadURL,
       });
 
-      await getUpdatedUserDoc();
+      await getUpdatedUserDoc(id);
 
       await getUpdatedPosts();
 
@@ -148,17 +154,20 @@ const useProfileLogic = () => {
     try {
       await deleteObject(dpRef);
 
-      await updateUserDoc({
-        dp: {
-          fileName: 'dummyDp',
-          url: '',
+      await updateUserDoc(
+        {
+          dp: {
+            fileName: 'dummyDp',
+            url: '',
+          },
         },
-      });
+        id
+      );
 
       // $##$#$#$#$#$#$ Update useDpUrl field in all his posts ##############
       await updatePostsDocFields('userId', '==', id, { userDpUrl: '' });
 
-      await getUpdatedUserDoc();
+      await getUpdatedUserDoc(id);
 
       await getUpdatedPosts();
 
