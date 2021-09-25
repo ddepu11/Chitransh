@@ -118,7 +118,7 @@ const Post = ({ post }) => {
       {comments.length !== 0 && (
         <div className='comments'>
           {comments.map((item) => (
-            <p className='comment' key={item.userId}>
+            <p className='comment' key={item.comment}>
               <span className='user_name'>{item.userName}</span>
               {item.comment}
             </p>
@@ -338,7 +338,8 @@ const Wrapper = styled.main`
       /* border: 1px solid red; */
       background-color: transparent;
       font-size: 0.8em;
-      color: #5d5d5d;
+      color: #6b6b6b;
+      font-weight: 700;
     }
   }
 `;

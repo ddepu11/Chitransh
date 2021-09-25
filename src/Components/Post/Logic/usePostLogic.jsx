@@ -97,7 +97,7 @@ const usePostLogic = (post) => {
 
   const likeThePost = async () => {
     if (!didYouLikedThePost) {
-      dispatch(userLoadingBegins());
+      setLoading(true);
 
       try {
         const userDocRef = doc(firestoreInstance, 'users', id);
@@ -112,7 +112,7 @@ const usePostLogic = (post) => {
 
         await getUpdatedPosts();
 
-        dispatch(userLoadingEnds());
+        setLoading(false);
 
         dispatch(
           notificationShowSuccess({ msg: 'Successfully liked the song!' })
@@ -120,13 +120,14 @@ const usePostLogic = (post) => {
       } catch (err) {
         dispatch(notificationShowError({ msg: err.code.toString().slice(5) }));
         dispatch(userLoadingEnds());
+        setLoading(false);
       }
     }
   };
 
   const dislikeThePost = async () => {
     if (didYouLikedThePost) {
-      dispatch(userLoadingBegins());
+      setLoading(true);
 
       try {
         const userDocRef = doc(firestoreInstance, 'users', id);
@@ -141,7 +142,7 @@ const usePostLogic = (post) => {
 
         await getUpdatedPosts();
 
-        dispatch(userLoadingEnds());
+        setLoading(false);
 
         dispatch(
           notificationShowSuccess({ msg: 'Successfully disliked the song!' })
@@ -149,6 +150,7 @@ const usePostLogic = (post) => {
       } catch (err) {
         dispatch(notificationShowError({ msg: err.code.toString().slice(5) }));
         dispatch(userLoadingEnds());
+        setLoading(false);
       }
     }
   };
@@ -163,7 +165,7 @@ const usePostLogic = (post) => {
 
   const savePost = async () => {
     if (!didYouSavedThePost) {
-      dispatch(userLoadingBegins());
+      setLoading(true);
 
       try {
         const userDocRef = doc(firestoreInstance, 'users', id);
@@ -172,7 +174,7 @@ const usePostLogic = (post) => {
 
         await getUpdatedUserDoc();
 
-        dispatch(userLoadingEnds());
+        setLoading(false);
 
         dispatch(
           notificationShowSuccess({ msg: 'Successfully saved the song!' })
@@ -180,6 +182,7 @@ const usePostLogic = (post) => {
       } catch (err) {
         dispatch(notificationShowError({ msg: err.code.toString().slice(5) }));
         dispatch(userLoadingEnds());
+        setLoading(false);
       }
     }
   };
