@@ -10,6 +10,7 @@ import PropsType from 'prop-types';
 import BookmarkBorderOutlinedIcon from '@material-ui/icons/BookmarkBorderOutlined';
 import Button from '../Button';
 import { useState } from 'react';
+import dummyDp from '../../images/dummyDp.png';
 
 const Post = ({ post }) => {
   const { caption, comments, createdOn, images, likes, userDpUrl, userName } =
@@ -55,7 +56,7 @@ const Post = ({ post }) => {
       <div className='post_top flex'>
         <div className='left flex'>
           <div className='dp'>
-            <img src={userDpUrl} alt='' />
+            <img src={userDpUrl === '' ? dummyDp : userDpUrl} alt='' />
           </div>
 
           <h3 className='username'>{userName}</h3>
