@@ -153,7 +153,16 @@ const Post = ({ post }) => {
           <div className='comments'>
             {comments.map((item) => (
               <p className='comment' key={item.id}>
-                <span className='user_name'>{item.userName}</span>
+                <Link
+                  className='user_name'
+                  to={
+                    id === item.userId
+                      ? `/${item.userName}`
+                      : `/profile/${item.userId}/`
+                  }
+                >
+                  {item.userName}
+                </Link>
                 {item.comment}
 
                 <div className='dp' style={{ width: '20px', height: '20px' }}>

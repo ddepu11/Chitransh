@@ -7,7 +7,7 @@ import useProfileLogic from './Logic/useProfileLogic';
 import dummyDp from '../../images/dummyDp.png';
 import Loader from '../../Components/Loader';
 import Saved from '../Saved/Saved';
-import Posts from '../Posts/Posts';
+import UserPosts from '../Posts/UserPosts';
 
 const Profile = () => {
   const {
@@ -219,11 +219,11 @@ const Profile = () => {
 
         {/*  */}
         <Route path='/profile/:userId' exact>
-          <Posts posts={personPosts} />
+          <UserPosts posts={personPosts} loading={loading} />
         </Route>
 
         <Route path='/:userName/' exact>
-          <Posts posts={myPosts} />
+          <UserPosts posts={myPosts} loading={loading} />
         </Route>
 
         <Route path='/:userName/saved/' exact>
