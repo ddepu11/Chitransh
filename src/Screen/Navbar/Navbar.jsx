@@ -116,7 +116,7 @@ const Navbar = () => {
                                   ? dummyDp
                                   : item.whoMade.userDpUrl
                               }
-                              alt='sender'
+                              alt={item.whoMade.userName}
                             />
                           </div>
 
@@ -240,7 +240,11 @@ const Wrapper = styled.nav`
     transition: all 0.3s ease;
     border: ${({ activeIcon }) =>
       activeIcon === 'avatar' ? '2px solid #333' : ''};
+
     padding: ${({ activeIcon }) => (activeIcon === 'avatar' ? '1px' : '0px')};
+    ${({ activeIcon }) => {
+      console.log(activeIcon);
+    }};
 
     img {
       border-radius: 50%;

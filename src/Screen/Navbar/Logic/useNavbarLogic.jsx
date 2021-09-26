@@ -23,11 +23,11 @@ const useNavbarLogic = () => {
 
   useEffect(() => {
     setActiveIcon('home');
-  }, [id]);
+  }, []);
 
   useEffect(() => {
     const handleOnDocumentClick = (e) => {
-      // Avatar dropdown
+      // For hiding Avatar dropdown
       if (
         e.target.closest('.the_avatar_box') === null &&
         !e.target.matches('.ava_img') &&
@@ -46,13 +46,24 @@ const useNavbarLogic = () => {
           setActiveIcon('home');
       }
 
-      // Notification dropdown ic_liked
-      // e.target.closest('.notification_box') === null &&
+      // For hiding  Notification dropdown
       if (
         !e.target.matches('.ic_liked') &&
+        !e.target.matches('.ava_img') &&
         notificationDropDown.current !== null
       ) {
         notificationDropDown.current.classList.remove('active');
+
+        // If click any where then add, liked icon and add icon is not active
+        // set active as home
+
+        if (
+          !e.target.matches('.ic_add') &&
+          !e.target.matches('.ic_liked') &&
+          history.location.pathname === '/' &&
+          activeIcon !== 'add'
+        )
+          setActiveIcon('home');
       }
     };
 
@@ -62,7 +73,7 @@ const useNavbarLogic = () => {
       document.removeEventListener('click', handleOnDocumentClick);
     };
   }, [history, activeIcon]);
-
+  
   // Get Notifications
   const getNotifications = async () => {
     const q = query(
@@ -89,7 +100,6 @@ const useNavbarLogic = () => {
 
   const handleActiveIcon = (e) => {
     const icon = e.currentTarget.getAttribute('data-icon');
-
     setActiveIcon(icon);
 
     if (icon === 'add') {
