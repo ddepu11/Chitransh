@@ -6,9 +6,16 @@ import {
   getDownloadURL,
   deleteObject,
 } from 'firebase/storage';
-
-import { collection, query, where, getDocs } from 'firebase/firestore';
-import { useHistory } from 'react-router-dom';
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  doc,
+  getDoc,
+  updateDoc,
+} from 'firebase/firestore';
+import { useHistory, useParams } from 'react-router-dom';
 
 import { firestoreInstance, storage } from '../../../config/firebase';
 import {
@@ -23,7 +30,58 @@ import useCommentOperation from '../../../Components/useCommentOperation';
 const useProfileLogic = () => {
   const dispatch = useDispatch();
 
+  const [profile, setProfile] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [personPosts, setPersonPosts] = useState([]);
+
+  const { userId } = useParams();
+
   const { info, id, userLoading } = useSelector((state) => state.user.value);
+
+  // Runs When viewing someone profile
+  useEffect(() => {
+    const getPosts = async () => {
+      const q = query(
+        collection(firestoreInstance, 'posts'),
+        where('userId', '==', userId)
+      );
+      const myPostsSnap = await getDocs(q);
+      const newPosts = [];
+      let index = 0;
+
+      myPostsSnap.forEach((p) => {
+        newPosts.push(p.data());
+
+        if (index === myPostsSnap.size - 1) {
+          setPersonPosts(newPosts);
+          setLoading(false);
+        }
+
+        index += 1;
+      });
+    };
+
+    const fetchProfile = async () => {
+      const docRef = doc(firestoreInstance, 'users', userId);
+      const userSnap = await getDoc(docRef);
+
+      if (userSnap.exists()) {
+        setProfile(userSnap.data());
+        getPosts();
+      }
+    };
+
+    if (userId && Object.keys(profile).length === 0) {
+      fetchProfile();
+    } else {
+      setLoading(false);
+    }
+
+    return () => {
+      setLoading(false);
+    };
+  }, [userId, profile]);
+
   const [handlingChangeDp, setHandlingChangeDp] = useState(false);
 
   // #@@#@#@#@#@@## All Dp Related #$#$$#$#$#$#$##$#$
@@ -81,6 +139,21 @@ const useProfileLogic = () => {
         userDpUrl: downloadURL,
       });
 
+      // Update userDpUrl  in notifications
+      const notfiRef = collection(firestoreInstance, 'notifications');
+
+      const q = query(notfiRef, where('whoMade.userId', '==', id));
+      const notifiSnap = await getDocs(q);
+
+      notifiSnap.forEach(async (n) => {
+        const { userId: nUID, userName } = n.get('whoMade');
+
+        await updateDoc(doc(firestoreInstance, 'notifications', n.id), {
+          whoMade: { userName, userDpUrl: downloadURL, userId: nUID },
+        });
+      });
+      // Update userDpUrl in notifications ends
+
       await getUpdatedUserDoc(id);
 
       await getUpdatedPosts();
@@ -132,6 +205,21 @@ const useProfileLogic = () => {
       await updateCommentPostFields('userId', '==', id, {
         userDpUrl: downloadURL,
       });
+
+      // Update userDpUrl  in notifications
+      const notfiRef = collection(firestoreInstance, 'notifications');
+
+      const q = query(notfiRef, where('whoMade.userId', '==', id));
+      const notifiSnap = await getDocs(q);
+
+      notifiSnap.forEach(async (n) => {
+        const { userId: nUID, userName } = n.get('whoMade');
+
+        await updateDoc(doc(firestoreInstance, 'notifications', n.id), {
+          whoMade: { userName, userDpUrl: downloadURL, userId: nUID },
+        });
+      });
+      // Update userDpUrl in notifications ends
 
       await getUpdatedUserDoc(id);
 
@@ -186,6 +274,21 @@ const useProfileLogic = () => {
         userDpUrl: '',
       });
 
+      // Update userDpUrl  in notifications
+      const notfiRef = collection(firestoreInstance, 'notifications');
+
+      const q = query(notfiRef, where('whoMade.userId', '==', id));
+      const notifiSnap = await getDocs(q);
+
+      notifiSnap.forEach(async (n) => {
+        const { userId: nUID, userName } = n.get('whoMade');
+
+        await updateDoc(doc(firestoreInstance, 'notifications', n.id), {
+          whoMade: { userName, userDpUrl: '', userId: nUID },
+        });
+      });
+      // Update userDpUrl in notifications ends
+
       await getUpdatedUserDoc(id);
 
       await getUpdatedPosts();
@@ -209,7 +312,7 @@ const useProfileLogic = () => {
     if (history.location.pathname.includes('saved')) {
       postsLinkRef.current.classList.remove('active');
       savedLinkRef.current.classList.add('active');
-    } else {
+    } else if (postsLinkRef.current && savedLinkRef.current) {
       postsLinkRef.current.classList.add('active');
       savedLinkRef.current.classList.remove('active');
     }
@@ -217,7 +320,7 @@ const useProfileLogic = () => {
 
   const [myPosts, setMyPosts] = useState([]);
 
-  //
+  // Get logged in user posts
   useEffect(() => {
     const getPosts = async () => {
       const q = query(
@@ -228,20 +331,19 @@ const useProfileLogic = () => {
       const newPosts = [];
       let index = 0;
 
-      myPostsSnap.forEach((doc) => {
-        newPosts.push(doc.data());
+      myPostsSnap.forEach((p) => {
+        newPosts.push(p.data());
 
         if (index === myPostsSnap.size - 1) {
           setMyPosts(newPosts);
-          console.log(newPosts);
         }
 
         index += 1;
       });
     };
 
-    getPosts();
-  }, [id]);
+    if (!userId) getPosts();
+  }, [id, userId]);
 
   return {
     myPosts,
@@ -255,6 +357,10 @@ const useProfileLogic = () => {
     closeDialog,
     postsLinkRef,
     savedLinkRef,
+    loading,
+    profile,
+    userId,
+    personPosts,
   };
 };
 

@@ -136,6 +136,12 @@ const App = () => {
             />
 
             <ProtectedRoute
+              path='/profile/:userId/'
+              isAuthenticated={hasUserLoggedIn}
+              component={Profile}
+            />
+
+            <ProtectedRoute
               path='/:userName/'
               isAuthenticated={hasUserLoggedIn}
               component={Profile}

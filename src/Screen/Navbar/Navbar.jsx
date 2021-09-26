@@ -110,7 +110,14 @@ const Navbar = () => {
                       <div key={item.createdOn} className='notification flex'>
                         <div className='left flex'>
                           <div className='sender_dp'>
-                            <img src={item.whoMade.userDpUrl} alt='sender' />
+                            <img
+                              src={
+                                item.whoMade.userDpUrl === ''
+                                  ? dummyDp
+                                  : item.whoMade.userDpUrl
+                              }
+                              alt='sender'
+                            />
                           </div>
 
                           <h3 className='user_name'>{item.whoMade.userName}</h3>

@@ -4,7 +4,17 @@ import isEmpty from 'validator/lib/isEmpty';
 import isLength from 'validator/lib/isLength';
 import contains from 'validator/lib/contains';
 import isAlpha from 'validator/lib/isAlpha';
+import {
+  getDocs,
+  updateDoc,
+  where,
+  query,
+  doc,
+  collection,
+} from 'firebase/firestore';
 import isMobilePhone from 'validator/lib/isMobilePhone';
+import { firestoreInstance } from '../../../config/firebase';
+
 import useUserOperation from '../../../Components/useUserOperations';
 import usePostsOperation from '../../../Components/usePostsOperation';
 import setValidationMessage from '../../../utils/setValidationMessage';
@@ -22,15 +32,15 @@ const useEditAccount = () => {
   const dispatch = useDispatch();
 
   const setTimeOutId = useRef(0);
+  const { info, id, userLoading } = useSelector((state) => state.user.value);
 
   useEffect(() => {
     console.log('');
+    // ?$#$#$#$#$#$#$#$#$#$#$#$#$#$
     return () => {
       clearAllSetTimeoutOrSetInterval(setTimeOutId);
     };
-  }, []);
-
-  const { info, id, userLoading } = useSelector((state) => state.user.value);
+  }, [id]);
 
   const [userInfo, setUserInfo] = useState({
     phoneNumber: info.phoneNumber,
@@ -333,6 +343,21 @@ const useEditAccount = () => {
           await updateCommentPostFields('userId', '==', id, {
             userName: userInfo.userName,
           });
+
+          // Update user name in notifications
+          const notfiRef = collection(firestoreInstance, 'notifications');
+
+          const q = query(notfiRef, where('whoMade.userId', '==', id));
+          const notifiSnap = await getDocs(q);
+
+          notifiSnap.forEach(async (n) => {
+            const { userDpUrl, userId } = n.get('whoMade');
+
+            await updateDoc(doc(firestoreInstance, 'notifications', n.id), {
+              whoMade: { userName: userInfo.userName, userDpUrl, userId },
+            });
+          });
+          // Update user name in notifications ends
         }
 
         setGender(gender);

@@ -22,15 +22,52 @@ const Profile = () => {
     postsLinkRef,
     savedLinkRef,
     myPosts,
+    loading,
+    profile,
+    userId,
+    personPosts,
   } = useProfileLogic();
 
   if (userLoading) {
     return <Loader />;
   }
 
+  if (loading) {
+    return <Loader />;
+  }
+
+  let imageErc = dummyDp;
+
+  if (userId) {
+    if (profile.dp.fileName !== 'dummyDp') {
+      imageErc = profile.dp.url;
+    }
+  } else if (info.dp.fileName !== 'dummyDp') {
+    imageErc = info.dp.url;
+  }
+
+  let bio = '';
+  if (userId) {
+    if (profile.bio) {
+      bio = profile.bio;
+    }
+  } else if (info.bio) {
+    bio = info.bio;
+  }
+
+  let website = '';
+
+  if (userId) {
+    if (profile.website) {
+      website = profile.website;
+    }
+  } else if (info.website) {
+    website = info.website;
+  }
+
   return (
     <>
-      {handlingChangeDp && (
+      {handlingChangeDp && !userId && (
         <ChangeDpDialog onClick={closeDialog} className='ChangeDpDialog'>
           <div className='center_box flex'>
             <h2 className='heading'>Change Profile Photo</h2>
@@ -91,60 +128,67 @@ const Profile = () => {
       <Wrapper className='w-960'>
         <div className='dp_and_details flex'>
           <div className='dp' onClick={openChangeDpDialog}>
-            <img
-              src={info.dp.fileName === 'dummyDp' ? dummyDp : info.dp.url}
-              alt='dp'
-            />
+            <img src={imageErc} alt='dp' />
           </div>
 
           <div className='details'>
             <div className='top flex'>
-              <h3 className='username'>{info.userName}</h3>
+              <h3 className='username'>
+                {userId ? profile.userName : info.userName}
+              </h3>
 
-              <Link to='/accounts/edit/'>
-                <Button
-                  type='button'
-                  borderRadius='5px'
-                  padding='5px 10px'
-                  margin='0 0 0 22px'
-                  fs='0.95em'
-                  bgColor='transparent'
-                  color='#333'
-                  bSh='rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgb(209, 213, 219) 0px 0px 0px 1px inset'
-                  transform='scale(1)'
-                >
-                  Edit Profile
-                </Button>
-              </Link>
+              {!userId && (
+                <Link to='/accounts/edit/'>
+                  <Button
+                    type='button'
+                    borderRadius='5px'
+                    padding='5px 10px'
+                    margin='0 0 0 22px'
+                    fs='0.95em'
+                    bgColor='transparent'
+                    color='#333'
+                    bSh='rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgb(209, 213, 219) 0px 0px 0px 1px inset'
+                    transform='scale(1)'
+                  >
+                    Edit Profile
+                  </Button>
+                </Link>
+              )}
             </div>
 
             <div className='middle flex'>
               <div className='posts flex'>
-                <h3>{myPosts.length}</h3>
+                <h3>{userId ? personPosts.length : myPosts.length}</h3>
                 <span>posts</span>
               </div>
 
               <div className='followers flex'>
-                <h3>{info.followers.length}</h3>
+                <h3>
+                  {userId ? profile.followers.length : info.followers.length}
+                </h3>
                 <span>followers</span>
               </div>
 
               <div className='following flex'>
-                <h3>{info.followers.length}</h3>
+                <h3>
+                  {userId ? profile.following.length : info.following.length}
+                </h3>
                 <span>following</span>
               </div>
             </div>
 
             <div className='bottom flex'>
-              <h2 className='name'>{info.fullName}</h2>
+              <h2 className='name'>
+                {userId ? profile.fullName : info.fullName}
+              </h2>
 
-              {info.bio && <span className='bio_text'>{info.bio}</span>}
+              {bio && <span className='bio_text'>{bio}</span>}
 
-              {info.website && (
-                <a href={info.website} className='bio_website'>
-                  {info.website.includes('https')
-                    ? info.website.slice(8)
-                    : info.website.slice(7)}
+              {website && (
+                <a href={website} className='bio_website'>
+                  {website.includes('https')
+                    ? website.slice(8)
+                    : website.slice(7)}
                 </a>
               )}
             </div>
@@ -153,26 +197,33 @@ const Profile = () => {
 
         <nav className='flex'>
           <Link
-            to={`/${info.email}/`}
-            className='posts  flex'
+            to={userId ? `/profile/${profile.email}` : `/${info.email}/`}
+            className={userId ? `active posts flex` : 'posts flex'}
             ref={postsLinkRef}
           >
             <GridOnOutlinedIcon className='ic_posts' />
             <span>POSTS</span>
           </Link>
-          <Link
-            to={`/${info.email}/saved/`}
-            className='saved  flex'
-            ref={savedLinkRef}
-          >
-            <BookmarkBorderOutlinedIcon className='ic_saved' />
-            <span>SAVED</span>
-          </Link>
+
+          {!userId && (
+            <Link
+              to={`/${info.email}/saved/`}
+              className='saved  flex'
+              ref={savedLinkRef}
+            >
+              <BookmarkBorderOutlinedIcon className='ic_saved' />
+              <span>SAVED</span>
+            </Link>
+          )}
         </nav>
 
         {/*  */}
+        <Route path='/profile/:userId' exact>
+          <Posts posts={personPosts} />
+        </Route>
+
         <Route path='/:userName/' exact>
-          <Posts />
+          <Posts posts={myPosts} />
         </Route>
 
         <Route path='/:userName/saved/' exact>

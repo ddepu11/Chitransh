@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
+import { Link } from 'react-router-dom';
 import FavoriteBorderOutlinedIcon from '@material-ui/icons/FavoriteBorderOutlined';
 import FavoriteOutlinedIcon from '@material-ui/icons/FavoriteOutlined';
 import ModeCommentOutlinedIcon from '@material-ui/icons/ModeCommentOutlined';
@@ -14,7 +15,7 @@ import dummyDp from '../../images/dummyDp.png';
 import usePostLogic from './Logic/usePostLogic';
 
 const Post = ({ post }) => {
-  const { caption, images, likes, userDpUrl, userName } = post;
+  const { caption, images, likes, userDpUrl, userName, userId } = post;
 
   const {
     unSavePost,
@@ -75,7 +76,12 @@ const Post = ({ post }) => {
               <img src={userDpUrl === '' ? dummyDp : userDpUrl} alt='' />
             </div>
 
-            <h3 className='username'>{userName}</h3>
+            <Link
+              to={userId === id ? `/${userName}` : `/profile/${userId}/`}
+              className='username'
+            >
+              {userName}
+            </Link>
           </div>
 
           <MoreHorizIcon className='more_btn' onClick={openDialog} />
@@ -150,7 +156,7 @@ const Post = ({ post }) => {
                 <span className='user_name'>{item.userName}</span>
                 {item.comment}
 
-                {/* <div className='dp' style={{ width: '20px', height: '20px' }}>
+                <div className='dp' style={{ width: '20px', height: '20px' }}>
                   <img
                     src={item.userDpUrl === '' ? dummyDp : item.userDpUrl}
                     alt='s'
@@ -160,7 +166,7 @@ const Post = ({ post }) => {
                       borderRadius: '50%',
                     }}
                   />
-                </div> */}
+                </div>
               </p>
             ))}
           </div>
@@ -224,6 +230,7 @@ const Wrapper = styled.main`
         margin-left: 15px;
         color: #333;
         font-size: 0.9em;
+        font-weight: 700;
       }
     }
 
