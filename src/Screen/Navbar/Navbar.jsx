@@ -23,6 +23,9 @@ const Navbar = () => {
     info,
     handleCloseAvatarDrop,
     setActiveIcon,
+    notificationDropDown,
+    loading,
+    notifications,
   } = useNavbarLogic();
 
   return (
@@ -91,7 +94,43 @@ const Navbar = () => {
               />
             </div>
 
-            <div ref={dropDownFromAvatar} className='the_box'>
+            <div ref={notificationDropDown} className='notification_box'>
+              {loading ? (
+                <div className='notification_loading flex'>
+                  <h3>Loading...</h3>
+                </div>
+              ) : (
+                <>
+                  {notifications.length === 0 ? (
+                    <div className='no_notification flex'>
+                      <h2>There are no notifications !</h2>
+                    </div>
+                  ) : (
+                    notifications.map((item) => (
+                      <div key={item.createdOn} className='notification flex'>
+                        <div className='left flex'>
+                          <div className='sender_dp'>
+                            <img src={item.whoMade.userDpUrl} alt='sender' />
+                          </div>
+
+                          <h3 className='user_name'>{item.whoMade.userName}</h3>
+                          <div className='body'>{item.body.slice(0, 30)}</div>
+                        </div>
+
+                        <div className='right'>
+                          <div className='post_img'>
+                            <img src={item.postImg} alt='post' />
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </>
+              )}
+            </div>
+
+            {/* The Avatar box */}
+            <div ref={dropDownFromAvatar} className='the_avatar_box'>
               <Link
                 to={`/${info.userName}`}
                 className='profile flex'
@@ -208,10 +247,11 @@ const Wrapper = styled.nav`
     cursor: pointer;
   }
 
-  .the_box {
+  .notification_box,
+  .the_avatar_box {
     position: absolute;
     top: calc(100% + 0.25rem);
-    width: 250px;
+    right: 0;
     color: #333;
     background-color: white;
     border-radius: 0.25rem;
@@ -220,6 +260,77 @@ const Wrapper = styled.nav`
     transform: translateY(-10px);
     transition: opacity 0.5s ease, transform 0.5s ease;
     pointer-events: none;
+  }
+
+  .notification_box {
+    width: 520px;
+    padding: 15px 10px 10px;
+
+    .notification_loading {
+      height: 70px;
+
+      h3 {
+        font-size: 1.2em;
+        letter-spacing: 1px;
+        color: #646464;
+      }
+    }
+
+    .no_notification {
+      height: 70px;
+
+      h2 {
+        font-size: 1.1em;
+        letter-spacing: 1px;
+        color: #646464;
+      }
+    }
+
+    .notification {
+      margin-bottom: 20px;
+      justify-content: space-between;
+      /* align-items: flex-start; */
+
+      .sender_dp {
+        width: 45px;
+        height: 45px;
+
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          border-radius: 50%;
+        }
+      }
+
+      .user_name {
+        font-size: 0.8em;
+        letter-spacing: 1px;
+        color: #3f3f3f;
+        margin-left: 10px;
+      }
+
+      .body {
+        font-size: 0.8em;
+        letter-spacing: 1px;
+        color: #3f3f3f;
+        margin-left: 5px;
+      }
+
+      .post_img {
+        width: 45px;
+        height: 45px;
+
+        img {
+          width: 100%;
+          height: 100%;
+        }
+      }
+    }
+  }
+
+  .the_avatar_box {
+    width: 250px;
 
     .profile,
     .saved {
@@ -267,7 +378,8 @@ const Wrapper = styled.nav`
     }
   }
 
-  .the_box.active {
+  .the_avatar_box.active,
+  .notification_box.active {
     opacity: 1;
     transform: translateY(0px);
     pointer-events: auto;

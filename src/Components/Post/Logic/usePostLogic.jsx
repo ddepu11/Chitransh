@@ -20,6 +20,7 @@ import {
 } from '../../../features/notification';
 import usePostsOperation from '../../usePostsOperation';
 import useUserOperation from '../../useUserOperations';
+import useNotificationOperations from '../../useNotificationOperations';
 
 const usePostLogic = (post) => {
   const [loading, setLoading] = useState(false);
@@ -90,7 +91,9 @@ const usePostLogic = (post) => {
 
   // like/dislike Post
   const { updatePostsDocFields, getUpdatedPosts } = usePostsOperation();
-  const { getUpdatedUserDoc } = useUserOperation(id);
+  const { getUpdatedUserDoc } = useUserOperation();
+
+  const { sendNotification } = useNotificationOperations(id);
 
   let didYouLikedThePost = false;
 
@@ -113,6 +116,26 @@ const usePostLogic = (post) => {
         await updatePostsDocFields('id', '==', post.id, {
           likes: post.likes + 1,
         });
+
+        // Notfication
+        const notification = {
+          body: `liked your post`,
+          sendToUserId: post.userId,
+          whoMade: {
+            userName: info.userName,
+            userId: id,
+            userDpUrl: info.dp.url,
+          },
+          postId: post.id,
+          postImg: post.images[0].url,
+          createdOn: Date.now(),
+        };
+
+        if (post.userId !== id) {
+          sendNotification(post.userId, notification);
+        }
+
+        // Notification ends
 
         await getUpdatedUserDoc(id);
 
@@ -233,12 +256,13 @@ const usePostLogic = (post) => {
     };
 
     try {
+      // add comment doc
       const commentRef = await addDoc(
         collection(firestoreInstance, 'comments'),
         finalComment
       );
 
-      // Add id in post comment array
+      // Add comment id in post's comment array
       const postsCollectionReference = collection(firestoreInstance, 'posts');
       const q = query(postsCollectionReference, where('id', '==', post.id));
       const querySnapshot = await getDocs(q);
@@ -250,11 +274,29 @@ const usePostLogic = (post) => {
       });
 
       // $%$$#$#$##$#$# Seperation #$#$$##$##$#
+      // Get that comment add it to comments state
       const docRef = doc(firestoreInstance, 'comments', commentRef.id);
       const commentSnap = await getDoc(docRef);
 
       if (commentSnap.exists()) {
         setComments((prevState) => [...prevState, commentSnap.data()]);
+      }
+
+      const notification = {
+        body: `commented on your post: ${comment}`,
+        sendToUserId: post.userId,
+        whoMade: {
+          userName: info.userName,
+          userId: id,
+          userDpUrl: info.dp.url,
+        },
+        postId: post.id,
+        postImg: post.images[0].url,
+        createdOn: Date.now(),
+      };
+
+      if (post.userId !== id) {
+        sendNotification(post.userId, notification);
       }
 
       setComment('');
