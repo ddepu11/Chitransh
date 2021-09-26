@@ -73,7 +73,9 @@ const useEditAccount = () => {
     setHandlingChangeGender(false);
   };
 
-  const openDialogBox = () => setHandlingChangeGender(true);
+  const openDialogBox = () => {
+    setHandlingChangeGender(true);
+  };
 
   const { getUpdatedUserDoc, updateUserDoc } = useUserOperation(id);
 

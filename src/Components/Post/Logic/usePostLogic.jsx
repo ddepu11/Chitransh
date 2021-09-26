@@ -291,7 +291,20 @@ const usePostLogic = (post) => {
     }
   }, [comments.length, post.comments]);
 
+  const [showDialog, setShowDialog] = useState(false);
+
+  const closeDialog = () => {
+    setShowDialog(false);
+    document.body.classList.remove('dialog_active');
+  };
+
+  const openDialog = () => {
+    document.body.classList.add('dialog_active');
+    setShowDialog(true);
+  };
+
   return {
+    id,
     loading,
     unSavePost,
     savePost,
@@ -307,6 +320,9 @@ const usePostLogic = (post) => {
     comments,
     postComment,
     handleComment,
+    showDialog,
+    closeDialog,
+    openDialog,
   };
 };
 

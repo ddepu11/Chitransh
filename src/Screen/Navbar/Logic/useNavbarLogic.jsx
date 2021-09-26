@@ -51,6 +51,10 @@ const useNavbarLogic = () => {
 
     setActiveIcon(icon);
 
+    if (icon === 'add') {
+      document.body.classList.add('dialog_active');
+    }
+
     if (icon === 'avatar') {
       // Show Drop Down
       dropDownFromAvatar.current.classList.add('active');
@@ -73,6 +77,7 @@ const useNavbarLogic = () => {
 
   const handleCloseCreatePost = () => {
     setActiveIcon('home');
+    document.body.classList.remove('dialog_active');
   };
 
   const handleCloseAvatarDrop = () => {

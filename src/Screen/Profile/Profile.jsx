@@ -21,6 +21,7 @@ const Profile = () => {
     closeDialog,
     postsLinkRef,
     savedLinkRef,
+    myPosts,
   } = useProfileLogic();
 
   if (userLoading) {
@@ -119,17 +120,17 @@ const Profile = () => {
 
             <div className='middle flex'>
               <div className='posts flex'>
-                <h3>65</h3>
+                <h3>{myPosts.length}</h3>
                 <span>posts</span>
               </div>
 
               <div className='followers flex'>
-                <h3>140</h3>
+                <h3>{info.followers.length}</h3>
                 <span>followers</span>
               </div>
 
               <div className='following flex'>
-                <h3>185</h3>
+                <h3>{info.followers.length}</h3>
                 <span>following</span>
               </div>
             </div>

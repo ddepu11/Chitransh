@@ -32,134 +32,166 @@ const Post = ({ post }) => {
     postComment,
     loading,
     comments,
+    showDialog,
+    closeDialog,
+    openDialog,
+    id,
   } = usePostLogic(post);
 
   return (
-    <Wrapper>
-      {loading && (
-        <PostLoader>
-          <h3>Loading...</h3>
-        </PostLoader>
+    <>
+      {showDialog && (
+        <PostDialog className='ChangeDpDialog'>
+          <div className='center_box flex'>
+            {id !== post.userId && (
+              <div className='btn_div_common'>
+                <p className='unfollow'>Unfollow</p>
+              </div>
+            )}
+
+            <div className='btn_div_common'>
+              <p className='go_to_post'>Go to post</p>
+            </div>
+
+            <div className='btn_div_common '>
+              <p className='cancel' onClick={closeDialog}>
+                cancel
+              </p>
+            </div>
+          </div>
+        </PostDialog>
       )}
 
-      <div className='post_top flex'>
-        <div className='left flex'>
-          <div className='dp'>
-            <img src={userDpUrl === '' ? dummyDp : userDpUrl} alt='' />
+      <Wrapper>
+        {loading && (
+          <PostLoader>
+            <h3>Loading...</h3>
+          </PostLoader>
+        )}
+
+        <div className='post_top flex'>
+          <div className='left flex'>
+            <div className='dp'>
+              <img src={userDpUrl === '' ? dummyDp : userDpUrl} alt='' />
+            </div>
+
+            <h3 className='username'>{userName}</h3>
           </div>
 
-          <h3 className='username'>{userName}</h3>
+          <MoreHorizIcon className='more_btn' onClick={openDialog} />
         </div>
 
-        <MoreHorizIcon className='more_btn' />
-      </div>
-
-      <div className='hero' onDoubleClick={likeThePost}>
-        {images.length > 1 && (
-          <>
-            <NavigateBeforeIcon
-              className='previous'
-              onClick={showPreviousImage}
-            />
-
-            <NavigateNextIcon className='next' onClick={showNextImage} />
-          </>
-        )}
-        <img src={images[currentImageIndex].url} alt='s' />
-      </div>
-
-      <div className='btns flex'>
-        <div className='btn_left flex'>
-          {didYouLikedThePost ? (
-            <FavoriteOutlinedIcon
-              className='ic_dislike'
-              onClick={dislikeThePost}
-            />
-          ) : (
-            <FavoriteBorderOutlinedIcon
-              className='ic_like'
-              onClick={likeThePost}
-            />
-          )}
-          <ModeCommentOutlinedIcon className='ic_comment' />
-        </div>
-
-        {images.length > 1 && (
-          <div className='which_no_of_image'>
-            {images.map(({ url }, index) => (
-              <FiberManualRecordRounded
-                key={url}
-                className={`${index === currentImageIndex && `active`} dots`}
+        <div className='hero' onDoubleClick={likeThePost}>
+          {images.length > 1 && (
+            <>
+              <NavigateBeforeIcon
+                className='previous'
+                onClick={showPreviousImage}
               />
+
+              <NavigateNextIcon className='next' onClick={showNextImage} />
+            </>
+          )}
+          <img src={images[currentImageIndex].url} alt='s' />
+        </div>
+
+        <div className='btns flex'>
+          <div className='btn_left flex'>
+            {didYouLikedThePost ? (
+              <FavoriteOutlinedIcon
+                className='ic_dislike'
+                onClick={dislikeThePost}
+              />
+            ) : (
+              <FavoriteBorderOutlinedIcon
+                className='ic_like'
+                onClick={likeThePost}
+              />
+            )}
+            <ModeCommentOutlinedIcon className='ic_comment' />
+          </div>
+
+          {images.length > 1 && (
+            <div className='which_no_of_image'>
+              {images.map(({ url }, index) => (
+                <FiberManualRecordRounded
+                  key={url}
+                  className={`${index === currentImageIndex && `active`} dots`}
+                />
+              ))}
+            </div>
+          )}
+
+          <div className='btn_save'>
+            {didYouSavedThePost ? (
+              <BookmarkIcon className='ic_saved' onClick={unSavePost} />
+            ) : (
+              <BookmarkBorderOutlinedIcon
+                className='ic_save'
+                onClick={savePost}
+              />
+            )}
+          </div>
+        </div>
+
+        <div className='likes'>{likes} likes</div>
+
+        <div className='username_and_caption'>
+          <p className='caption'>
+            <span className='username'>{userName}</span>
+            {caption}
+          </p>
+        </div>
+
+        {comments.length !== 0 && (
+          <div className='comments'>
+            {comments.map((item) => (
+              <p className='comment' key={item.id}>
+                <span className='user_name'>{item.userName}</span>
+                {item.comment}
+
+                {/* <div className='dp' style={{ width: '20px', height: '20px' }}>
+                  <img
+                    src={item.userDpUrl === '' ? dummyDp : item.userDpUrl}
+                    alt='s'
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      borderRadius: '50%',
+                    }}
+                  />
+                </div> */}
+              </p>
             ))}
           </div>
         )}
 
-        <div className='btn_save'>
-          {didYouSavedThePost ? (
-            <BookmarkIcon className='ic_saved' onClick={unSavePost} />
-          ) : (
-            <BookmarkBorderOutlinedIcon
-              className='ic_save'
-              onClick={savePost}
-            />
-          )}
+        <span className='when_uploaded'>{whenWasThePostCreated}</span>
+
+        <div className='comment_box flex'>
+          <input
+            type='text'
+            placeholder='Add a comment...'
+            value={comment}
+            onChange={handleComment}
+          />
+
+          <Button
+            type='button'
+            bgColor='transparent'
+            color={comment ? '#0095f6' : '#92c9ee'}
+            fs='0.9em'
+            isDisabled={comment ? 0 : 1}
+            handleClick={postComment}
+            transform='scale(1)'
+            transition='all 0.5s ease'
+            cursorOnHover={comment ? 'pointer' : 'default'}
+          >
+            <span style={{ fontWeight: '700' }}>Post</span>
+          </Button>
         </div>
-      </div>
-
-      <div className='likes'>{likes} likes</div>
-
-      <div className='username_and_caption'>
-        <p className='caption'>
-          <span className='username'>{userName}</span>
-          {caption}
-        </p>
-      </div>
-
-      {comments.length !== 0 && (
-        <div className='comments'>
-          {comments.map((item) => (
-            <p className='comment' key={item.id}>
-              <span className='user_name'>{item.userName}</span>
-              {item.comment}
-
-              <div className='dp' style={{ width: '20px', height: '20px' }}>
-                <img
-                  src={item.userDpUrl === '' ? dummyDp : item.userDpUrl}
-                  alt='s'
-                  style={{ width: '100%', height: '100%', borderRadius: '50%' }}
-                />
-              </div>
-            </p>
-          ))}
-        </div>
-      )}
-
-      <span className='when_uploaded'>{whenWasThePostCreated}</span>
-
-      <div className='comment_box flex'>
-        <input
-          type='text'
-          placeholder='Add a comment...'
-          value={comment}
-          onChange={handleComment}
-        />
-
-        <Button
-          type='button'
-          bgColor='transparent'
-          color={comment ? '#0095f6' : '#92c9ee'}
-          fs='0.9em'
-          isDisabled={comment ? 0 : 1}
-          handleClick={postComment}
-          transform='scale(1)'
-          transition='all 0.5s ease'
-          cursorOnHover={comment ? 'pointer' : 'default'}
-        >
-          <span style={{ fontWeight: '700' }}>Post</span>
-        </Button>
-      </div>
-    </Wrapper>
+      </Wrapper>
+    </>
   );
 };
 
@@ -367,6 +399,65 @@ const PostLoader = styled.main`
   h3 {
     color: #eeeeee;
     font-size: 2.5em;
+  }
+`;
+
+const PostDialog = styled.div`
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  top: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: grid;
+  place-content: center;
+  z-index: 15;
+  overflow-y: auto;
+
+  .center_box {
+    width: 29vw;
+    height: auto;
+    background-color: #fbfbfb;
+    border-radius: 12px;
+    flex-direction: column;
+    justify-content: flex-start;
+    color: #333;
+    font-size: 0.95em;
+  }
+
+  .heading {
+    width: 100%;
+    font-size: 1.2em;
+    padding: 22px 0;
+    border-bottom: 1px solid #cac9c9;
+    text-align: center;
+  }
+
+  .btn_div_common {
+    /* padding: 14px 0; */
+    border-bottom: 1px solid #cac9c9;
+    width: 100%;
+    text-align: center;
+
+    .unfollow {
+      color: #cc3333;
+    }
+
+    .unfollow,
+    .go_to_post,
+    .cancel {
+      display: inline-block;
+      padding: 15px 0;
+      width: 100%;
+      font-size: 0.9em;
+      font-weight: 700;
+    }
+
+    .unfollow,
+    .go_to_post,
+    .cancel:hover {
+      cursor: pointer;
+    }
   }
 `;
 

@@ -6,8 +6,11 @@ import {
   getDownloadURL,
   deleteObject,
 } from 'firebase/storage';
+
+import { collection, query, where, getDocs } from 'firebase/firestore';
 import { useHistory } from 'react-router-dom';
-import { storage } from '../../../config/firebase';
+
+import { firestoreInstance, storage } from '../../../config/firebase';
 import {
   notificationShowError,
   notificationShowSuccess,
@@ -26,10 +29,12 @@ const useProfileLogic = () => {
   // #@@#@#@#@#@@## All Dp Related #$#$$#$#$#$#$##$#$
   const openChangeDpDialog = () => {
     setHandlingChangeDp(true);
+    document.body.classList.add('dialog_active');
   };
 
   const cancelChangeDp = () => {
     setHandlingChangeDp(false);
+    document.body.classList.remove('dialog_active');
   };
 
   const closeDialog = (e) => {
@@ -210,7 +215,36 @@ const useProfileLogic = () => {
     }
   }, [history.location.pathname]);
 
+  const [myPosts, setMyPosts] = useState([]);
+
+  //
+  useEffect(() => {
+    const getPosts = async () => {
+      const q = query(
+        collection(firestoreInstance, 'posts'),
+        where('userId', '==', id)
+      );
+      const myPostsSnap = await getDocs(q);
+      const newPosts = [];
+      let index = 0;
+
+      myPostsSnap.forEach((doc) => {
+        newPosts.push(doc.data());
+
+        if (index === myPostsSnap.size - 1) {
+          setMyPosts(newPosts);
+          console.log(newPosts);
+        }
+
+        index += 1;
+      });
+    };
+
+    getPosts();
+  }, [id]);
+
   return {
+    myPosts,
     info,
     openChangeDpDialog,
     handlingChangeDp,
