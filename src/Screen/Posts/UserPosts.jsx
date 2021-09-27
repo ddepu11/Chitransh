@@ -11,7 +11,7 @@ const UserPosts = ({ posts, loading }) => {
 
   return (
     <Wrapper>
-      {posts &&
+      {posts.length !== 0 ? (
         posts.map((item) => (
           <div className='post' key={item.id}>
             <img src={item.images[0].url} alt={item.caption} />
@@ -28,7 +28,12 @@ const UserPosts = ({ posts, loading }) => {
               </div>
             </div>
           </div>
-        ))}
+        ))
+      ) : (
+        <div className='no_posts_div flex'>
+          <h3>You haven&apos;t post anything yet!</h3>
+        </div>
+      )}
     </Wrapper>
   );
 };
@@ -90,6 +95,15 @@ const Wrapper = styled.main`
 
   .post:hover .post_cover {
     opacity: 0.7;
+  }
+
+  .no_posts_div {
+    /* border: 1px solid red; */
+    width: 100%;
+    height: 30vh;
+    color: #646464;
+    letter-spacing: 1px;
+    font-size: 0.9em;
   }
 `;
 
