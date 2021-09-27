@@ -101,6 +101,10 @@ const useNavbarLogic = () => {
 
       index += 1;
     });
+
+    if (myNotificationsSnap.size === 0) {
+      setLoading(false);
+    }
   };
 
   const handleActiveIcon = (e) => {
