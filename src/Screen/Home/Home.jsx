@@ -5,9 +5,9 @@ import Post from '../../Components/Post/Post';
 import useHomeLogic from './Logic/useHomeLogic';
 
 const Home = () => {
-  const { userLoading, allPosts } = useHomeLogic();
+  const { userLoading, allPosts, postLoading } = useHomeLogic();
 
-  if (userLoading) {
+  if (userLoading || postLoading) {
     return <Loader />;
   }
 

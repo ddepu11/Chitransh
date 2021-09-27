@@ -18,7 +18,7 @@ const useHomeLogic = () => {
     (state) => state.user.value
   );
 
-  const { allPosts } = useSelector((state) => state.posts.value);
+  const { allPosts, postLoading } = useSelector((state) => state.posts.value);
 
   useEffect(() => {
     if (!hasUserLoggedIn) {
@@ -58,6 +58,7 @@ const useHomeLogic = () => {
   return {
     userLoading,
     allPosts,
+    postLoading,
   };
 };
 

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { getDocs, query, where, collection } from 'firebase/firestore';
+import { getDocs, query, where, collection, orderBy } from 'firebase/firestore';
 import { authInstance, firestoreInstance } from '../../../config/firebase';
 
 import {
@@ -9,6 +9,11 @@ import {
   notificationShowInfo,
 } from '../../../features/notification';
 import { userLoadingEnds } from '../../../features/user';
+import {
+  postsLoadingBegins,
+  postsLoadingEnds,
+  storeAllPosts,
+} from '../../../features/posts';
 
 const useNavbarLogic = () => {
   const dispatch = useDispatch();
@@ -73,7 +78,7 @@ const useNavbarLogic = () => {
       document.removeEventListener('click', handleOnDocumentClick);
     };
   }, [history, activeIcon]);
-  
+
   // Get Notifications
   const getNotifications = async () => {
     const q = query(
@@ -143,6 +148,35 @@ const useNavbarLogic = () => {
     dropDownFromAvatar.current.classList.remove('active');
   };
 
+  const handleClickOnLogo = async () => {
+    setActiveIcon('home');
+
+    dispatch(postsLoadingBegins());
+
+    try {
+      const userCollection = collection(firestoreInstance, 'posts');
+
+      let index = 0;
+      const posts = [];
+
+      const q = query(userCollection, orderBy('createdOn', 'desc'));
+
+      const userSnapshot = await getDocs(q);
+
+      userSnapshot.forEach((u) => {
+        posts.push(u.data());
+
+        if (index === userSnapshot.size - 1) {
+          dispatch(storeAllPosts(posts));
+        }
+        index += 1;
+      });
+    } catch (err) {
+      dispatch(notificationShowError({ msg: err.code.toString().slice(5) }));
+      dispatch(postsLoadingEnds());
+    }
+  };
+
   return {
     handleCloseCreatePost,
     handleLogOut,
@@ -152,9 +186,9 @@ const useNavbarLogic = () => {
     info,
     handleCloseAvatarDrop,
     notificationDropDown,
-    setActiveIcon,
     loading,
     notifications,
+    handleClickOnLogo,
   };
 };
 

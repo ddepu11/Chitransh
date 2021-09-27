@@ -22,10 +22,10 @@ const Navbar = () => {
     dropDownFromAvatar,
     info,
     handleCloseAvatarDrop,
-    setActiveIcon,
     notificationDropDown,
     loading,
     notifications,
+    handleClickOnLogo,
   } = useNavbarLogic();
 
   return (
@@ -36,7 +36,7 @@ const Navbar = () => {
 
       <Wrapper activeIcon={activeIcon}>
         <div className='w-960 nav_center_div flex'>
-          <Link to='/' onClick={() => setActiveIcon('home')}>
+          <Link to='/' onClick={handleClickOnLogo}>
             <h1 className='instagram'>Chitransh</h1>
           </Link>
 

@@ -253,6 +253,7 @@ const usePostLogic = (post) => {
       userId: id,
       userDpUrl: info.dp.url,
       comment,
+      createdOn: Date.now(),
     };
 
     try {
@@ -274,7 +275,7 @@ const usePostLogic = (post) => {
       });
 
       // $%$$#$#$##$#$# Seperation #$#$$##$##$#
-      // Get that comment add it to comments state
+      // Get that comment add it to comments array of state
       const docRef = doc(firestoreInstance, 'comments', commentRef.id);
       const commentSnap = await getDoc(docRef);
 
@@ -309,6 +310,7 @@ const usePostLogic = (post) => {
     }
   };
 
+  // Fetch comments
   useEffect(() => {
     const getComments = async () => {
       const newComments = [];
