@@ -26,19 +26,26 @@ const useFeedLogic = () => {
         const newUsers = [];
 
         usersSnap.forEach((u) => {
-          // console.log(info.following);
-
           info.following.forEach((folId) => {
-            // console.log(&& u.id !== id);
+            // console.log(u.id !== id);
             if (folId !== u.get('id') && u.id !== id) {
               newUsers.push(u.data());
             }
           });
 
+          // Runs when you have no followers
+          if (info.following.length === 0) {
+            if (u.id !== id) {
+              newUsers.push(u.data());
+            }
+          }
+
+          // At the end of usersSnap store new Users in users state
           if (index === usersSnap.size - 1) {
             setUsers(newUsers);
-            console.log(newUsers);
+            // console.log(newUsers);
           }
+
           index += 1;
         });
       } catch (err) {
