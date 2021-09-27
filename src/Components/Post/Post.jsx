@@ -165,7 +165,7 @@ const Post = ({ post }) => {
                 </Link>
                 {item.comment}
 
-                <div className='dp' style={{ width: '20px', height: '20px' }}>
+                {/* <div className='dp' style={{ width: '20px', height: '20px' }}>
                   <img
                     src={item.userDpUrl === '' ? dummyDp : item.userDpUrl}
                     alt='s'
@@ -175,7 +175,7 @@ const Post = ({ post }) => {
                       borderRadius: '50%',
                     }}
                   />
-                </div>
+                </div> */}
               </p>
             ))}
           </div>
