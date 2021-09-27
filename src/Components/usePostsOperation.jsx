@@ -5,32 +5,56 @@ import {
   where,
   query,
   doc,
+  orderBy,
 } from 'firebase/firestore';
 import { useDispatch } from 'react-redux';
 import { firestoreInstance } from '../config/firebase';
-import { storeAllPosts } from '../features/posts';
+import { notificationShowError } from '../features/notification';
+import {
+  postsLoadingBegins,
+  postsLoadingEnds,
+  storeAllPosts,
+} from '../features/posts';
 
 const usePostsOperation = () => {
   const dispatch = useDispatch();
 
   const postsCollectionReference = collection(firestoreInstance, 'posts');
 
-  const getUpdatedPosts = async () => {
-    const postsSnapshot = await getDocs(postsCollectionReference);
+  const getUpdatedPosts = async (info, id) => {
+    dispatch(postsLoadingBegins());
 
-    let index = 0;
+    try {
+      const userCollection = collection(firestoreInstance, 'posts');
 
-    const posts = [];
+      let index = 0;
+      const posts = [];
 
-    postsSnapshot.forEach((p) => {
-      posts.push(p.data());
+      const q = query(userCollection, orderBy('createdOn', 'desc'));
 
-      if (index === postsSnapshot.size - 1) {
-        dispatch(storeAllPosts(posts));
-      }
+      const userSnapshot = await getDocs(q);
 
-      index += 1;
-    });
+      userSnapshot.forEach((u) => {
+        info.following.forEach((folId) => {
+          if (folId === u.get('userId')) {
+            posts.push(u.data());
+          }
+        });
+
+        if (u.get('userId') === id) {
+          posts.push(u.data());
+        }
+
+        if (index === userSnapshot.size - 1) {
+          dispatch(storeAllPosts(posts));
+        }
+
+        index += 1;
+      });
+    } catch (err) {
+      dispatch(notificationShowError({ msg: err.code.toString().slice(5) }));
+      dispatch(postsLoadingEnds());
+    }
   };
 
   const updatePostsDocFields = async (

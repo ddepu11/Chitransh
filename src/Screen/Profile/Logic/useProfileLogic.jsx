@@ -156,7 +156,7 @@ const useProfileLogic = () => {
 
       await getUpdatedUserDoc(id);
 
-      await getUpdatedPosts();
+      await getUpdatedPosts(info, id);
 
       dispatch(
         notificationShowSuccess({
@@ -223,7 +223,7 @@ const useProfileLogic = () => {
 
       await getUpdatedUserDoc(id);
 
-      await getUpdatedPosts();
+      await getUpdatedPosts(info, id);
 
       dispatch(
         notificationShowSuccess({ msg: 'Successfully uploaded new dp' })
@@ -291,7 +291,7 @@ const useProfileLogic = () => {
 
       await getUpdatedUserDoc(id);
 
-      await getUpdatedPosts();
+      await getUpdatedPosts(info, id);
 
       dispatch(notificationShowSuccess({ msg: 'Successfully removed  dp!' }));
     } catch (err) {

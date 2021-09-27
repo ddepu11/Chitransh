@@ -11,6 +11,8 @@ import {
 } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { firestoreInstance, storage } from '../../../config/firebase';
+import usePostsOperation from '../../../Components/usePostsOperation';
+
 import {
   notificationShowError,
   notificationShowInfo,
@@ -98,6 +100,8 @@ const useCreatePostLogic = (handleCloseCreatePost) => {
     setCaption(e.target.value);
   };
 
+  const { getUpdatedPosts } = usePostsOperation();
+
   const createPost = async () => {
     try {
       const docRef = await addDoc(collection(firestoreInstance, 'posts'), {
@@ -111,6 +115,7 @@ const useCreatePostLogic = (handleCloseCreatePost) => {
         comments: [],
         likes: 0,
       });
+
       if (docRef) {
         previews.forEach(async ({ f }, index) => {
           const randomName = `${info.userName}_${Math.floor(
@@ -131,7 +136,10 @@ const useCreatePostLogic = (handleCloseCreatePost) => {
 
           if (index === previews.length - 1) {
             dispatch(userLoadingEnds());
+
             handleCloseCreatePost();
+
+            getUpdatedPosts(info, id);
             dispatch(
               notificationShowSuccess({
                 msg: 'Successfully created your post!',

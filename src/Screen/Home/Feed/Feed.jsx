@@ -30,6 +30,7 @@ const Feed = () => {
       {users.length !== 0 ? (
         users.map((item) => (
           <div className='row flex' key={item.id}>
+            {/* {console.log(item.id)} */}
             <div className='far_left flex'>
               <div className='dp'>
                 <img src={item.dp.url === '' ? dummyDp : item.dp.url} alt='' />

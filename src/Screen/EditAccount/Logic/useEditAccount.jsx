@@ -362,9 +362,10 @@ const useEditAccount = () => {
 
         setGender(gender);
 
-        await getUpdatedPosts();
+        await getUpdatedPosts(info, id);
 
         await getUpdatedUserDoc(id);
+
         dispatch(
           notificationShowSuccess({
             msg: 'successfully updated information!!!',

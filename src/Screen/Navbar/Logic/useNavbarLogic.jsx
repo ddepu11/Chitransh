@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { getDocs, query, where, collection, orderBy } from 'firebase/firestore';
+import { getDocs, query, where, collection } from 'firebase/firestore';
+import usePostsOperation from '../../../Components/usePostsOperation';
 import { authInstance, firestoreInstance } from '../../../config/firebase';
 
 import {
@@ -9,11 +10,6 @@ import {
   notificationShowInfo,
 } from '../../../features/notification';
 import { userLoadingEnds } from '../../../features/user';
-import {
-  postsLoadingBegins,
-  postsLoadingEnds,
-  storeAllPosts,
-} from '../../../features/posts';
 
 const useNavbarLogic = () => {
   const dispatch = useDispatch();
@@ -153,34 +149,12 @@ const useNavbarLogic = () => {
     dropDownFromAvatar.current.classList.remove('active');
   };
 
+  const { getUpdatedPosts } = usePostsOperation();
+
   const handleClickOnLogo = async () => {
     setActiveIcon('home');
 
-    // console.log(info.following);
-    dispatch(postsLoadingBegins());
-
-    try {
-      const postsCollection = collection(firestoreInstance, 'posts');
-
-      const q = query(postsCollection, orderBy('createdOn', 'desc'));
-
-      const postsSnap = await getDocs(q);
-
-      let index = 0;
-      const posts = [];
-
-      postsSnap.forEach((u) => {
-        posts.push(u.data());
-
-        if (index === postsSnap.size - 1) {
-          dispatch(storeAllPosts(posts));
-        }
-        index += 1;
-      });
-    } catch (err) {
-      dispatch(notificationShowError({ msg: err.code.toString().slice(5) }));
-      dispatch(postsLoadingEnds());
-    }
+    getUpdatedPosts(info, id);
   };
 
   return {
