@@ -24,6 +24,7 @@ const useNavbarLogic = () => {
   const [notifications, setNotifications] = useState([]);
   const dropDownFromAvatar = useRef(null);
   const notificationDropDown = useRef(null);
+
   const { info, id } = useSelector((state) => state.user.value);
 
   useEffect(() => {
@@ -155,22 +156,23 @@ const useNavbarLogic = () => {
   const handleClickOnLogo = async () => {
     setActiveIcon('home');
 
+    // console.log(info.following);
     dispatch(postsLoadingBegins());
 
     try {
-      const userCollection = collection(firestoreInstance, 'posts');
+      const postsCollection = collection(firestoreInstance, 'posts');
+
+      const q = query(postsCollection, orderBy('createdOn', 'desc'));
+
+      const postsSnap = await getDocs(q);
 
       let index = 0;
       const posts = [];
 
-      const q = query(userCollection, orderBy('createdOn', 'desc'));
-
-      const userSnapshot = await getDocs(q);
-
-      userSnapshot.forEach((u) => {
+      postsSnap.forEach((u) => {
         posts.push(u.data());
 
-        if (index === userSnapshot.size - 1) {
+        if (index === postsSnap.size - 1) {
           dispatch(storeAllPosts(posts));
         }
         index += 1;
