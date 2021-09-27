@@ -242,9 +242,6 @@ const Wrapper = styled.nav`
       activeIcon === 'avatar' ? '2px solid #333' : ''};
 
     padding: ${({ activeIcon }) => (activeIcon === 'avatar' ? '1px' : '0px')};
-    ${({ activeIcon }) => {
-      console.log(activeIcon);
-    }};
 
     img {
       border-radius: 50%;

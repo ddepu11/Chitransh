@@ -309,14 +309,16 @@ const useProfileLogic = () => {
 
   // Handling active nav
   useEffect(() => {
-    if (history.location.pathname.includes('saved')) {
-      postsLinkRef.current.classList.remove('active');
-      savedLinkRef.current.classList.add('active');
-    } else if (postsLinkRef.current && savedLinkRef.current) {
-      postsLinkRef.current.classList.add('active');
-      savedLinkRef.current.classList.remove('active');
+    if (!userId && !loading) {
+      if (history.location.pathname.includes('saved')) {
+        postsLinkRef.current.classList.remove('active');
+        savedLinkRef.current.classList.add('active');
+      } else if (!userId) {
+        postsLinkRef.current.classList.add('active');
+        savedLinkRef.current.classList.remove('active');
+      }
     }
-  }, [history.location.pathname]);
+  }, [history.location.pathname, userId, loading]);
 
   const [myPosts, setMyPosts] = useState([]);
 
