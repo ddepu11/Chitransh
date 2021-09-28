@@ -61,6 +61,7 @@ const useFeedLogic = () => {
           if (index === usersSnap.size - 1) {
             setUsers(newUsers);
             // console.log(newUsers);
+            setLoading(false);
           }
 
           index += 1;
@@ -72,6 +73,7 @@ const useFeedLogic = () => {
     };
 
     if (!userLoading && hasUserLoggedIn) {
+      setLoading(true);
       fetchSuggestFollowers();
     }
   }, [dispatch, info, id, userLoading, hasUserLoggedIn]);
@@ -123,17 +125,15 @@ const useFeedLogic = () => {
 
       setTimeout(async () => {
         await getUpdatedUserDoc(id);
-      }, 1000);
 
-      setTimeout(async () => {
+        setLoading(false);
+
         await getUpdatedPosts(info, id);
-      }, 2000);
+      }, 1000);
 
       dispatch(
         notificationShowInfo({ msg: 'Successfully followed a person!' })
       );
-
-      setLoading(false);
     } catch (err) {
       dispatch(notificationShowError({ msg: err.code.toString().slice(5) }));
 
