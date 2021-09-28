@@ -121,14 +121,18 @@ const Navbar = () => {
                           </div>
 
                           <h3 className='user_name'>{item.whoMade.userName}</h3>
-                          <div className='body'>{item.body.slice(0, 30)}</div>
-                        </div>
-
-                        <div className='right'>
-                          <div className='post_img'>
-                            <img src={item.postImg} alt='post' />
+                          <div className='body'>
+                            {item.body.slice(0, 38)}...
                           </div>
                         </div>
+
+                        {item.postImg !== '' && (
+                          <div className='right'>
+                            <div className='post_img'>
+                              <img src={item.postImg} alt='post' />
+                            </div>
+                          </div>
+                        )}
                       </div>
                     ))
                   )}

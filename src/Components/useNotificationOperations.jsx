@@ -18,7 +18,7 @@ const useNotificationOperations = () => {
   const sendNotification = async (userId, notification) => {
     try {
       // Add notification doc
-      const commentRef = await addDoc(
+      const notificationRef = await addDoc(
         collection(firestoreInstance, 'notifications'),
         notification
       );
@@ -27,14 +27,14 @@ const useNotificationOperations = () => {
       const usersRef = collection(firestoreInstance, 'users');
 
       const q = query(usersRef, where('id', '==', userId));
+
       const usersSnap = await getDocs(q);
 
       usersSnap.forEach(async (u) => {
         await updateDoc(doc(firestoreInstance, 'users', u.id), {
-          notifications: arrayUnion(commentRef.id),
+          notifications: arrayUnion(notificationRef.id),
         });
       });
-      
     } catch (err) {
       dispatch(notificationShowError({ msg: err.code.toString().slice(5) }));
     }

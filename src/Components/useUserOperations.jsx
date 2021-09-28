@@ -18,10 +18,11 @@ const useUserOperation = () => {
       dispatch(userLoadingEnds());
     }
   };
-
+  
   const updateUserDoc = async (data, docId) => {
     try {
       const userDocRef = doc(firestoreInstance, 'users', docId);
+
       await updateDoc(userDocRef, data);
     } catch (err) {
       dispatch(notificationShowError({ msg: err.code.toString().slice(5) }));

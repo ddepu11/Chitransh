@@ -6,7 +6,7 @@ import useFeedLogic from './Logic/useFeedLogic';
 import Button from '../../../Components/Button';
 
 const Feed = () => {
-  const { users, loading } = useFeedLogic();
+  const { users, loading, followAPerson } = useFeedLogic();
 
   if (loading) {
     return <Loader />;
@@ -39,6 +39,8 @@ const Feed = () => {
               <div className='username'>{item.userName}</div>
             </div>
 
+            {/* {console.log(item)} */}
+
             <Button
               type='button'
               bgColor='transparent'
@@ -47,6 +49,8 @@ const Feed = () => {
               color='#0095f6'
               fs='0.87em'
               fWeight='700'
+              handleClick={followAPerson}
+              dataVal={item.id}
             >
               Follow
             </Button>

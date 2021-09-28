@@ -1,14 +1,30 @@
-import { collection, orderBy, getDocs, query } from 'firebase/firestore';
+import {
+  collection,
+  orderBy,
+  getDocs,
+  query,
+  doc,
+  updateDoc,
+  arrayUnion,
+  where,
+} from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import useNotificationOperations from '../../../../Components/useNotificationOperations';
+import usePostsOperation from '../../../../Components/usePostsOperation';
+import useUserOperation from '../../../../Components/useUserOperations';
 import { firestoreInstance } from '../../../../config/firebase';
-import { notificationShowError } from '../../../../features/notification';
+import {
+  notificationShowError,
+  notificationShowInfo,
+} from '../../../../features/notification';
 
 const useFeedLogic = () => {
   const dispatch = useDispatch();
 
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
+
   const { info, id, userLoading, hasUserLoggedIn } = useSelector(
     (state) => state.user.value
   );
@@ -16,9 +32,9 @@ const useFeedLogic = () => {
   useEffect(() => {
     const fetchSuggestFollowers = async () => {
       try {
-        const postsCollection = collection(firestoreInstance, 'users');
+        const usersCollection = collection(firestoreInstance, 'users');
 
-        const q = query(postsCollection, orderBy('createdOn', 'desc'));
+        const q = query(usersCollection, orderBy('createdOn', 'desc'));
 
         const usersSnap = await getDocs(q);
 
@@ -28,7 +44,8 @@ const useFeedLogic = () => {
         usersSnap.forEach((u) => {
           info.following.forEach((folId) => {
             // console.log(u.id !== id);
-            if (folId !== u.get('id') && u.id !== id) {
+            // get('id')
+            if (folId !== u.id && u.id !== id) {
               newUsers.push(u.data());
             }
           });
@@ -59,7 +76,72 @@ const useFeedLogic = () => {
     }
   }, [dispatch, info, id, userLoading, hasUserLoggedIn]);
 
-  return { users, loading };
+  const { getUpdatedUserDoc } = useUserOperation();
+  const { sendNotification } = useNotificationOperations();
+  const { getUpdatedPosts } = usePostsOperation();
+
+  const followAPerson = async (e) => {
+    const personId = e.target.getAttribute('data-value');
+
+    setLoading(true);
+
+    try {
+      // Adding my id in person's followers array whom you  gonna follow
+      const usersCollectionRef = collection(firestoreInstance, 'users');
+
+      const q = query(usersCollectionRef, where('id', '==', personId));
+
+      const querySnapshot = await getDocs(q);
+
+      querySnapshot.forEach(async (u) => {
+        await updateDoc(doc(firestoreInstance, 'users', u.id), {
+          followers: arrayUnion(id),
+        });
+
+        // Add person's id whom you gonna follow, in my following array
+        const userRef = doc(firestoreInstance, 'users', id);
+        await updateDoc(userRef, {
+          following: arrayUnion(u.id),
+        });
+
+        // Send notification
+        const notification = {
+          body: `has started following you`,
+          sendToUserId: u.id,
+          whoMade: {
+            userName: info.userName,
+            userId: id,
+            userDpUrl: info.dp.url,
+          },
+          postId: null,
+          postImg: '',
+          createdOn: Date.now(),
+        };
+
+        await sendNotification(personId, notification);
+      });
+
+      setTimeout(async () => {
+        await getUpdatedUserDoc(id);
+      }, 1000);
+
+      setTimeout(async () => {
+        await getUpdatedPosts(info, id);
+      }, 2000);
+
+      dispatch(
+        notificationShowInfo({ msg: 'Successfully followed a person!' })
+      );
+
+      setLoading(false);
+    } catch (err) {
+      dispatch(notificationShowError({ msg: err.code.toString().slice(5) }));
+
+      setLoading(false);
+    }
+  };
+
+  return { users, loading, followAPerson };
 };
 
 export default useFeedLogic;

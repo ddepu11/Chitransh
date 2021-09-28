@@ -10,11 +10,7 @@ import {
 import { useDispatch } from 'react-redux';
 import { firestoreInstance } from '../config/firebase';
 import { notificationShowError } from '../features/notification';
-import {
-  postsLoadingBegins,
-  postsLoadingEnds,
-  storeAllPosts,
-} from '../features/posts';
+import { postsLoadingEnds, storeAllPosts } from '../features/posts';
 
 const usePostsOperation = () => {
   const dispatch = useDispatch();
@@ -22,8 +18,6 @@ const usePostsOperation = () => {
   const postsCollectionReference = collection(firestoreInstance, 'posts');
 
   const getUpdatedPosts = async (info, id) => {
-    dispatch(postsLoadingBegins());
-
     try {
       const userCollection = collection(firestoreInstance, 'posts');
 
@@ -41,6 +35,7 @@ const usePostsOperation = () => {
           }
         });
 
+        // When useer's following array is empty
         if (u.get('userId') === id) {
           posts.push(u.data());
         }

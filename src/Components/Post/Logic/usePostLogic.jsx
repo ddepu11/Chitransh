@@ -139,7 +139,7 @@ const usePostLogic = (post) => {
 
         await getUpdatedUserDoc(id);
 
-        await getUpdatedPosts();
+        await getUpdatedPosts(info, id);
 
         setLoading(false);
 
@@ -168,7 +168,7 @@ const usePostLogic = (post) => {
 
         await getUpdatedUserDoc(id);
 
-        await getUpdatedPosts();
+        await getUpdatedPosts(info, id);
 
         setLoading(false);
 
@@ -181,6 +181,7 @@ const usePostLogic = (post) => {
       }
     }
   };
+
   // ############################### like/dislike Post ends #####################################
 
   // Saving/Unsaving Post
