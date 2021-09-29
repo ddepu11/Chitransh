@@ -6,7 +6,7 @@ import Button from '../../Components/Button';
 import useProfileLogic from './Logic/useProfileLogic';
 import dummyDp from '../../images/dummyDp.png';
 import Loader from '../../Components/Loader';
-import Saved from '../Saved/Saved';
+import Saved from './Saved/Saved';
 import UserPosts from '../Posts/UserPosts';
 
 const Profile = () => {
@@ -227,7 +227,7 @@ const Profile = () => {
         </Route>
 
         <Route path='/:userName/saved/' exact>
-          <Saved />
+          <Saved info={info} />
         </Route>
       </Wrapper>
     </>

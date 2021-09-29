@@ -4,7 +4,7 @@ import FavoriteIcon from '@material-ui/icons/Favorite';
 import ModeCommentRoundedIcon from '@material-ui/icons/ModeCommentRounded';
 import Loader from '../../Components/Loader';
 
-const UserPosts = ({ posts, loading }) => {
+const UserPosts = ({ posts, loading, savedPosts }) => {
   if (loading) {
     return <Loader />;
   }
@@ -31,7 +31,11 @@ const UserPosts = ({ posts, loading }) => {
         ))
       ) : (
         <div className='no_posts_div flex'>
-          <h3>You haven&apos;t post anything yet!</h3>
+          <h3>
+            {savedPosts
+              ? "You haven't saved any post yet!"
+              : "You haven't  posted anything yet!"}
+          </h3>
         </div>
       )}
     </Wrapper>
@@ -110,6 +114,11 @@ const Wrapper = styled.main`
 UserPosts.propTypes = {
   posts: PropTypes.array.isRequired,
   loading: PropTypes.bool.isRequired,
+  savedPosts: PropTypes.bool,
+};
+
+UserPosts.defaultProps = {
+  savedPosts: false,
 };
 
 export default UserPosts;
