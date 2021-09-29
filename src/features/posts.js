@@ -36,6 +36,14 @@ const posts = createSlice({
     postsLoadingEnds: (state = initialState) => {
       state.value = { ...state.value, postLoading: false };
     },
+
+    clearPosts: (state = initialState) => {
+      state.value = {
+        allPosts: [],
+        userPosts: [],
+        postLoading: false,
+      };
+    },
   },
 });
 
@@ -44,6 +52,7 @@ export const {
   storeUserPosts,
   storeAllPosts,
   postsLoadingEnds,
+  clearPosts,
 } = posts.actions;
 
 export default posts.reducer;

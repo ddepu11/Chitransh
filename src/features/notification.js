@@ -17,6 +17,7 @@ const notificationSlice = createSlice({
         error: true,
       };
     },
+
     notificationShowSuccess: (state = initialState, action) => {
       state.value = {
         ...state.value,

@@ -10,7 +10,7 @@ import {
   notificationShowInfo,
 } from '../../../features/notification';
 import { userLoadingEnds } from '../../../features/user';
-import { postsLoadingBegins } from '../../../features/posts';
+import { clearPosts, postsLoadingBegins } from '../../../features/posts';
 
 const useNavbarLogic = () => {
   const dispatch = useDispatch();
@@ -133,6 +133,8 @@ const useNavbarLogic = () => {
     authInstance
       .signOut()
       .then(() => {
+        dispatch(clearPosts());
+
         history.push('/login');
 
         dispatch(notificationShowInfo({ msg: 'Successfully logged out' }));
