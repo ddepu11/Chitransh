@@ -21,6 +21,7 @@ import {
 import usePostsOperation from '../../usePostsOperation';
 import useUserOperation from '../../useUserOperations';
 import useNotificationOperations from '../../useNotificationOperations';
+import { closePost } from '../../../features/post';
 
 const usePostLogic = (post) => {
   const [loading, setLoading] = useState(false);
@@ -348,6 +349,11 @@ const usePostLogic = (post) => {
     setShowDialog(true);
   };
 
+  const closeViewPost = () => {
+    dispatch(closePost());
+    document.body.classList.remove('dialog_active');
+  };
+
   return {
     id,
     loading,
@@ -368,6 +374,7 @@ const usePostLogic = (post) => {
     showDialog,
     closeDialog,
     openDialog,
+    closeViewPost,
   };
 };
 

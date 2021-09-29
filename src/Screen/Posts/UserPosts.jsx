@@ -2,9 +2,33 @@ import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import ModeCommentRoundedIcon from '@material-ui/icons/ModeCommentRounded';
+import { useDispatch } from 'react-redux';
+import { collection, where, query, getDocs } from 'firebase/firestore';
 import Loader from '../../Components/Loader';
+import { viewPost } from '../../features/post';
+import { notificationShowError } from '../../features/notification';
+import { firestoreInstance } from '../../config/firebase';
 
 const UserPosts = ({ posts, loading, savedPosts }) => {
+  const dispatch = useDispatch();
+
+  const viewPostDialog = async (e) => {
+    const postId = e.target.getAttribute('data-id');
+
+    try {
+      const postsRef = collection(firestoreInstance, 'posts');
+
+      const q = query(postsRef, where('id', '==', postId));
+      const postSnap = await getDocs(q);
+
+      postSnap.forEach((doc) => {
+        dispatch(viewPost(doc.data()));
+      });
+    } catch (err) {
+      dispatch(notificationShowError({ msg: err.code.toString().slice(5) }));
+    }
+  };
+
   if (loading) {
     return <Loader />;
   }
@@ -16,7 +40,11 @@ const UserPosts = ({ posts, loading, savedPosts }) => {
           <div className='post' key={item.id}>
             <img src={item.images[0].url} alt={item.caption} />
 
-            <div className='post_cover flex'>
+            <div
+              className='post_cover flex'
+              data-id={item.id}
+              onClick={viewPostDialog}
+            >
               <div className='like flex'>
                 <FavoriteIcon className='ic_likes' />
                 <span>{item.likes}</span>

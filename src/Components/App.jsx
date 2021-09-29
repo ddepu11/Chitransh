@@ -28,6 +28,7 @@ import Navbar from '../Screen/Navbar/Navbar';
 import Profile from '../Screen/Profile/Profile';
 import EditAccount from '../Screen/EditAccount/EditAccount';
 import ProtectedRoute from './ProtectedRoute';
+import Post from './Post/Post';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -76,6 +77,7 @@ const App = () => {
     useNotification();
 
   const { hasUserLoggedIn } = useSelector((state) => state.user.value);
+  const { view, post } = useSelector((state) => state.post.value);
 
   const { message, success, error, info } = useSelector(
     (state) => state.notification.value
@@ -115,6 +117,14 @@ const App = () => {
       <Wrapper>
         <Router>
           {hasUserLoggedIn && <Navbar />}
+
+          {view && (
+            <>
+              {document.body.classList.add('dialog_active')}
+
+              <Post post={post} viewPost={true} />
+            </>
+          )}
 
           <Switch>
             <Route path='/' exact>
