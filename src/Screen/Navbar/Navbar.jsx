@@ -30,6 +30,7 @@ const Navbar = () => {
     handleSearchTerm,
     searchTerm,
     users,
+    closeSearchDropBox,
   } = useNavbarLogic();
 
   return (
@@ -61,7 +62,12 @@ const Navbar = () => {
                 <>
                   {users.length !== 0 ? (
                     users.map((item) => (
-                      <div key={item.id} className='user flex'>
+                      <Link
+                        to={`/profile/${item.userDocId}/`}
+                        key={item.id}
+                        className='user flex'
+                        onClick={closeSearchDropBox}
+                      >
                         <div className='user_dp'>
                           <img
                             src={item.dp.url === '' ? dummyDp : item.dp.url}
@@ -73,7 +79,7 @@ const Navbar = () => {
                           <p className='username'>{item.userName}</p>
                           <p className='fullname'>{item.fullName}</p>
                         </div>
-                      </div>
+                      </Link>
                     ))
                   ) : (
                     <h2 className='no_users'>Sorry no match found!!</h2>
@@ -449,7 +455,7 @@ const SearchDropBox = styled.div`
   right: -80px;
   width: 420px;
   height: 400px;
-  padding: 15px 10px 10px;
+  padding: 12px 5px 10px;
   overflow-y: scroll;
 
   .user {
@@ -476,6 +482,7 @@ const SearchDropBox = styled.div`
       .username {
         font-weight: 700;
         font-size: 0.85em;
+        color: #353535;
       }
 
       .fullname {

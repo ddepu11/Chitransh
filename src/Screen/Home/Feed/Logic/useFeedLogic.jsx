@@ -24,7 +24,6 @@ const useFeedLogic = () => {
 
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [userDocId, setUserDocId] = useState('');
 
   const { info, id, userLoading, hasUserLoggedIn } = useSelector(
     (state) => state.user.value
@@ -50,13 +49,13 @@ const useFeedLogic = () => {
             !info.following.includes(u.id) &&
             u.id !== id
           ) {
-            newUsers.push(u.data());
+            newUsers.push({ ...u.data(), userDocId: u.id });
           }
 
           // Runs when you have no followers
           if (info.following.length === 0) {
             if (u.id !== id) {
-              newUsers.push(u.data());
+              newUsers.push({ ...u.data(), userDocId: u.id });
             }
           }
 
@@ -149,19 +148,7 @@ const useFeedLogic = () => {
     }
   };
 
-  const getUserDocId = async (idInsideDoc) => {
-    const q = query(
-      collection(firestoreInstance, 'users'),
-      where('id', '==', idInsideDoc)
-    );
-    const myPostsSnap = await getDocs(q);
-
-    myPostsSnap.forEach((p) => {
-      if (mounted.current) setUserDocId(p.id);
-    });
-  };
-
-  return { users, loading, followAPerson, getUserDocId, userDocId };
+  return { users, loading, followAPerson };
 };
 
 export default useFeedLogic;

@@ -6,8 +6,7 @@ import useFeedLogic from './Logic/useFeedLogic';
 import Button from '../../../Components/Button';
 
 const Feed = () => {
-  const { users, loading, followAPerson, userDocId, getUserDocId } =
-    useFeedLogic();
+  const { users, loading, followAPerson } = useFeedLogic();
 
   if (loading) {
     return <Loader />;
@@ -30,7 +29,9 @@ const Feed = () => {
 
       {users.length !== 0 ? (
         users.map((item) => {
-          getUserDocId(item.id);
+          console.log('');
+
+          // console.log('asas');
 
           return (
             <div className='row flex' key={item.id}>
@@ -43,7 +44,7 @@ const Feed = () => {
                   />
                 </div>
 
-                <Link to={`/profile/${userDocId}/`} className='username'>
+                <Link to={`/profile/${item.userDocId}/`} className='username'>
                   {item.userName}
                 </Link>
               </div>

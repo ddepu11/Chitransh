@@ -24,6 +24,57 @@ const useNavbarLogic = () => {
 
   const { info, id } = useSelector((state) => state.user.value);
 
+  // Search user functionality
+  const [searchTerm, setSearchTerm] = useState('');
+  const [users, setUsers] = useState([]);
+
+  const searchDropBoxRef = useRef(null);
+
+  useEffect(() => {
+    const searchUser = async () => {
+      const usersRef = collection(firestoreInstance, 'users');
+
+      const qSnap = await getDocs(usersRef);
+
+      let index = 0;
+      const newUsers = [];
+
+      qSnap.forEach((doc) => {
+        if (
+          doc.get('userName').toLowerCase().includes(searchTerm.toLowerCase())
+        ) {
+          newUsers.push({ ...doc.data(), userDocId: doc.id });
+        }
+
+        if (index === qSnap.size - 1) {
+          setLoading(false);
+          setUsers(newUsers);
+        }
+
+        index += 1;
+      });
+    };
+
+    if (searchTerm) {
+      setLoading(true);
+      searchUser();
+      searchDropBoxRef.current.classList.add('active');
+    } else {
+      searchDropBoxRef.current.classList.remove('active');
+      setLoading(false);
+      setUsers([]);
+    }
+  }, [searchTerm]);
+
+  const handleSearchTerm = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const closeSearchDropBox = () => {
+    setSearchTerm('');
+    setUsers([]);
+  };
+
   useEffect(() => {
     setActiveIcon('home');
   }, []);
@@ -45,8 +96,10 @@ const useNavbarLogic = () => {
           !e.target.matches('.ic_liked') &&
           history.location.pathname === '/' &&
           activeIcon !== 'add'
-        )
+        ) {
           setActiveIcon('home');
+          closeSearchDropBox();
+        }
       }
 
       // For hiding  Notification dropdown
@@ -67,6 +120,15 @@ const useNavbarLogic = () => {
           activeIcon !== 'add'
         )
           setActiveIcon('home');
+      }
+
+      // For hidding notification dropdown when click on icons
+      if (
+        e.target.matches('.ava_img') ||
+        e.target.matches('.ic_add') ||
+        e.target.matches('.ic_liked')
+      ) {
+        closeSearchDropBox();
       }
     };
 
@@ -163,54 +225,9 @@ const useNavbarLogic = () => {
     getUpdatedPosts(info, id);
   };
 
-  // Search user functionality
-  const [searchTerm, setSearchTerm] = useState('');
-  const [users, setUsers] = useState([]);
-
-  const searchDropBoxRef = useRef(null);
-
-  useEffect(() => {
-    const searchUser = async () => {
-      const usersRef = collection(firestoreInstance, 'users');
-
-      const qSnap = await getDocs(usersRef);
-
-      let index = 0;
-      const newUsers = [];
-
-      qSnap.forEach((doc) => {
-        if (
-          doc.get('userName').toLowerCase().includes(searchTerm.toLowerCase())
-        ) {
-          newUsers.push(doc.data());
-        }
-
-        if (index === qSnap.size - 1) {
-          setLoading(false);
-          setUsers(newUsers);
-        }
-
-        index += 1;
-      });
-    };
-
-    if (searchTerm) {
-      setLoading(true);
-      searchUser();
-      searchDropBoxRef.current.classList.add('active');
-    } else {
-      searchDropBoxRef.current.classList.remove('active');
-      setLoading(false);
-      setUsers([]);
-    }
-  }, [searchTerm]);
-
-  const handleSearchTerm = (e) => {
-    setSearchTerm(e.target.value);
-  };
-
   return {
     handleSearchTerm,
+    closeSearchDropBox,
     searchTerm,
     searchDropBoxRef,
     handleCloseCreatePost,
