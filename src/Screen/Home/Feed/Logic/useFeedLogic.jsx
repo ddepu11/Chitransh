@@ -48,7 +48,6 @@ const useFeedLogic = () => {
             !info.following.includes(u.id) &&
             u.id !== id
           ) {
-            console.log(u.get('userName'));
             newUsers.push(u.data());
           }
 
@@ -79,9 +78,9 @@ const useFeedLogic = () => {
       fetchSuggestFollowers();
     }
 
-    return () => {
-      console.log('Feed clean up!');
-    };
+    // return () => {
+    //   console.log('Feed clean up!');
+    // };
   }, [dispatch, info, id, userLoading, hasUserLoggedIn]);
 
   const { getUpdatedUserDoc } = useUserOperation();
