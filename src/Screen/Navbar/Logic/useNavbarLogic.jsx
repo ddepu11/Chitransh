@@ -165,15 +165,48 @@ const useNavbarLogic = () => {
 
   // Search user functionality
   const [searchTerm, setSearchTerm] = useState('');
+  const [users, setUsers] = useState([]);
 
   const searchDropBoxRef = useRef(null);
 
+  useEffect(() => {
+    const searchUser = async () => {
+      const usersRef = collection(firestoreInstance, 'users');
+
+      const qSnap = await getDocs(usersRef);
+
+      let index = 0;
+      const newUsers = [];
+
+      qSnap.forEach((doc) => {
+        if (
+          doc.get('userName').toLowerCase().includes(searchTerm.toLowerCase())
+        ) {
+          newUsers.push(doc.data());
+        }
+
+        if (index === qSnap.size - 1) {
+          setLoading(false);
+          setUsers(newUsers);
+        }
+
+        index += 1;
+      });
+    };
+
+    if (searchTerm) {
+      setLoading(true);
+      searchUser();
+      searchDropBoxRef.current.classList.add('active');
+    } else {
+      searchDropBoxRef.current.classList.remove('active');
+      setLoading(false);
+      setUsers([]);
+    }
+  }, [searchTerm]);
+
   const handleSearchTerm = (e) => {
     setSearchTerm(e.target.value);
-
-    if (searchTerm === '') {
-      console.log('Change');
-    }
   };
 
   return {
@@ -191,6 +224,7 @@ const useNavbarLogic = () => {
     loading,
     notifications,
     handleClickOnLogo,
+    users,
   };
 };
 

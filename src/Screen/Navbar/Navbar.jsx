@@ -29,6 +29,7 @@ const Navbar = () => {
     searchDropBoxRef,
     handleSearchTerm,
     searchTerm,
+    users,
   } = useNavbarLogic();
 
   return (
@@ -52,7 +53,33 @@ const Navbar = () => {
             />
 
             <SearchDropBox ref={searchDropBoxRef} className='search_dropbox'>
-              sa
+              {loading ? (
+                <div className='search_loading flex'>
+                  <h3>Loading...</h3>
+                </div>
+              ) : (
+                <>
+                  {users.length !== 0 ? (
+                    users.map((item) => (
+                      <div key={item.id} className='user flex'>
+                        <div className='user_dp'>
+                          <img
+                            src={item.dp.url === '' ? dummyDp : item.dp.url}
+                            alt={item.dp.url}
+                          />
+                        </div>
+
+                        <div className='right'>
+                          <p className='username'>{item.userName}</p>
+                          <p className='fullname'>{item.fullName}</p>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <h2 className='no_users'>Sorry no match found!!</h2>
+                  )}
+                </>
+              )}
             </SearchDropBox>
           </div>
 
@@ -400,7 +427,8 @@ const Wrapper = styled.nav`
   }
 
   .the_avatar_box.active,
-  .notification_box.active {
+  .notification_box.active,
+  .search_dropbox.active {
     opacity: 1;
     transform: translateY(0px);
     pointer-events: auto;
@@ -420,12 +448,61 @@ const SearchDropBox = styled.div`
   pointer-events: none;
   right: -80px;
   width: 420px;
+  height: 400px;
   padding: 15px 10px 10px;
+  overflow-y: scroll;
 
-  .active {
-    opacity: 1;
-    transform: translateY(0px);
-    pointer-events: auto;
+  .user {
+    justify-content: flex-start;
+    padding: 10px 10px;
+
+    .user_dp {
+      width: 45px;
+      height: 45px;
+      margin-right: 10px;
+      border: 2px solid rgba(216, 6, 6, 0.6);
+      border-radius: 50%;
+      padding: 1px;
+
+      img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+    }
+
+    .right {
+      .username {
+        font-weight: 700;
+        font-size: 0.85em;
+      }
+
+      .fullname {
+        font-weight: 700;
+        font-size: 0.8em;
+        color: #9b9b9b;
+      }
+    }
+
+    :hover {
+      cursor: pointer;
+      background-color: #eeeeee;
+      border-radius: 5px;
+    }
+  }
+
+  .no_users,
+  .search_loading {
+    text-align: center;
+    font-weight: 700;
+    font-size: 1em;
+    color: #acacac;
+    margin: 50px 0 0;
+  }
+
+  .search_loading {
+    font-size: 1.2em;
   }
 `;
 
