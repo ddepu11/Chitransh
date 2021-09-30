@@ -148,7 +148,7 @@ const Post = ({ post, viewPost }) => {
                 {comments.length !== 0 && (
                   <div className='comments'>
                     {comments.map((item) => (
-                      <p className='comment flex' key={item.id}>
+                      <div className='comment flex' key={item.id}>
                         <div
                           className='dp'
                           style={{ width: '35px', height: '35px' }}
@@ -177,7 +177,7 @@ const Post = ({ post, viewPost }) => {
                           {item.userName}
                         </Link>
                         {item.comment}
-                      </p>
+                      </div>
                     ))}
                   </div>
                 )}
