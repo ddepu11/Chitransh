@@ -63,9 +63,15 @@ const useProfileLogic = () => {
 
         index += 1;
       });
+
+      if (myPostsSnap.size === 0) {
+        setLoading(false);
+        setPersonPosts(newPosts);
+      }
     };
 
     const fetchProfile = async () => {
+      console.log('as');
       const docRef = doc(firestoreInstance, 'users', userId);
       const userSnap = await getDoc(docRef);
 
@@ -75,16 +81,16 @@ const useProfileLogic = () => {
       }
     };
 
-    if (userId && Object.keys(profile).length === 0) {
+    // Object.keys(profile).length === 0
+    if (userId) {
+      setLoading(true);
       fetchProfile();
-    } else {
-      setLoading(false);
     }
 
     return () => {
       setLoading(false);
     };
-  }, [userId, profile]);
+  }, [userId]);
 
   const [handlingChangeDp, setHandlingChangeDp] = useState(false);
 
@@ -342,13 +348,17 @@ const useProfileLogic = () => {
 
         if (index === myPostsSnap.size - 1) {
           setMyPosts(newPosts);
+
+          setLoading(false);
         }
 
         index += 1;
       });
     };
 
-    if (!userId) getPosts();
+    if (!userId) {
+      getPosts();
+    }
   }, [id, userId]);
 
   const [amIFollingProfilePerson, setAmIFollingProfilePerson] = useState(false);

@@ -242,6 +242,7 @@ const useNavbarLogic = () => {
     notifications,
     handleClickOnLogo,
     users,
+    id,
   };
 };
 

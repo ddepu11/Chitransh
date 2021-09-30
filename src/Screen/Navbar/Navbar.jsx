@@ -31,6 +31,7 @@ const Navbar = () => {
     searchTerm,
     users,
     closeSearchDropBox,
+    id,
   } = useNavbarLogic();
 
   return (
@@ -63,7 +64,11 @@ const Navbar = () => {
                   {users.length !== 0 ? (
                     users.map((item) => (
                       <Link
-                        to={`/profile/${item.userDocId}/`}
+                        to={
+                          id === item.userDocId
+                            ? `/${item.userName}`
+                            : `/profile/${item.userDocId}/`
+                        }
                         key={item.id}
                         className='user flex'
                         onClick={closeSearchDropBox}

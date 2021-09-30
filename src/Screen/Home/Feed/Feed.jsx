@@ -28,45 +28,35 @@ const Feed = () => {
       </div>
 
       {users.length !== 0 ? (
-        users.map((item) => {
-          console.log('');
-
-          // console.log('asas');
-
-          return (
-            <div className='row flex' key={item.id}>
-              {/* {console.log(item.id)} */}
-              <div className='far_left flex'>
-                <div className='dp'>
-                  <img
-                    src={item.dp.url === '' ? dummyDp : item.dp.url}
-                    alt=''
-                  />
-                </div>
-
-                <Link to={`/profile/${item.userDocId}/`} className='username'>
-                  {item.userName}
-                </Link>
+        users.map((item) => (
+          <div className='row flex' key={item.id}>
+            <div className='far_left flex'>
+              <div className='dp'>
+                <img src={item.dp.url === '' ? dummyDp : item.dp.url} alt='' />
               </div>
 
-              {/* {console.log(item)} */}
-
-              <Button
-                type='button'
-                bgColor='transparent'
-                bSh=''
-                transform='scale(1)'
-                color='#0095f6'
-                fs='0.87em'
-                fWeight='700'
-                handleClick={followAPerson}
-                dataVal={item.id}
-              >
-                Follow
-              </Button>
+              <Link to={`/profile/${item.userDocId}/`} className='username'>
+                {item.userName}
+              </Link>
             </div>
-          );
-        })
+
+            {/* {console.log(item)} */}
+
+            <Button
+              type='button'
+              bgColor='transparent'
+              bSh=''
+              transform='scale(1)'
+              color='#0095f6'
+              fs='0.87em'
+              fWeight='700'
+              handleClick={followAPerson}
+              dataVal={item.id}
+            >
+              Follow
+            </Button>
+          </div>
+        ))
       ) : (
         <h3 className='no_suggestion'>Sorry there are no suggestion</h3>
       )}

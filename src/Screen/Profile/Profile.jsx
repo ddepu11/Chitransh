@@ -31,17 +31,11 @@ const Profile = () => {
     amIFollingProfilePerson,
   } = useProfileLogic();
 
-  if (userLoading) {
-    return <Loader />;
-  }
-
-  if (loading) {
-    return <Loader />;
-  }
+  const isProfileEmpty = Object.keys(profile).length === 0;
 
   let imageErc = dummyDp;
 
-  if (userId) {
+  if (userId && !isProfileEmpty) {
     if (profile.dp.fileName !== 'dummyDp') {
       imageErc = profile.dp.url;
     }
@@ -66,6 +60,14 @@ const Profile = () => {
     }
   } else if (info.website) {
     website = info.website;
+  }
+
+  if (userLoading) {
+    return <Loader />;
+  }
+
+  if (loading) {
+    return <Loader />;
   }
 
   return (
