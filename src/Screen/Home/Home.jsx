@@ -14,7 +14,17 @@ const Home = () => {
   return (
     <Wrapper className='w-960 '>
       <HomeDiv className='home'>
-        {allPosts && allPosts.map((post) => <Post key={post.id} post={post} />)}
+        {allPosts.length !== 0 ? (
+          allPosts.map((post) => <Post key={post.id} post={post} />)
+        ) : (
+          <div className='no_posts flex'>
+            <h1>Sorry, there are no post to see!</h1>
+
+            <p>
+              You need to follow people or create your posts own to see posts
+            </p>
+          </div>
+        )}
       </HomeDiv>
 
       <Feed />
@@ -31,6 +41,23 @@ const Wrapper = styled.main`
 
 const HomeDiv = styled.div`
   width: 63%;
+
+  .no_posts {
+    flex-direction: column;
+    border: 1px dashed #dad9d9;
+    height: 250px;
+
+    h1 {
+      font-size: 1.3em;
+      color: #7a7a7a;
+    }
+
+    p {
+      font-size: 1em;
+      margin-top: 10px;
+      color: #7a7a7a;
+    }
+  }
 `;
 
 export default Home;

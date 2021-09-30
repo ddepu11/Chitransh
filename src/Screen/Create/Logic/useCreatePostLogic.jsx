@@ -135,16 +135,17 @@ const useCreatePostLogic = (handleCloseCreatePost) => {
           });
 
           if (index === previews.length - 1) {
-            dispatch(userLoadingEnds());
-
             handleCloseCreatePost();
 
-            getUpdatedPosts(info, id);
+            await getUpdatedPosts(info, id);
+
             dispatch(
               notificationShowSuccess({
                 msg: 'Successfully created your post!',
               })
             );
+
+            dispatch(userLoadingEnds());
           }
         });
       }
@@ -158,7 +159,7 @@ const useCreatePostLogic = (handleCloseCreatePost) => {
   const handleUpload = () => {
     let errorFlag = false;
 
-    if (caption.length > 50) {
+    if (caption.length > 500) {
       setValidationMessage(
         'Caption is too lengthy!',
         'error',

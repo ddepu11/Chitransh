@@ -293,6 +293,7 @@ const Post = ({ post, viewPost }) => {
                 <NavigateNextIcon className='next' onClick={showNextImage} />
               </>
             )}
+
             <img src={images[currentImageIndex].url} alt='s' />
           </div>
 

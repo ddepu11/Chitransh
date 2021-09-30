@@ -26,26 +26,30 @@ const usePostsOperation = () => {
 
       const q = query(userCollection, orderBy('createdOn', 'desc'));
 
-      const userSnapshot = await getDocs(q);
+      const postsSnap = await getDocs(q);
 
-      userSnapshot.forEach((u) => {
+      postsSnap.forEach((u) => {
         info.following.forEach((folId) => {
           if (folId === u.get('userId')) {
             posts.push(u.data());
           }
         });
 
-        // When useer's following array is empty
+        // Getting user's own posts array is empty
         if (u.get('userId') === id) {
           posts.push(u.data());
         }
 
-        if (index === userSnapshot.size - 1) {
+        if (index === postsSnap.size - 1) {
           dispatch(storeAllPosts(posts));
         }
 
         index += 1;
       });
+
+      if (postsSnap.size === 0) {
+        dispatch(postsLoadingEnds());
+      }
     } catch (err) {
       dispatch(notificationShowError({ msg: err.code.toString().slice(5) }));
       dispatch(postsLoadingEnds());
