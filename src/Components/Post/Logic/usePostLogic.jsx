@@ -43,7 +43,9 @@ const usePostLogic = (post) => {
   const msInAMinute = 60 * 1000;
   const msInAHour = 60 * 60 * 1000;
   const msInADay = 24 * 60 * 60 * 1000;
+  const msInAWeek = msInADay * 7;
 
+  const week = Math.floor(currentTimeInMs / msInAWeek);
   const days = Math.floor(currentTimeInMs / msInADay);
   const hours = Math.floor((currentTimeInMs % msInADay) / msInAHour);
   const minutes = Math.floor((currentTimeInMs % msInAHour) / msInAMinute);
@@ -66,6 +68,11 @@ const usePostLogic = (post) => {
   if (days !== 0) {
     whenWasThePostCreated = `${days}d ago`;
   }
+
+  if (week !== 0) {
+    whenWasThePostCreated = `${week}w ago`;
+  }
+
   // ################## Calculating when was the post created  Ends #####################
 
   // Navigate through images if there are more then 1 image
@@ -98,10 +105,7 @@ const usePostLogic = (post) => {
 
   let didYouLikedThePost = false;
 
-  if (
-    info &&
-    info.likedPostsIds.filter((item) => item === post.id).length === 1
-  ) {
+  if (info && info.likedPostsIds.includes(post.id)) {
     didYouLikedThePost = true;
   }
 
@@ -188,10 +192,7 @@ const usePostLogic = (post) => {
   // Saving/Unsaving Post
   let didYouSavedThePost = false;
 
-  if (
-    info &&
-    info.savedPostsIds.filter((item) => item === post.id).length === 1
-  ) {
+  if (info && info.savedPostsIds.includes(post.id)) {
     didYouSavedThePost = true;
   }
 

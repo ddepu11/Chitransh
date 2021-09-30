@@ -356,17 +356,9 @@ const useProfileLogic = () => {
   // Check that is logged in user following profile person
   useEffect(() => {
     if (info && !userLoading && Object.keys(profile).length !== 0) {
-      // info.following.forEach((item) => {
-      //   if (item === userId) {
-      //     setAmIFollingProfilePerson(true);
-      //   }
-      // });
-
       if (info.following.includes(userId)) {
-        console.log('Following');
         setAmIFollingProfilePerson(true);
       } else {
-        console.log('Not Following');
         setAmIFollingProfilePerson(false);
       }
 

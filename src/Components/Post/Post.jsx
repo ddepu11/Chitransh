@@ -308,7 +308,10 @@ const Post = ({ post, viewPost }) => {
                   onClick={likeThePost}
                 />
               )}
-              <ModeCommentOutlinedIcon className='ic_comment' />
+
+              <label htmlFor='comment'>
+                <ModeCommentOutlinedIcon className='ic_comment' />
+              </label>
             </div>
 
             {images.length > 1 && (
@@ -385,6 +388,7 @@ const Post = ({ post, viewPost }) => {
               placeholder='Add a comment...'
               value={comment}
               onChange={handleComment}
+              id='comment'
             />
 
             <Button

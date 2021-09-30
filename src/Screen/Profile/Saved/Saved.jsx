@@ -28,7 +28,6 @@ const Saved = ({ info }) => {
         if (info.savedPostsIds.length - 1 === index) {
           setLoading(false);
           setSavedPosts(newPosts);
-          console.log(newPosts);
         } else {
           setLoading(false);
         }
