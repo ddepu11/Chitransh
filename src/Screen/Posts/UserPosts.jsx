@@ -9,7 +9,7 @@ import { viewPost } from '../../features/post';
 import { notificationShowError } from '../../features/notification';
 import { firestoreInstance } from '../../config/firebase';
 
-const UserPosts = ({ posts, loading, savedPosts }) => {
+const UserPosts = ({ posts, loading, savedPosts, viewingAProfile }) => {
   const dispatch = useDispatch();
 
   const viewPostDialog = async (e) => {
@@ -61,8 +61,12 @@ const UserPosts = ({ posts, loading, savedPosts }) => {
         <div className='no_posts_div flex'>
           <h3>
             {savedPosts
-              ? "You haven't saved any post yet!"
-              : "You haven't  posted anything yet!"}
+              ? `${
+                  viewingAProfile ? 'Person' : 'You'
+                } haven't saved any post yet!`
+              : `${
+                  viewingAProfile ? 'Person' : 'You'
+                } haven't posted anything yet!`}
           </h3>
         </div>
       )}
@@ -143,10 +147,12 @@ UserPosts.propTypes = {
   posts: PropTypes.array.isRequired,
   loading: PropTypes.bool.isRequired,
   savedPosts: PropTypes.bool,
+  viewingAProfile: PropTypes.bool,
 };
 
 UserPosts.defaultProps = {
   savedPosts: false,
+  viewingAProfile: false,
 };
 
 export default UserPosts;

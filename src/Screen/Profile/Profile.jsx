@@ -257,7 +257,11 @@ const Profile = () => {
 
         {/*  */}
         <Route path='/profile/:userId' exact>
-          <UserPosts posts={personPosts} loading={loading} />
+          <UserPosts
+            posts={personPosts}
+            loading={loading}
+            viewingAProfile={true}
+          />
         </Route>
 
         <Route path='/:userName/' exact>
