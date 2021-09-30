@@ -163,7 +163,23 @@ const useNavbarLogic = () => {
     getUpdatedPosts(info, id);
   };
 
+  // Search user functionality
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const searchDropBoxRef = useRef(null);
+
+  const handleSearchTerm = (e) => {
+    setSearchTerm(e.target.value);
+
+    if (searchTerm === '') {
+      console.log('Change');
+    }
+  };
+
   return {
+    handleSearchTerm,
+    searchTerm,
+    searchDropBoxRef,
     handleCloseCreatePost,
     handleLogOut,
     handleActiveIcon,

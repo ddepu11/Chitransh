@@ -26,6 +26,9 @@ const Navbar = () => {
     loading,
     notifications,
     handleClickOnLogo,
+    searchDropBoxRef,
+    handleSearchTerm,
+    searchTerm,
   } = useNavbarLogic();
 
   return (
@@ -43,9 +46,14 @@ const Navbar = () => {
           <div className='search'>
             <input
               type='text'
-              name='searchTerm'
               placeholder='&#128269;&nbsp;Search'
+              onChange={handleSearchTerm}
+              value={searchTerm}
             />
+
+            <SearchDropBox ref={searchDropBoxRef} className='search_dropbox'>
+              sa
+            </SearchDropBox>
           </div>
 
           <div className='far_right flex'>
@@ -94,6 +102,7 @@ const Navbar = () => {
               />
             </div>
 
+            {/* Dropboxes */}
             <div ref={notificationDropDown} className='notification_box'>
               {loading ? (
                 <div className='notification_loading flex'>
@@ -205,6 +214,7 @@ const Wrapper = styled.nav`
   }
 
   .search {
+    position: relative;
     input {
       border: 1px solid #bdbcbc99;
       background: #f3f1f199;
@@ -217,7 +227,6 @@ const Wrapper = styled.nav`
   .far_right {
     justify-content: space-between;
     width: 22%;
-    /* border: 1px solid red; */
     position: relative;
 
     .ic_home,
@@ -392,6 +401,28 @@ const Wrapper = styled.nav`
 
   .the_avatar_box.active,
   .notification_box.active {
+    opacity: 1;
+    transform: translateY(0px);
+    pointer-events: auto;
+  }
+`;
+
+const SearchDropBox = styled.div`
+  position: absolute;
+  top: calc(100% + 1.2rem);
+  color: #333;
+  background-color: white;
+  border-radius: 0.25rem;
+  box-shadow: 0px 2px 5px 0 rgba(0, 0, 0, 0.1);
+  transform: translateY(-10px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  opacity: 0;
+  pointer-events: none;
+  right: -80px;
+  width: 420px;
+  padding: 15px 10px 10px;
+
+  .active {
     opacity: 1;
     transform: translateY(0px);
     pointer-events: auto;
