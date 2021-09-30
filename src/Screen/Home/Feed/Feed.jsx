@@ -17,7 +17,7 @@ const Feed = () => {
     <Wrapper>
       <div className='row flex' style={{ marginBottom: '20px' }}>
         <p className='suggestion_p'>Suggestions For You</p>
-
+        {/* 
         {users.length !== 0 && (
           <Link
             to='/explore/people'
@@ -25,7 +25,7 @@ const Feed = () => {
           >
             See All
           </Link>
-        )}
+        )} */}
       </div>
 
       {users.length !== 0 ? (

@@ -454,14 +454,14 @@ const useProfileLogic = () => {
       setTimeout(async () => {
         await getUpdatedUserDoc(id);
 
+        await getUpdatedPosts(info, id);
+
         setLoading(false);
 
-        await getUpdatedPosts(info, id);
+        dispatch(
+          notificationShowInfo({ msg: 'Successfully followed a person!' })
+        );
       }, 1000);
-
-      dispatch(
-        notificationShowInfo({ msg: 'Successfully followed a person!' })
-      );
     } catch (err) {
       dispatch(notificationShowError({ msg: err.code.toString().slice(5) }));
 
