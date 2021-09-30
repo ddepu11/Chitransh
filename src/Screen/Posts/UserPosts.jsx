@@ -62,10 +62,10 @@ const UserPosts = ({ posts, loading, savedPosts, viewingAProfile }) => {
           <h3>
             {savedPosts
               ? `${
-                  viewingAProfile ? 'Person' : 'You'
+                  viewingAProfile ? 'This person' : 'You'
                 } haven't saved any post yet!`
               : `${
-                  viewingAProfile ? 'Person' : 'You'
+                  viewingAProfile ? 'This person' : 'You'
                 } haven't posted anything yet!`}
           </h3>
         </div>
