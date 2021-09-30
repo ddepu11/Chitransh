@@ -43,13 +43,14 @@ const useFeedLogic = () => {
         const newUsers = [];
 
         usersSnap.forEach((u) => {
-          info.following.forEach((folId) => {
-            // console.log(u.id !== id);
-            // get('id')
-            if (folId !== u.id && u.id !== id) {
-              newUsers.push(u.data());
-            }
-          });
+          if (
+            info.following.length !== 0 &&
+            !info.following.includes(u.id) &&
+            u.id !== id
+          ) {
+            console.log(u.get('userName'));
+            newUsers.push(u.data());
+          }
 
           // Runs when you have no followers
           if (info.following.length === 0) {
@@ -77,6 +78,10 @@ const useFeedLogic = () => {
       setLoading(true);
       fetchSuggestFollowers();
     }
+
+    return () => {
+      console.log('Feed clean up!');
+    };
   }, [dispatch, info, id, userLoading, hasUserLoggedIn]);
 
   const { getUpdatedUserDoc } = useUserOperation();

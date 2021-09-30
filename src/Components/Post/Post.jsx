@@ -52,10 +52,6 @@ const Post = ({ post, viewPost }) => {
               </div>
             )}
 
-            <div className='btn_div_common'>
-              <p className='go_to_post'>Go to post</p>
-            </div>
-
             <div className='btn_div_common '>
               <p className='cancel' onClick={closeDialog}>
                 cancel
@@ -279,7 +275,9 @@ const Post = ({ post, viewPost }) => {
               </Link>
             </div>
 
-            <MoreHorizIcon className='more_btn' onClick={openDialog} />
+            {id !== post.userId && (
+              <MoreHorizIcon className='more_btn' onClick={openDialog} />
+            )}
           </div>
 
           <div className='hero' onDoubleClick={likeThePost}>
