@@ -315,6 +315,8 @@ const usePostLogic = (post) => {
 
   // Fetch comments
   useEffect(() => {
+    let mounted = true;
+
     const getComments = async () => {
       const newComments = [];
 
@@ -328,7 +330,7 @@ const usePostLogic = (post) => {
         }
 
         if (index === post.comments.length - 1) {
-          setComments(newComments);
+          if (mounted) setComments(newComments);
         }
       });
     };
@@ -336,6 +338,10 @@ const usePostLogic = (post) => {
     if (post.comments.length !== 0 && comments.length === 0) {
       getComments();
     }
+
+    return () => {
+      mounted = false;
+    };
   }, [comments.length, post.comments]);
 
   const [showDialog, setShowDialog] = useState(false);

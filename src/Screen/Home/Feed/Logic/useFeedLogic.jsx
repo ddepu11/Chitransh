@@ -8,7 +8,7 @@ import {
   arrayUnion,
   where,
 } from 'firebase/firestore';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import useNotificationOperations from '../../../../Components/useNotificationOperations';
 import usePostsOperation from '../../../../Components/usePostsOperation';
@@ -29,6 +29,8 @@ const useFeedLogic = () => {
   const { info, id, userLoading, hasUserLoggedIn } = useSelector(
     (state) => state.user.value
   );
+
+  const mounted = useRef(true);
 
   useEffect(() => {
     const fetchSuggestFollowers = async () => {
@@ -60,28 +62,29 @@ const useFeedLogic = () => {
 
           // At the end of usersSnap store new Users in users state
           if (index === usersSnap.size - 1) {
-            setUsers(newUsers);
-            // console.log(newUsers);
-            setLoading(false);
+            if (mounted.current) {
+              setUsers(newUsers);
+              setLoading(false);
+            }
           }
 
           index += 1;
         });
       } catch (err) {
         dispatch(notificationShowError({ msg: err.code.toString().slice(5) }));
-        setLoading(false);
+        if (mounted.current) setLoading(false);
       }
     };
 
-    if (!userLoading && hasUserLoggedIn) {
-      setLoading(true);
+    if (!userLoading && hasUserLoggedIn && users.length === 0) {
+      if (mounted.current) setLoading(true);
       fetchSuggestFollowers();
     }
 
-    // return () => {
-    //   console.log('Feed clean up!');
-    // };
-  }, [dispatch, info, id, userLoading, hasUserLoggedIn]);
+    return () => {
+      mounted.current = false;
+    };
+  }, [dispatch, info, id, userLoading, hasUserLoggedIn, users]);
 
   const { getUpdatedUserDoc } = useUserOperation();
   const { sendNotification } = useNotificationOperations();
@@ -154,7 +157,7 @@ const useFeedLogic = () => {
     const myPostsSnap = await getDocs(q);
 
     myPostsSnap.forEach((p) => {
-      setUserDocId(p.id);
+      if (mounted.current) setUserDocId(p.id);
     });
   };
 
