@@ -44,7 +44,7 @@ const Post = ({ post, viewPost }) => {
   return (
     <>
       {showDialog && (
-        <PostDialog className='ChangeDpDialog'>
+        <PostDialog>
           <div className='center_box flex'>
             {id !== post.userId && (
               <div className='btn_div_common'>
@@ -103,17 +103,20 @@ const Post = ({ post, viewPost }) => {
             </div>
 
             <div className='right_part flex'>
-              <div className='top flex'>
-                <div className='dp'>
-                  <img src={userDpUrl === '' ? dummyDp : userDpUrl} alt='a' />
-                </div>
+              <div className='top flex '>
+                <div className='flex'>
+                  <div className='dp'>
+                    <img src={userDpUrl === '' ? dummyDp : userDpUrl} alt='a' />
+                  </div>
 
-                <Link
-                  to={userId === id ? `/${userName}` : `/profile/${userId}/`}
-                  className='username'
-                >
-                  {userName}
-                </Link>
+                  <Link
+                    to={userId === id ? `/${userName}` : `/profile/${userId}/`}
+                    className='username'
+                  >
+                    {userName}
+                  </Link>
+                </div>
+                <MoreHorizIcon className='more_btn' onClick={openDialog} />
               </div>
 
               <div className='middle_part flex'>
@@ -623,7 +626,7 @@ const PostDialog = styled.div`
   background: rgba(0, 0, 0, 0.45);
   display: grid;
   place-content: center;
-  z-index: 15;
+  z-index: 16;
   overflow-y: auto;
 
   .center_box {
@@ -765,6 +768,13 @@ const ViewPost = styled.div`
       .top {
         border-bottom: 1px solid #d6d5d5;
         padding: 15px 15px;
+        width: 100%;
+        justify-content: space-between;
+
+        .more_btn {
+          font-size: 1.5em;
+          color: #333;
+        }
       }
 
       .middle_part {

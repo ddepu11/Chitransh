@@ -6,7 +6,8 @@ import useFeedLogic from './Logic/useFeedLogic';
 import Button from '../../../Components/Button';
 
 const Feed = () => {
-  const { users, loading, followAPerson } = useFeedLogic();
+  const { users, loading, followAPerson, userDocId, getUserDocId } =
+    useFeedLogic();
 
   if (loading) {
     return <Loader />;
@@ -28,34 +29,43 @@ const Feed = () => {
       </div>
 
       {users.length !== 0 ? (
-        users.map((item) => (
-          <div className='row flex' key={item.id}>
-            {/* {console.log(item.id)} */}
-            <div className='far_left flex'>
-              <div className='dp'>
-                <img src={item.dp.url === '' ? dummyDp : item.dp.url} alt='' />
+        users.map((item) => {
+          getUserDocId(item.id);
+
+          return (
+            <div className='row flex' key={item.id}>
+              {/* {console.log(item.id)} */}
+              <div className='far_left flex'>
+                <div className='dp'>
+                  <img
+                    src={item.dp.url === '' ? dummyDp : item.dp.url}
+                    alt=''
+                  />
+                </div>
+
+                <Link to={`/profile/${userDocId}/`} className='username'>
+                  {item.userName}
+                </Link>
               </div>
 
-              <div className='username'>{item.userName}</div>
+              {/* {console.log(item)} */}
+
+              <Button
+                type='button'
+                bgColor='transparent'
+                bSh=''
+                transform='scale(1)'
+                color='#0095f6'
+                fs='0.87em'
+                fWeight='700'
+                handleClick={followAPerson}
+                dataVal={item.id}
+              >
+                Follow
+              </Button>
             </div>
-
-            {/* {console.log(item)} */}
-
-            <Button
-              type='button'
-              bgColor='transparent'
-              bSh=''
-              transform='scale(1)'
-              color='#0095f6'
-              fs='0.87em'
-              fWeight='700'
-              handleClick={followAPerson}
-              dataVal={item.id}
-            >
-              Follow
-            </Button>
-          </div>
-        ))
+          );
+        })
       ) : (
         <h3 className='no_suggestion'>Sorry there are no suggestion</h3>
       )}
@@ -69,7 +79,7 @@ const Wrapper = styled.main`
 
   .row {
     justify-content: space-between;
-    margin-bottom: 2px;
+    margin-bottom: 18px;
 
     .suggestion_p {
       color: #8e8e8e;

@@ -13,19 +13,23 @@ import {
   getDocs,
   doc,
   getDoc,
+  arrayRemove,
   updateDoc,
+  arrayUnion,
 } from 'firebase/firestore';
 import { useHistory, useParams } from 'react-router-dom';
 
 import { firestoreInstance, storage } from '../../../config/firebase';
 import {
   notificationShowError,
+  notificationShowInfo,
   notificationShowSuccess,
 } from '../../../features/notification';
 import { userLoadingBegins, userLoadingEnds } from '../../../features/user';
 import useUserOperation from '../../../Components/useUserOperations';
 import usePostsOperation from '../../../Components/usePostsOperation';
 import useCommentOperation from '../../../Components/useCommentOperation';
+import useNotificationOperations from '../../../Components/useNotificationOperations';
 
 const useProfileLogic = () => {
   const dispatch = useDispatch();
@@ -347,9 +351,130 @@ const useProfileLogic = () => {
     if (!userId) getPosts();
   }, [id, userId]);
 
+  const [amIFollingProfilePerson, setAmIFollingProfilePerson] = useState(false);
+
+  // Check that is logged in user following profile person
+  useEffect(() => {
+    if (info && !userLoading && Object.keys(profile).length !== 0) {
+      info.following.forEach((item) => {
+        if (item === userId) {
+          setAmIFollingProfilePerson(true);
+        }
+      });
+
+      if (info.following.length === 0) {
+        setAmIFollingProfilePerson(false);
+      }
+    }
+  }, [info, userLoading, profile, userId]);
+
+  const unfollowAPerson = async (e) => {
+    const personId = e.target.getAttribute('data-value');
+
+    setLoading(true);
+
+    try {
+      // Removing my id from person's followers array whom you  gonna unfollow
+      const usersCollectionRef = collection(firestoreInstance, 'users');
+
+      const q = query(usersCollectionRef, where('id', '==', personId));
+
+      const querySnapshot = await getDocs(q);
+
+      querySnapshot.forEach(async (u) => {
+        await updateDoc(doc(firestoreInstance, 'users', u.id), {
+          followers: arrayRemove(id),
+        });
+
+        // Remove person's id whom you gonna unfollow, from my following array
+        const userRef = doc(firestoreInstance, 'users', id);
+        await updateDoc(userRef, {
+          following: arrayRemove(u.id),
+        });
+      });
+
+      setTimeout(async () => {
+        await getUpdatedUserDoc(id);
+
+        await getUpdatedPosts(info, id);
+
+        setLoading(false);
+
+        dispatch(notificationShowInfo({ msg: 'Unfollowed a person!' }));
+      }, 1000);
+    } catch (err) {
+      dispatch(notificationShowError({ msg: err.code.toString().slice(5) }));
+      setLoading(false);
+    }
+  };
+
+  const { sendNotification } = useNotificationOperations();
+
+  const followAPerson = async (e) => {
+    const personId = e.target.getAttribute('data-value');
+
+    setLoading(true);
+
+    try {
+      // Adding my id in person's followers array whom you  gonna follow
+      const usersCollectionRef = collection(firestoreInstance, 'users');
+
+      const q = query(usersCollectionRef, where('id', '==', personId));
+
+      const querySnapshot = await getDocs(q);
+
+      querySnapshot.forEach(async (u) => {
+        await updateDoc(doc(firestoreInstance, 'users', u.id), {
+          followers: arrayUnion(id),
+        });
+
+        // Add person's id whom you gonna follow, in my following array
+        const userRef = doc(firestoreInstance, 'users', id);
+        await updateDoc(userRef, {
+          following: arrayUnion(u.id),
+        });
+
+        // Send notification
+        const notification = {
+          body: `has started following you`,
+          sendToUserId: u.id,
+          whoMade: {
+            userName: info.userName,
+            userId: id,
+            userDpUrl: info.dp.url,
+          },
+          postId: null,
+          postImg: '',
+          createdOn: Date.now(),
+        };
+
+        await sendNotification(personId, notification);
+      });
+
+      setTimeout(async () => {
+        await getUpdatedUserDoc(id);
+
+        setLoading(false);
+
+        await getUpdatedPosts(info, id);
+      }, 1000);
+
+      dispatch(
+        notificationShowInfo({ msg: 'Successfully followed a person!' })
+      );
+    } catch (err) {
+      dispatch(notificationShowError({ msg: err.code.toString().slice(5) }));
+
+      setLoading(false);
+    }
+  };
+
   return {
+    unfollowAPerson,
+    followAPerson,
     myPosts,
     info,
+    amIFollingProfilePerson,
     openChangeDpDialog,
     handlingChangeDp,
     cancelChangeDp,

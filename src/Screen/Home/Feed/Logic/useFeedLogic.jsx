@@ -24,6 +24,7 @@ const useFeedLogic = () => {
 
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [userDocId, setUserDocId] = useState('');
 
   const { info, id, userLoading, hasUserLoggedIn } = useSelector(
     (state) => state.user.value
@@ -141,7 +142,19 @@ const useFeedLogic = () => {
     }
   };
 
-  return { users, loading, followAPerson };
+  const getUserDocId = async (idInsideDoc) => {
+    const q = query(
+      collection(firestoreInstance, 'users'),
+      where('id', '==', idInsideDoc)
+    );
+    const myPostsSnap = await getDocs(q);
+
+    myPostsSnap.forEach((p) => {
+      setUserDocId(p.id);
+    });
+  };
+
+  return { users, loading, followAPerson, getUserDocId, userDocId };
 };
 
 export default useFeedLogic;

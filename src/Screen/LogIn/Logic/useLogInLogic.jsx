@@ -78,6 +78,7 @@ const useLogInLogic = () => {
     const users = [
       { email: 'ddepu11@gmail.com', password: 'aaaaaa' },
       { email: 'mohan11@gmail.com', password: '111111' },
+      { email: 'ayush11@gmail.com', password: 'aaaaaa' },
     ];
     const randomUsers = Math.floor(Math.random() * users.length);
 

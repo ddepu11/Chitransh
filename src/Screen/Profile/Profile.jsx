@@ -26,6 +26,9 @@ const Profile = () => {
     profile,
     userId,
     personPosts,
+    unfollowAPerson,
+    followAPerson,
+    amIFollingProfilePerson,
   } = useProfileLogic();
 
   if (userLoading) {
@@ -136,7 +139,6 @@ const Profile = () => {
               <h3 className='username'>
                 {userId ? profile.userName : info.userName}
               </h3>
-
               {!userId && (
                 <Link to='/accounts/edit/'>
                   <Button
@@ -153,6 +155,42 @@ const Profile = () => {
                     Edit Profile
                   </Button>
                 </Link>
+              )}
+
+              {userId && amIFollingProfilePerson && (
+                <Button
+                  type='button'
+                  borderRadius='5px'
+                  padding='5px 10px'
+                  margin='0 0 0 22px'
+                  fs='0.95em'
+                  bgColor='#c51d07ee'
+                  color='#ffffff'
+                  bSh=''
+                  transform='scale(1)'
+                  handleClick={unfollowAPerson}
+                  dataVal={profile.id}
+                >
+                  Unfollow
+                </Button>
+              )}
+
+              {userId && !amIFollingProfilePerson && (
+                <Button
+                  type='button'
+                  borderRadius='5px'
+                  padding='5px 10px'
+                  margin='0 0 0 22px'
+                  fs='0.95em'
+                  bgColor='#0095f6'
+                  color='#f5f5f5'
+                  bSh=''
+                  transform='scale(1)'
+                  handleClick={followAPerson}
+                  dataVal={profile.id}
+                >
+                  follow
+                </Button>
               )}
             </div>
 
