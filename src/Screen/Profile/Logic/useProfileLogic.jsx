@@ -349,6 +349,10 @@ const useProfileLogic = () => {
 
         index += 1;
       });
+
+      if (myPostsSnap.size === 0) {
+        setLoading(false);
+      }
     };
 
     if (!userId) {
@@ -373,10 +377,13 @@ const useProfileLogic = () => {
     }
   }, [info, userLoading, profile, userId]);
 
-  const unfollowAPerson = async (e) => {
-    const personId = e.target.getAttribute('data-value');
+  const [dialogToView, setDialogToView] = useState(null);
 
+  const unfollowAPerson = async (e) => {
+    setDialogToView(null);
     setLoading(true);
+
+    const personId = e.target.getAttribute('data-value');
 
     try {
       // Removing my id from person's followers array whom you  gonna unfollow
@@ -505,8 +512,6 @@ const useProfileLogic = () => {
       fetchPeopleWhomIFollow(info.following);
     }
   }, [userId, info.followers, info.following, profile]);
-
-  const [dialogToView, setDialogToView] = useState(null);
 
   const handleFollowingFollwersDialog = (e) => {
     const view = e.currentTarget.getAttribute('data-view');
