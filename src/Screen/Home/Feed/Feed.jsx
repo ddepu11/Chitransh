@@ -66,8 +66,10 @@ const Feed = ({ info, id }) => {
 };
 
 const Wrapper = styled.main`
-  padding: 10px 5px 10px;
+  padding: 10px 0px 10px;
   width: 35%;
+  height: 660px;
+  overflow-y: scroll;
 
   .row {
     justify-content: space-between;
