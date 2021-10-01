@@ -340,7 +340,12 @@ const Profile = () => {
               {bio && <span className='bio_text'>{bio}</span>}
 
               {website && (
-                <a href={website} className='bio_website'>
+                <a
+                  href={website}
+                  className='bio_website'
+                  target='_blank'
+                  rel='noreferrer'
+                >
                   {website.includes('https')
                     ? website.slice(8)
                     : website.slice(7)}
