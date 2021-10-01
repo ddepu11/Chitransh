@@ -21,7 +21,7 @@ const Home = () => {
             <h1>Sorry, there are no post to see!</h1>
 
             <p>
-              You need to follow people or create your posts own to see posts
+              You need to follow people or create your own posts to see posts
             </p>
           </div>
         )}
