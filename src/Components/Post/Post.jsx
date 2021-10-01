@@ -102,7 +102,7 @@ const Post = ({ post, viewPost }) => {
                 </div>
               )}
 
-              <img src={images[currentImageIndex].url} alt='a' />
+              <img src={images[currentImageIndex].url} alt={caption} />
             </div>
 
             <div className='right_part flex'>
@@ -164,7 +164,7 @@ const Post = ({ post, viewPost }) => {
                             src={
                               item.userDpUrl === '' ? dummyDp : item.userDpUrl
                             }
-                            alt='s'
+                            alt={userName}
                             style={{
                               width: '100%',
                               height: '100%',
@@ -271,7 +271,10 @@ const Post = ({ post, viewPost }) => {
           <div className='post_top flex'>
             <div className='left flex'>
               <div className='dp'>
-                <img src={userDpUrl === '' ? dummyDp : userDpUrl} alt='' />
+                <img
+                  src={userDpUrl === '' ? dummyDp : userDpUrl}
+                  alt={userName}
+                />
               </div>
 
               <Link
@@ -299,7 +302,7 @@ const Post = ({ post, viewPost }) => {
               </>
             )}
 
-            <img src={images[currentImageIndex].url} alt='s' />
+            <img src={images[currentImageIndex].url} alt={caption} />
           </div>
 
           <div className='btns flex'>
