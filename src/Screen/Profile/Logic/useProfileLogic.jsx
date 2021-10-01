@@ -35,15 +35,18 @@ const useProfileLogic = () => {
   const dispatch = useDispatch();
 
   const [profile, setProfile] = useState({});
-  const [loading, setLoading] = useState(true);
   const [personPosts, setPersonPosts] = useState([]);
 
   const { userId } = useParams();
 
   const { info, id, userLoading } = useSelector((state) => state.user.value);
 
+  const [loading, setLoading] = useState(true);
+
   // Runs When viewing someone profile
   useEffect(() => {
+    setLoading(true);
+
     const getPosts = async () => {
       const q = query(
         collection(firestoreInstance, 'posts'),
@@ -75,20 +78,14 @@ const useProfileLogic = () => {
       const userSnap = await getDoc(docRef);
 
       if (userSnap.exists()) {
-        setProfile(userSnap.data());
+        setProfile({ ...userSnap.data(), personDocId: userSnap.id });
         getPosts();
       }
     };
 
-    // Object.keys(profile).length === 0
     if (userId) {
-      setLoading(true);
       fetchProfile();
     }
-
-    return () => {
-      setLoading(false);
-    };
   }, [userId]);
 
   const [handlingChangeDp, setHandlingChangeDp] = useState(false);
@@ -347,7 +344,6 @@ const useProfileLogic = () => {
 
         if (index === myPostsSnap.size - 1) {
           setMyPosts(newPosts);
-
           setLoading(false);
         }
 
@@ -384,22 +380,14 @@ const useProfileLogic = () => {
 
     try {
       // Removing my id from person's followers array whom you  gonna unfollow
-      const usersCollectionRef = collection(firestoreInstance, 'users');
+      await updateDoc(doc(firestoreInstance, 'users', personId), {
+        followers: arrayRemove(id),
+      });
 
-      const q = query(usersCollectionRef, where('id', '==', personId));
-
-      const querySnapshot = await getDocs(q);
-
-      querySnapshot.forEach(async (u) => {
-        await updateDoc(doc(firestoreInstance, 'users', u.id), {
-          followers: arrayRemove(id),
-        });
-
-        // Remove person's id whom you gonna unfollow, from my following array
-        const userRef = doc(firestoreInstance, 'users', id);
-        await updateDoc(userRef, {
-          following: arrayRemove(u.id),
-        });
+      // Remove person's id whom you gonna unfollow, from my following array
+      const userRef = doc(firestoreInstance, 'users', id);
+      await updateDoc(userRef, {
+        following: arrayRemove(personId),
       });
 
       setTimeout(async () => {
@@ -426,39 +414,31 @@ const useProfileLogic = () => {
 
     try {
       // Adding my id in person's followers array whom you  gonna follow
-      const usersCollectionRef = collection(firestoreInstance, 'users');
-
-      const q = query(usersCollectionRef, where('id', '==', personId));
-
-      const querySnapshot = await getDocs(q);
-
-      querySnapshot.forEach(async (u) => {
-        await updateDoc(doc(firestoreInstance, 'users', u.id), {
-          followers: arrayUnion(id),
-        });
-
-        // Add person's id whom you gonna follow, in my following array
-        const userRef = doc(firestoreInstance, 'users', id);
-        await updateDoc(userRef, {
-          following: arrayUnion(u.id),
-        });
-
-        // Send notification
-        const notification = {
-          body: `has started following you`,
-          sendToUserId: u.id,
-          whoMade: {
-            userName: info.userName,
-            userId: id,
-            userDpUrl: info.dp.url,
-          },
-          postId: null,
-          postImg: '',
-          createdOn: Date.now(),
-        };
-
-        await sendNotification(personId, notification);
+      await updateDoc(doc(firestoreInstance, 'users', personId), {
+        followers: arrayUnion(id),
       });
+
+      // Add person's id whom you gonna follow, in my following array
+      const userRef = doc(firestoreInstance, 'users', id);
+      await updateDoc(userRef, {
+        following: arrayUnion(personId),
+      });
+
+      // Send notification
+      const notification = {
+        body: `has started following you`,
+        sendToUserId: personId,
+        whoMade: {
+          userName: info.userName,
+          userId: id,
+          userDpUrl: info.dp.url,
+        },
+        postId: null,
+        postImg: '',
+        createdOn: Date.now(),
+      };
+
+      await sendNotification(personId, notification);
 
       setTimeout(async () => {
         await getUpdatedUserDoc(id);
@@ -478,7 +458,70 @@ const useProfileLogic = () => {
     }
   };
 
+  const [following, setFollowing] = useState([]);
+  const [followers, setFollowers] = useState([]);
+
+  useEffect(() => {
+    const fetchFollowers = async (followersArr) => {
+      const newFollowers = [];
+
+      followersArr.forEach(async (persId, index) => {
+        const docRef = doc(firestoreInstance, 'users', persId);
+        const userSnap = await getDoc(docRef);
+
+        if (userSnap.exists()) {
+          newFollowers.push({ ...userSnap.data(), docId: userSnap.id });
+        }
+
+        if (index === followersArr.length - 1) {
+          setFollowers(newFollowers);
+        }
+      });
+    };
+
+    const fetchPeopleWhomIFollow = async (followingPeopleArr) => {
+      const newFollowing = [];
+
+      followingPeopleArr.forEach(async (persId, index) => {
+        const docRef = doc(firestoreInstance, 'users', persId);
+
+        const userSnap = await getDoc(docRef);
+
+        if (userSnap.exists()) {
+          newFollowing.push({ ...userSnap.data(), docId: userSnap.id });
+        }
+
+        if (index === followingPeopleArr.length - 1) {
+          setFollowing(newFollowing);
+        }
+      });
+    };
+
+    if (userId && Object.keys(profile).length !== 0) {
+      fetchFollowers(profile.followers);
+      fetchPeopleWhomIFollow(profile.following);
+    } else if (!userId) {
+      fetchFollowers(info.followers);
+      fetchPeopleWhomIFollow(info.following);
+    }
+  }, [userId, info.followers, info.following, profile]);
+
+  const [dialogToView, setDialogToView] = useState(null);
+
+  const handleFollowingFollwersDialog = (e) => {
+    const view = e.currentTarget.getAttribute('data-view');
+    setDialogToView(view);
+  };
+
+  const closeFollowDialog = () => {
+    setDialogToView(null);
+  };
+
   return {
+    following,
+    dialogToView,
+    closeFollowDialog,
+    followers,
     unfollowAPerson,
     followAPerson,
     myPosts,
@@ -497,6 +540,7 @@ const useProfileLogic = () => {
     profile,
     userId,
     personPosts,
+    handleFollowingFollwersDialog,
   };
 };
 
