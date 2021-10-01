@@ -59,7 +59,6 @@ const useFeedLogic = (info, id) => {
 
           // At the end of usersSnap store new Users in users state
           if (index === usersSnap.size - 1) {
-            console.log(newUsers);
             if (mounted.current) {
               setUsers(newUsers);
               setLoading(false);
