@@ -224,6 +224,8 @@ const Profile = () => {
                     padding='5px 10px'
                     borderRadius='5px'
                     fWeight='700'
+                    dataVal={item.docId}
+                    handleClick={unfollowAPerson}
                   >
                     Unfollow
                   </Button>
