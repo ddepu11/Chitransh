@@ -85,6 +85,9 @@ const useProfileLogic = () => {
 
     if (userId) {
       fetchProfile();
+    } else {
+      setProfile({});
+      setPersonPosts([]);
     }
   }, [userId]);
 
@@ -382,6 +385,7 @@ const useProfileLogic = () => {
   const unfollowAPerson = async (e) => {
     setDialogToView(null);
     setLoading(true);
+    document.body.classList.remove('dialog_active');
 
     const personId = e.target.getAttribute('data-value');
 
@@ -516,10 +520,12 @@ const useProfileLogic = () => {
   const handleFollowingFollwersDialog = (e) => {
     const view = e.currentTarget.getAttribute('data-view');
     setDialogToView(view);
+    document.body.classList.add('dialog_active');
   };
 
   const closeFollowDialog = () => {
     setDialogToView(null);
+    document.body.classList.remove('dialog_active');
   };
 
   return {

@@ -179,7 +179,6 @@ const App = () => {
 
 const Wrapper = styled.main`
   position: relative;
-  height: 100vh;
 `;
 
 export default App;

@@ -549,7 +549,7 @@ const Wrapper = styled.main`
 `;
 
 const ChangeDpDialog = styled.div`
-  position: absolute;
+  position: fixed;
   top: 0;
   bottom: 0;
   width: 100%;
@@ -603,7 +603,7 @@ const ChangeDpDialog = styled.div`
 `;
 
 const ViewFollowers = styled.div`
-  position: absolute;
+  position: fixed;
   top: 0;
   bottom: 0;
   width: 100%;
@@ -690,7 +690,7 @@ const ViewFollowers = styled.div`
 `;
 
 const ViewFollowing = styled.div`
-  position: absolute;
+  position: fixed;
   top: 0;
   bottom: 0;
   width: 100%;

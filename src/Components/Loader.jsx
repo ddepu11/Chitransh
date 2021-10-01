@@ -19,6 +19,7 @@ const Loader = () => (
 const Wrapper = styled.main`
   height: 100vh;
   flex-direction: column;
+  z-index: 20;
 
   h2 {
     padding: 10px 0;
