@@ -323,7 +323,9 @@ const Wrapper = styled.nav`
 
   .notification_box {
     width: 520px;
+    height: 500px;
     padding: 15px 10px 10px;
+    overflow-y: scroll;
 
     .notification_loading {
       height: 70px;
