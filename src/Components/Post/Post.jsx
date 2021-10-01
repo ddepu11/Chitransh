@@ -39,6 +39,7 @@ const Post = ({ post, viewPost }) => {
     closeDialog,
     openDialog,
     id,
+    unfollowAPerson,
   } = usePostLogic(post);
 
   return (
@@ -48,7 +49,13 @@ const Post = ({ post, viewPost }) => {
           <div className='center_box flex'>
             {id !== post.userId && (
               <div className='btn_div_common'>
-                <p className='unfollow'>Unfollow</p>
+                <p
+                  className='unfollow'
+                  data-value={userId}
+                  onClick={unfollowAPerson}
+                >
+                  Unfollow
+                </p>
               </div>
             )}
 

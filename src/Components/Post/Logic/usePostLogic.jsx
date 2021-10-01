@@ -16,12 +16,14 @@ import { v4 as uuidv4 } from 'uuid';
 import { firestoreInstance } from '../../../config/firebase';
 import {
   notificationShowError,
+  notificationShowInfo,
   notificationShowSuccess,
 } from '../../../features/notification';
 import usePostsOperation from '../../usePostsOperation';
 import useUserOperation from '../../useUserOperations';
 import useNotificationOperations from '../../useNotificationOperations';
 import { closePost } from '../../../features/post';
+import { clearPosts } from '../../../features/posts';
 
 const usePostLogic = (post) => {
   const [loading, setLoading] = useState(false);
@@ -361,8 +363,44 @@ const usePostLogic = (post) => {
     document.body.classList.remove('dialog_active');
   };
 
+  const unfollowAPerson = async (e) => {
+    closeDialog();
+
+    const personDocId = e.target.getAttribute('data-value');
+
+    setLoading(true);
+
+    try {
+      // Removing my id from person's followers array whom you  gonna unfollow
+      await updateDoc(doc(firestoreInstance, 'users', personDocId), {
+        followers: arrayRemove(id),
+      });
+
+      // Remove person's id whom you gonna unfollow, from my following array
+      const userRef = doc(firestoreInstance, 'users', id);
+
+      await updateDoc(userRef, {
+        following: arrayRemove(personDocId),
+      });
+
+      setTimeout(async () => {
+        dispatch(clearPosts());
+
+        await getUpdatedUserDoc(id);
+
+        await getUpdatedPosts(info, id);
+
+        dispatch(notificationShowInfo({ msg: 'Unfollowed a person!' }));
+      }, 1000);
+    } catch (err) {
+      dispatch(notificationShowError({ msg: err.code.toString().slice(5) }));
+      setLoading(false);
+    }
+  };
+
   return {
     id,
+    unfollowAPerson,
     loading,
     unSavePost,
     savePost,
