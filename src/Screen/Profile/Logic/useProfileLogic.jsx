@@ -71,7 +71,6 @@ const useProfileLogic = () => {
     };
 
     const fetchProfile = async () => {
-      console.log('as');
       const docRef = doc(firestoreInstance, 'users', userId);
       const userSnap = await getDoc(docRef);
 

@@ -78,7 +78,6 @@ const useFeedLogic = (info, id) => {
     fetchSuggestFollowers();
 
     return () => {
-      console.log('Feed Clean up');
       mounted.current = false;
     };
   }, [dispatch, id, info.following]);
@@ -103,10 +102,6 @@ const useFeedLogic = (info, id) => {
       await updateDoc(userRef, {
         following: arrayUnion(personDocId),
       });
-
-      // setUsers((prevState) => [
-      //   ...prevState.filter((item) => item.userDocId !== personDocId),
-      // ]);
 
       // Send notification
       const notification = {
