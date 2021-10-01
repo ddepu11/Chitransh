@@ -1,12 +1,13 @@
 import { Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import dummyDp from '../../../images/dummyDp.png';
 import Loader from '../../../Components/Loader';
 import useFeedLogic from './Logic/useFeedLogic';
 import Button from '../../../Components/Button';
 
-const Feed = () => {
-  const { users, loading, followAPerson } = useFeedLogic();
+const Feed = ({ info, id }) => {
+  const { users, loading, followAPerson } = useFeedLogic(info, id);
 
   if (loading) {
     return <Loader />;
@@ -51,7 +52,7 @@ const Feed = () => {
               fs='0.87em'
               fWeight='700'
               handleClick={followAPerson}
-              dataVal={item.id}
+              dataVal={item.userDocId}
             >
               Follow
             </Button>
@@ -107,5 +108,10 @@ const Wrapper = styled.main`
     padding: 20px 0;
   }
 `;
+
+Feed.propTypes = {
+  info: PropTypes.object.isRequired,
+  id: PropTypes.string.isRequired,
+};
 
 export default Feed;

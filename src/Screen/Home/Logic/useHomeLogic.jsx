@@ -27,16 +27,18 @@ const useHomeLogic = () => {
     history,
     dispatch,
     allPosts.length,
-    info,
     id,
     getUpdatedPosts,
     postLoading,
+    info,
   ]);
 
   return {
     userLoading,
     allPosts,
     postLoading,
+    info,
+    id,
   };
 };
 

@@ -5,7 +5,7 @@ import Post from '../../Components/Post/Post';
 import useHomeLogic from './Logic/useHomeLogic';
 
 const Home = () => {
-  const { userLoading, allPosts, postLoading } = useHomeLogic();
+  const { userLoading, allPosts, postLoading, info, id } = useHomeLogic();
 
   if (userLoading || postLoading) {
     return <Loader />;
@@ -27,7 +27,7 @@ const Home = () => {
         )}
       </HomeDiv>
 
-      <Feed />
+      {info && <Feed info={info} id={id} />}
     </Wrapper>
   );
 };
