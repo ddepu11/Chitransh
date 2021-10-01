@@ -1,4 +1,5 @@
 import GridOnOutlinedIcon from '@material-ui/icons/GridOnOutlined';
+import ClearIcon from '@material-ui/icons/Clear';
 import BookmarkBorderOutlinedIcon from '@material-ui/icons/BookmarkBorderOutlined';
 import styled from 'styled-components';
 import { Link, Route } from 'react-router-dom';
@@ -29,6 +30,11 @@ const Profile = () => {
     unfollowAPerson,
     followAPerson,
     amIFollingProfilePerson,
+    following,
+    followers,
+    dialogToView,
+    closeFollowDialog,
+    handleFollowingFollwersDialog,
   } = useProfileLogic();
 
   const isProfileEmpty = Object.keys(profile).length === 0;
@@ -62,11 +68,7 @@ const Profile = () => {
     website = info.website;
   }
 
-  if (userLoading) {
-    return <Loader />;
-  }
-
-  if (loading) {
+  if (userLoading || loading) {
     return <Loader />;
   }
 
@@ -130,6 +132,108 @@ const Profile = () => {
         </ChangeDpDialog>
       )}
 
+      {dialogToView === 'followers' && followers.length !== 0 && (
+        <ViewFollowers>
+          <div className='center_box'>
+            <div className='top_part'>
+              <h1>Followers</h1>
+              <ClearIcon className='ic_close' onClick={closeFollowDialog} />
+            </div>
+
+            <div className='hero'>
+              {followers.map((item) => (
+                <div className='user flex' key={item.id}>
+                  <div className='details flex'>
+                    <div className='dp'>
+                      <img
+                        src={item.dp.url === '' ? dummyDp : item.dp.url}
+                        alt={item.userName}
+                      />
+                    </div>
+
+                    <div className='username_fullname'>
+                      <Link
+                        to={`/profile/${item.docId}/`}
+                        onClick={closeFollowDialog}
+                      >
+                        {item.userName}
+                      </Link>
+
+                      <span>{item.fullName}</span>
+                    </div>
+                  </div>
+
+                  {/* <Button
+                    type='button'
+                    bgColor='#0095f6'
+                    bSh=''
+                    transform='scale(1)'
+                    fs='0.87'
+                    color='#ffffff'
+                    padding='7px 14px'
+                    borderRadius='5px'
+                    fWeight='700'
+                  >
+                    Unfollow
+                  </Button> */}
+                </div>
+              ))}
+            </div>
+          </div>
+        </ViewFollowers>
+      )}
+
+      {dialogToView === 'following' && following.length !== 0 && (
+        <ViewFollowing>
+          <div className='center_box'>
+            <div className='top_part'>
+              <h1>Following</h1>
+              <ClearIcon className='ic_close' onClick={closeFollowDialog} />
+            </div>
+
+            <div className='hero'>
+              {following.map((item) => (
+                <div className='user flex' key={item.id}>
+                  <div className='details flex'>
+                    <div className='dp'>
+                      <img
+                        src={item.dp.url === '' ? dummyDp : item.dp.url}
+                        alt={item.userName}
+                      />
+                    </div>
+
+                    <div className='username_fullname'>
+                      <Link
+                        to={`/profile/${item.docId}/`}
+                        onClick={closeFollowDialog}
+                      >
+                        {item.userName}
+                      </Link>
+
+                      <span>{item.fullName}</span>
+                    </div>
+                  </div>
+
+                  <Button
+                    type='button'
+                    bgColor='#0095f6'
+                    bSh=''
+                    transform='scale(1)'
+                    fs='0.8em'
+                    color='#ffffff'
+                    padding='5px 10px'
+                    borderRadius='5px'
+                    fWeight='700'
+                  >
+                    Unfollow
+                  </Button>
+                </div>
+              ))}
+            </div>
+          </div>
+        </ViewFollowing>
+      )}
+
       <Wrapper className='w-960'>
         <div className='dp_and_details flex'>
           <div className='dp' onClick={openChangeDpDialog}>
@@ -141,6 +245,7 @@ const Profile = () => {
               <h3 className='username'>
                 {userId ? profile.userName : info.userName}
               </h3>
+
               {!userId && (
                 <Link to='/accounts/edit/'>
                   <Button
@@ -171,7 +276,7 @@ const Profile = () => {
                   bSh=''
                   transform='scale(1)'
                   handleClick={unfollowAPerson}
-                  dataVal={profile.id}
+                  dataVal={profile.personDocId}
                 >
                   Unfollow
                 </Button>
@@ -189,7 +294,7 @@ const Profile = () => {
                   bSh=''
                   transform='scale(1)'
                   handleClick={followAPerson}
-                  dataVal={profile.id}
+                  dataVal={profile.personDocId}
                 >
                   follow
                 </Button>
@@ -198,28 +303,38 @@ const Profile = () => {
 
             <div className='middle flex'>
               <div className='posts flex'>
-                <h3>{userId ? personPosts.length : myPosts.length}</h3>
+                <h3>{!isProfileEmpty ? personPosts.length : myPosts.length}</h3>
                 <span>posts</span>
               </div>
 
               <div className='followers flex'>
-                <h3>
-                  {userId ? profile.followers.length : info.followers.length}
+                <h3
+                  data-view='followers'
+                  onClick={handleFollowingFollwersDialog}
+                >
+                  {!isProfileEmpty
+                    ? profile.followers.length
+                    : info.followers.length}
+                  <span className='heading'>followers</span>
                 </h3>
-                <span>followers</span>
               </div>
 
               <div className='following flex'>
-                <h3>
-                  {userId ? profile.following.length : info.following.length}
+                <h3
+                  data-view='following'
+                  onClick={handleFollowingFollwersDialog}
+                >
+                  {!isProfileEmpty
+                    ? profile.following.length
+                    : info.following.length}
+                  <span className='heading'>following</span>
                 </h3>
-                <span>following</span>
               </div>
             </div>
 
             <div className='bottom flex'>
               <h2 className='name'>
-                {userId ? profile.fullName : info.fullName}
+                {!isProfileEmpty ? profile.fullName : info.fullName}
               </h2>
 
               {bio && <span className='bio_text'>{bio}</span>}
@@ -237,8 +352,10 @@ const Profile = () => {
 
         <nav className='flex'>
           <Link
-            to={userId ? `/profile/${profile.email}` : `/${info.email}/`}
-            className={userId ? `active posts flex` : 'posts flex'}
+            to={
+              !isProfileEmpty ? `/profile/${profile.email}` : `/${info.email}/`
+            }
+            className={!isProfileEmpty ? `active posts flex` : 'posts flex'}
             ref={postsLinkRef}
           >
             <GridOnOutlinedIcon className='ic_posts' />
@@ -280,6 +397,7 @@ const Profile = () => {
 
 const Wrapper = styled.main`
   padding: 40px 5px 20px;
+
   .dp_and_details {
     justify-content: flex-start;
     padding: 0 60px 30px;
@@ -341,15 +459,22 @@ const Wrapper = styled.main`
             font-weight: 600;
           }
 
+          .heading,
           span {
             margin-left: 6px;
             color: #444;
             font-size: 0.92em;
+            font-weight: 400;
           }
         }
 
         .followers {
           margin: 0 40px;
+        }
+
+        .followers,
+        .following:hover {
+          cursor: pointer;
         }
       }
 
@@ -467,6 +592,180 @@ const ChangeDpDialog = styled.div`
 
   .cancel {
     border-bottom: none;
+  }
+`;
+
+const ViewFollowers = styled.div`
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.65);
+  display: grid;
+  place-content: center;
+  z-index: 15;
+
+  .center_box {
+    width: 30vw;
+    height: auto;
+    background-color: #fbfbfb;
+    border-radius: 12px;
+    flex-direction: column;
+    justify-content: flex-start;
+    color: #333;
+    font-size: 0.95em;
+
+    .top_part {
+      position: relative;
+      padding: 10px 0;
+      border-bottom: 1px solid #bebebe;
+
+      h1 {
+        text-align: center;
+        font-size: 1em;
+        color: #464545;
+      }
+
+      .ic_close {
+        position: absolute;
+        top: 9px;
+        right: 10px;
+        font-size: 2em;
+      }
+
+      .ic_close:hover {
+        cursor: pointer;
+      }
+    }
+
+    .hero {
+      height: 400px;
+      overflow-y: scroll;
+      padding: 10px 20px 0;
+
+      .user {
+        padding: 10px 0px;
+        justify-content: space-between;
+      }
+
+      .details {
+        .dp {
+          width: 38px;
+          height: 38px;
+          margin-right: 15px;
+          padding: 1px;
+          border: 2px solid #e42e2e;
+          border-radius: 50%;
+
+          img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+          }
+        }
+
+        .username_fullname {
+          a {
+            font-weight: 700;
+            color: #333;
+            font-size: 0.9em;
+            display: block;
+          }
+          span {
+            color: #797979;
+            font-size: 0.9em;
+          }
+        }
+      }
+    }
+  }
+`;
+
+const ViewFollowing = styled.div`
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.65);
+  display: grid;
+  place-content: center;
+  z-index: 15;
+
+  .center_box {
+    width: 30vw;
+    height: auto;
+    background-color: #fbfbfb;
+    border-radius: 12px;
+    flex-direction: column;
+    justify-content: flex-start;
+    color: #333;
+    font-size: 0.95em;
+
+    .top_part {
+      position: relative;
+      padding: 10px 0;
+      border-bottom: 1px solid #bebebe;
+
+      h1 {
+        text-align: center;
+        font-size: 1em;
+        color: #464545;
+      }
+
+      .ic_close {
+        position: absolute;
+        top: 9px;
+        right: 10px;
+        font-size: 2em;
+      }
+
+      .ic_close:hover {
+        cursor: pointer;
+      }
+    }
+
+    .hero {
+      height: 400px;
+      overflow-y: scroll;
+      padding: 10px 20px 0;
+
+      .user {
+        padding: 10px 0px;
+        justify-content: space-between;
+      }
+
+      .details {
+        .dp {
+          width: 38px;
+          height: 38px;
+          margin-right: 15px;
+          padding: 1px;
+          border: 2px solid #e42e2e;
+          border-radius: 50%;
+
+          img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+          }
+        }
+
+        .username_fullname {
+          a {
+            font-weight: 700;
+            color: #333;
+            font-size: 0.9em;
+            display: block;
+          }
+          span {
+            color: #797979;
+            font-size: 0.9em;
+          }
+        }
+      }
+    }
   }
 `;
 
