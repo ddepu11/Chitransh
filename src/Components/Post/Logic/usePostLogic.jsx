@@ -23,7 +23,7 @@ import usePostsOperation from '../../usePostsOperation';
 import useUserOperation from '../../useUserOperations';
 import useNotificationOperations from '../../useNotificationOperations';
 import { closePost } from '../../../features/post';
-import { clearPosts } from '../../../features/posts';
+import { clearPosts, postsLoadingBegins } from '../../../features/posts';
 
 const usePostLogic = (post) => {
   const [loading, setLoading] = useState(false);
@@ -365,10 +365,9 @@ const usePostLogic = (post) => {
 
   const unfollowAPerson = async (e) => {
     closeDialog();
+    dispatch(postsLoadingBegins());
 
     const personDocId = e.target.getAttribute('data-value');
-
-    setLoading(true);
 
     try {
       // Removing my id from person's followers array whom you  gonna unfollow

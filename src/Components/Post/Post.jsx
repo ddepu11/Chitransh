@@ -47,7 +47,7 @@ const Post = ({ post, viewPost }) => {
       {showDialog && (
         <PostDialog>
           <div className='center_box flex'>
-            {id !== post.userId && (
+            {id !== userId && (
               <div className='btn_div_common'>
                 <p
                   className='unfollow'
@@ -282,7 +282,7 @@ const Post = ({ post, viewPost }) => {
               </Link>
             </div>
 
-            {id !== post.userId && (
+            {id !== userId && (
               <MoreHorizIcon className='more_btn' onClick={openDialog} />
             )}
           </div>
