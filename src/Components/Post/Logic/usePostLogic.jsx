@@ -397,6 +397,26 @@ const usePostLogic = (post) => {
     }
   };
 
+  const [
+    amIFollowingThePersonWhoCreatedThisPost,
+    setAmIFollowingThePersonWhoCreatedThisPost,
+  ] = useState(false);
+
+  // Check that is logged in user following profile person
+  useEffect(() => {
+    if (info) {
+      if (info.following.includes(post.userId)) {
+        setAmIFollowingThePersonWhoCreatedThisPost(true);
+      } else {
+        setAmIFollowingThePersonWhoCreatedThisPost(false);
+      }
+
+      if (info.following.length === 0) {
+        setAmIFollowingThePersonWhoCreatedThisPost(false);
+      }
+    }
+  }, [info, post.userId]);
+
   return {
     id,
     unfollowAPerson,
@@ -419,6 +439,7 @@ const usePostLogic = (post) => {
     closeDialog,
     openDialog,
     closeViewPost,
+    amIFollowingThePersonWhoCreatedThisPost,
   };
 };
 

@@ -39,6 +39,7 @@ const Post = ({ post, viewPost }) => {
     closeDialog,
     openDialog,
     id,
+    amIFollowingThePersonWhoCreatedThisPost,
     unfollowAPerson,
   } = usePostLogic(post);
 
@@ -119,7 +120,10 @@ const Post = ({ post, viewPost }) => {
                     {userName}
                   </Link>
                 </div>
-                <MoreHorizIcon className='more_btn' onClick={openDialog} />
+
+                {id !== userId && amIFollowingThePersonWhoCreatedThisPost && (
+                  <MoreHorizIcon className='more_btn' onClick={openDialog} />
+                )}
               </div>
 
               <div className='middle_part flex'>
