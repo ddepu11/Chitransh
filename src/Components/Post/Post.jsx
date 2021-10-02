@@ -704,18 +704,20 @@ const ViewPost = styled.div`
     font-size: 0.95em;
 
     .images {
-      width: 500px;
+      width: 600px;
       height: 500px;
       position: relative;
       background: rgba(107, 107, 107, 0.6);
+
       :hover {
         cursor: pointer;
       }
 
       img {
-        width: 100%;
+        width: 600px;
         height: 100%;
-        object-fit: scale-down;
+        object-fit: contain;
+        /* height: 100%; */
       }
 
       .previous,
