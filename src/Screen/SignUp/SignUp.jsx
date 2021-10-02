@@ -23,9 +23,7 @@ const SignUp = () => {
       <div className='hero'>
         <h1 className='instagram'>Chitransh</h1>
 
-        <p className='saying'>
-          Sign up to see photos and videos from your friends.
-        </p>
+        <p className='saying'>Sign up to see photos from your friends.</p>
 
         <form className='flex' onSubmit={handleSubmit}>
           <div className='row'>
