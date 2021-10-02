@@ -8,9 +8,7 @@ import { collection, getDocs, query, where } from 'firebase/firestore';
 import { authInstance, firestoreInstance } from '../config/firebase';
 import Home from '../Screen/Home/Home';
 import LogIn from '../Screen/LogIn/LogIn';
-import PrivacyPolicy from '../Screen/PrivacyPolicy/PrivacyPolicy';
 import SignUp from '../Screen/SignUp/SignUp';
-import TermsOfService from '../Screen/TermsOfService/TermsOfService';
 import useNotification from '../Screen/useNotification';
 import {
   userLoadingBegins,
@@ -22,13 +20,14 @@ import {
 import {
   notificationClear,
   notificationShowError,
-  // notificationShowInfo,
+  notificationShowInfo,
 } from '../features/notification';
 import Navbar from '../Screen/Navbar/Navbar';
 import Profile from '../Screen/Profile/Profile';
 import EditAccount from '../Screen/EditAccount/EditAccount';
 import ProtectedRoute from './ProtectedRoute';
 import Post from './Post/Post';
+import ErrorScreen from '../Screen/ErrorScreen';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -44,9 +43,9 @@ const App = () => {
         const querySnapshot = await getDocs(q);
 
         querySnapshot.forEach((doc) => {
-          // dispatch(
-          //   notificationShowInfo({ msg: `Welcome back ${doc.data().fullName}` })
-          // );
+          dispatch(
+            notificationShowInfo({ msg: `Welcome back ${doc.data().fullName}` })
+          );
           dispatch(userLoggedIn({ id: doc.id, info: doc.data() }));
           dispatch(userLoadingEnds());
         });
@@ -163,12 +162,8 @@ const App = () => {
               component={Profile}
             />
 
-            <Route path='/privacy-policy' exact>
-              <PrivacyPolicy />
-            </Route>
-
-            <Route path='/terms-of-service' exact>
-              <TermsOfService />
+            <Route>
+              <ErrorScreen />
             </Route>
           </Switch>
         </Router>
