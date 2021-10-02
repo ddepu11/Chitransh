@@ -35,6 +35,7 @@ const Profile = () => {
     dialogToView,
     closeFollowDialog,
     handleFollowingFollwersDialog,
+    id,
   } = useProfileLogic();
 
   const isProfileEmpty = Object.keys(profile).length === 0;
@@ -214,21 +215,43 @@ const Profile = () => {
                     </div>
                   </div>
 
-                  <Button
-                    type='button'
-                    bgColor='#0095f6'
-                    bSh=''
-                    transform='scale(1)'
-                    fs='0.8em'
-                    color='#ffffff'
-                    padding='5px 10px'
-                    borderRadius='5px'
-                    fWeight='700'
-                    dataVal={item.docId}
-                    handleClick={unfollowAPerson}
-                  >
-                    Unfollow
-                  </Button>
+                  {info.following.includes(item.docId) ? (
+                    <Button
+                      type='button'
+                      bgColor='#0095f6'
+                      bSh=''
+                      transform='scale(1)'
+                      fs='0.8em'
+                      color='#ffffff'
+                      padding='5px 10px'
+                      borderRadius='5px'
+                      fWeight='700'
+                      dataVal={item.docId}
+                      handleClick={unfollowAPerson}
+                    >
+                      Unfollow
+                    </Button>
+                  ) : (
+                    <>
+                      {item.docId !== id && (
+                        <Button
+                          type='button'
+                          bgColor='#0095f6'
+                          bSh=''
+                          transform='scale(1)'
+                          fs='0.8em'
+                          color='#ffffff'
+                          padding='5px 10px'
+                          borderRadius='5px'
+                          fWeight='700'
+                          dataVal={item.docId}
+                          handleClick={followAPerson}
+                        >
+                          follow
+                        </Button>
+                      )}
+                    </>
+                  )}
                 </div>
               ))}
             </div>

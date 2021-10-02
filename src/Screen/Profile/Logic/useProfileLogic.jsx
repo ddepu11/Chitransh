@@ -419,9 +419,11 @@ const useProfileLogic = () => {
   const { sendNotification } = useNotificationOperations();
 
   const followAPerson = async (e) => {
-    const personId = e.target.getAttribute('data-value');
-
+    setDialogToView(null);
     setLoading(true);
+    document.body.classList.remove('dialog_active');
+
+    const personId = e.target.getAttribute('data-value');
 
     try {
       // Adding my id in person's followers array whom you  gonna follow
@@ -473,6 +475,9 @@ const useProfileLogic = () => {
   const [followers, setFollowers] = useState([]);
 
   useEffect(() => {
+    setFollowing([]);
+    setFollowers([]);
+
     const fetchFollowers = async (followersArr) => {
       const newFollowers = [];
 
@@ -552,6 +557,7 @@ const useProfileLogic = () => {
     userId,
     personPosts,
     handleFollowingFollwersDialog,
+    id,
   };
 };
 
