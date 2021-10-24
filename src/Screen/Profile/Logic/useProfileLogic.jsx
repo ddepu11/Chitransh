@@ -525,7 +525,14 @@ const useProfileLogic = () => {
   const handleFollowingFollwersDialog = (e) => {
     const view = e.currentTarget.getAttribute('data-view');
     setDialogToView(view);
-    document.body.classList.add('dialog_active');
+
+    if (view === 'following' && following.length !== 0) {
+      document.body.classList.add('dialog_active');
+    }
+
+    if (view === 'followers' && followers.length !== 0) {
+      document.body.classList.add('dialog_active');
+    }
   };
 
   const closeFollowDialog = () => {
