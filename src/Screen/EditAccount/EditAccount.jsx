@@ -3,7 +3,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import UpdateFormField from '../../Components/UpdateFormField';
 import useEditAccount from './Logic/useEditAccount';
 import Button from '../../Components/Button';
-import Loader from '../../Components/Loader';
+import CircleLoader from '../../Components/CircleLoader';
 
 const EditAccount = () => {
   const {
@@ -16,7 +16,7 @@ const EditAccount = () => {
     openDialogBox,
     changeGender,
     gender,
-    userLoading,
+    loading,
     handleUpdateInfo,
   } = useEditAccount();
 
@@ -24,10 +24,6 @@ const EditAccount = () => {
 
   if (newGender === 'no_to_say') {
     newGender = 'Gender';
-  }
-
-  if (userLoading) {
-    return <Loader />;
   }
 
   return (
@@ -145,19 +141,25 @@ const EditAccount = () => {
         </div>
 
         <div className='row gender_row_outer flex'>
-          <div className='gender_row_inner flex'>
-            <label htmlFor='gender' onClick={openDialogBox}>
-              Gender:
-            </label>
+          {loading ? (
+            <CircleLoader wrapperMargin='12px 0' />
+          ) : (
+            <>
+              <div className='gender_row_inner flex'>
+                <label htmlFor='gender' onClick={openDialogBox}>
+                  Gender:
+                </label>
 
-            <input
-              type='text'
-              readOnly
-              value={newGender !== '' ? newGender : 'click here to choose'}
-              onClick={openDialogBox}
-            />
-          </div>
-          <p className='message' />
+                <input
+                  type='text'
+                  readOnly
+                  value={newGender !== '' ? newGender : 'click here to choose'}
+                  onClick={openDialogBox}
+                />
+              </div>
+              <p className='message' />
+            </>
+          )}
         </div>
 
         <div className='row bio_row_outer flex'>
@@ -192,18 +194,22 @@ const EditAccount = () => {
         </div>
 
         <div className='row submit_btn flex'>
-          <Button
-            type='button'
-            fs='0.9em'
-            padding='5px 10px'
-            borderRadius='5px'
-            bSh=''
-            transform='scale(1)'
-            bgColor='#0095f6'
-            handleClick={handleUpdateInfo}
-          >
-            Submit
-          </Button>
+          {loading ? (
+            <CircleLoader wrapperMargin='auto 0' />
+          ) : (
+            <Button
+              type='button'
+              fs='0.9em'
+              padding='5px 10px'
+              borderRadius='5px'
+              bSh=''
+              transform='scale(1)'
+              bgColor='#0095f6'
+              handleClick={handleUpdateInfo}
+            >
+              Submit
+            </Button>
+          )}
         </div>
       </Wrapper>
     </>

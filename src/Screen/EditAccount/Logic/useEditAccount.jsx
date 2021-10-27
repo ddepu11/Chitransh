@@ -24,7 +24,6 @@ import {
   notificationShowInfo,
   notificationShowSuccess,
 } from '../../../features/notification';
-import { userLoadingBegins, userLoadingEnds } from '../../../features/user';
 import clearAllSetTimeoutOrSetInterval from '../../../utils/clearAllSetTimeoutOrSetInterval';
 import useCommentOperation from '../../../Components/useCommentOperation';
 
@@ -32,7 +31,9 @@ const useEditAccount = () => {
   const dispatch = useDispatch();
 
   const setTimeOutId = useRef(0);
-  const { info, id, userLoading } = useSelector((state) => state.user.value);
+  const { info, id } = useSelector((state) => state.user.value);
+
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     console.log('');
@@ -91,7 +92,7 @@ const useEditAccount = () => {
 
   const changeGender = async () => {
     if (gender) {
-      dispatch(userLoadingBegins());
+      setLoading(true);
 
       closeDialogBox();
 
@@ -102,6 +103,8 @@ const useEditAccount = () => {
 
         setGender(gender);
 
+        setLoading(false);
+
         dispatch(
           notificationShowSuccess({
             msg: 'successfully updated gender!!!',
@@ -109,7 +112,8 @@ const useEditAccount = () => {
         );
       } catch (err) {
         dispatch(notificationShowError({ msg: err.code.toString().slice(5) }));
-        dispatch(userLoadingEnds());
+
+        setLoading(false);
         closeDialogBox();
       }
     } else {
@@ -325,12 +329,12 @@ const useEditAccount = () => {
     return errorFlag;
   };
 
-  const { updatePostsDocFields, getUpdatedPosts } = usePostsOperation();
+  const { updatePostsDocFields } = usePostsOperation();
   const { updateCommentPostFields } = useCommentOperation();
 
   const updateInfoInFirebase = async (doesErrorExists) => {
     if (!doesErrorExists) {
-      dispatch(userLoadingBegins());
+      setLoading(true);
 
       try {
         await updateUserDoc(userInfo, id);
@@ -362,9 +366,9 @@ const useEditAccount = () => {
 
         setGender(gender);
 
-        await getUpdatedPosts(info, id);
-
         await getUpdatedUserDoc(id);
+
+        setLoading(false);
 
         dispatch(
           notificationShowSuccess({
@@ -373,7 +377,7 @@ const useEditAccount = () => {
         );
       } catch (err) {
         dispatch(notificationShowError({ msg: err.code.toString().slice(5) }));
-        dispatch(userLoadingEnds());
+        setLoading(false);
       }
     }
   };
@@ -404,8 +408,8 @@ const useEditAccount = () => {
     gender,
     handleGender,
     changeGender,
-    userLoading,
     handleUpdateInfo,
+    loading,
   };
 };
 

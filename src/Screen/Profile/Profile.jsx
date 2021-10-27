@@ -302,39 +302,51 @@ const Profile = () => {
               )}
 
               {userId && amIFollingProfilePerson && (
-                <Button
-                  type='button'
-                  borderRadius='5px'
-                  padding='5px 10px'
-                  margin='0 0 0 22px'
-                  fs='0.95em'
-                  bgColor='#c51d07ee'
-                  color='#ffffff'
-                  bSh=''
-                  transform='scale(1)'
-                  handleClick={unfollowAPerson}
-                  dataVal={profile.personDocId}
-                >
-                  Unfollow
-                </Button>
+                <>
+                  {followUnfollowLoading ? (
+                    <CircleLoader wrapperMargin='0 0 0 40px' />
+                  ) : (
+                    <Button
+                      type='button'
+                      borderRadius='5px'
+                      padding='5px 10px'
+                      margin='0 0 0 22px'
+                      fs='0.95em'
+                      bgColor='#c51d07ee'
+                      color='#ffffff'
+                      bSh=''
+                      transform='scale(1)'
+                      handleClick={unfollowAPerson}
+                      dataVal={profile.personDocId}
+                    >
+                      Unfollow
+                    </Button>
+                  )}
+                </>
               )}
 
               {userId && !amIFollingProfilePerson && (
-                <Button
-                  type='button'
-                  borderRadius='5px'
-                  padding='5px 10px'
-                  margin='0 0 0 22px'
-                  fs='0.95em'
-                  bgColor='#0095f6'
-                  color='#f5f5f5'
-                  bSh=''
-                  transform='scale(1)'
-                  handleClick={followAPerson}
-                  dataVal={profile.personDocId}
-                >
-                  follow
-                </Button>
+                <>
+                  {followUnfollowLoading ? (
+                    <CircleLoader wrapperMargin='0 0 0 40px' />
+                  ) : (
+                    <Button
+                      type='button'
+                      borderRadius='5px'
+                      padding='5px 10px'
+                      margin='0 0 0 22px'
+                      fs='0.95em'
+                      bgColor='#0095f6'
+                      color='#f5f5f5'
+                      bSh=''
+                      transform='scale(1)'
+                      handleClick={followAPerson}
+                      dataVal={profile.personDocId}
+                    >
+                      follow
+                    </Button>
+                  )}
+                </>
               )}
             </div>
 
@@ -357,7 +369,7 @@ const Profile = () => {
               </div>
 
               {followUnfollowLoading ? (
-                <CircleLoader wrapperMargin='0 auto' />
+                <CircleLoader wrapperMargin='0 0 0 20px' />
               ) : (
                 <div className='following flex'>
                   <h3
