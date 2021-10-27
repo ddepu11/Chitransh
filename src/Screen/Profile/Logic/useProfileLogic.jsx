@@ -25,7 +25,7 @@ import {
   notificationShowInfo,
   notificationShowSuccess,
 } from '../../../features/notification';
-import { userLoadingBegins, userLoadingEnds } from '../../../features/user';
+
 import useUserOperation from '../../../Components/useUserOperations';
 import usePostsOperation from '../../../Components/usePostsOperation';
 import useCommentOperation from '../../../Components/useCommentOperation';
@@ -115,6 +115,8 @@ const useProfileLogic = () => {
   const { updatePostsDocFields } = usePostsOperation();
   const { updateCommentPostFields } = useCommentOperation();
 
+  const [dpLoading, setDpLoading] = useState(false);
+
   // If Display was never set
   const uploadPicAndUpdateUserDoc = async (imageToUpload) => {
     const randomlyGeneratedName = `${info.email}_${Math.floor(
@@ -165,8 +167,7 @@ const useProfileLogic = () => {
 
       await getUpdatedUserDoc(id);
 
-      // await getUpdatedPosts(info, id);
-
+      setDpLoading(false);
       dispatch(
         notificationShowSuccess({
           msg: 'Successfully changed display picture!',
@@ -174,7 +175,7 @@ const useProfileLogic = () => {
       );
     } catch (err) {
       dispatch(notificationShowError({ msg: err.code.toString().slice(5) }));
-      dispatch(userLoadingEnds());
+      setDpLoading(false);
     }
   };
 
@@ -232,14 +233,14 @@ const useProfileLogic = () => {
 
       await getUpdatedUserDoc(id);
 
-      // await getUpdatedPosts(info, id);
+      setDpLoading(false);
 
       dispatch(
         notificationShowSuccess({ msg: 'Successfully uploaded new dp' })
       );
     } catch (err) {
       dispatch(notificationShowError({ msg: err.code.toString().slice(5) }));
-      dispatch(userLoadingEnds());
+      setDpLoading(false);
     }
   };
 
@@ -249,10 +250,10 @@ const useProfileLogic = () => {
     const imageToUpload = Array.from(files)[0];
 
     if (info.dp.fileName === 'dummyDp') {
-      dispatch(userLoadingBegins());
+      setDpLoading(true);
       uploadPicAndUpdateUserDoc(imageToUpload);
     } else {
-      dispatch(userLoadingBegins());
+      setDpLoading(true);
       deletePreviousDpAndUploadNewOne(imageToUpload);
     }
   };
@@ -261,7 +262,7 @@ const useProfileLogic = () => {
     cancelChangeDp();
     const dpRef = ref(storage, `display_pictures/${info.dp.fileName}`);
 
-    dispatch(userLoadingBegins());
+    setDpLoading(true);
 
     try {
       await deleteObject(dpRef);
@@ -300,12 +301,11 @@ const useProfileLogic = () => {
 
       await getUpdatedUserDoc(id);
 
-      // await getUpdatedPosts(info, id);
-
+      setDpLoading(false);
       dispatch(notificationShowSuccess({ msg: 'Successfully removed  dp!' }));
     } catch (err) {
       dispatch(notificationShowError({ msg: err.code.toString().slice(5) }));
-      dispatch(userLoadingEnds());
+      setDpLoading(false);
     }
   };
 
@@ -569,6 +569,7 @@ const useProfileLogic = () => {
     handleFollowingFollwersDialog,
     id,
     followUnfollowLoading,
+    dpLoading,
   };
 };
 

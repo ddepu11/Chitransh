@@ -38,6 +38,7 @@ const Profile = () => {
     handleFollowingFollwersDialog,
     id,
     followUnfollowLoading,
+    dpLoading,
   } = useProfileLogic();
 
   const isProfileEmpty = Object.keys(profile).length === 0;
@@ -264,7 +265,16 @@ const Profile = () => {
       <Wrapper className='w-960'>
         <div className='dp_and_details flex'>
           <div className='dp' onClick={openChangeDpDialog}>
-            <img src={imageErc} alt='dp' />
+            {dpLoading ? (
+              <CircleLoader
+                wrapperMargin='auto 0'
+                wrapperH='100%'
+                cirH='30px'
+                cirW='30px'
+              />
+            ) : (
+              <img src={imageErc} alt='dp' />
+            )}
           </div>
 
           <div className='details'>
