@@ -60,7 +60,7 @@ const useProfileLogic = () => {
         newPosts.push(p.data());
 
         if (index === myPostsSnap.size - 1) {
-          setPersonPosts(newPosts);
+          setPersonPosts(newPosts.sort((a, b) => b.createdOn - a.createdOn));
           setLoading(false);
         }
 
@@ -112,7 +112,7 @@ const useProfileLogic = () => {
 
   const { getUpdatedUserDoc, updateUserDoc } = useUserOperation();
 
-  const { getUpdatedPosts, updatePostsDocFields } = usePostsOperation();
+  const { updatePostsDocFields } = usePostsOperation();
   const { updateCommentPostFields } = useCommentOperation();
 
   // If Display was never set
@@ -165,7 +165,7 @@ const useProfileLogic = () => {
 
       await getUpdatedUserDoc(id);
 
-      await getUpdatedPosts(info, id);
+      // await getUpdatedPosts(info, id);
 
       dispatch(
         notificationShowSuccess({
@@ -232,7 +232,7 @@ const useProfileLogic = () => {
 
       await getUpdatedUserDoc(id);
 
-      await getUpdatedPosts(info, id);
+      // await getUpdatedPosts(info, id);
 
       dispatch(
         notificationShowSuccess({ msg: 'Successfully uploaded new dp' })
@@ -300,7 +300,7 @@ const useProfileLogic = () => {
 
       await getUpdatedUserDoc(id);
 
-      await getUpdatedPosts(info, id);
+      // await getUpdatedPosts(info, id);
 
       dispatch(notificationShowSuccess({ msg: 'Successfully removed  dp!' }));
     } catch (err) {
@@ -338,6 +338,7 @@ const useProfileLogic = () => {
         collection(firestoreInstance, 'posts'),
         where('userId', '==', id)
       );
+
       const myPostsSnap = await getDocs(q);
       const newPosts = [];
       let index = 0;
@@ -346,7 +347,7 @@ const useProfileLogic = () => {
         newPosts.push(p.data());
 
         if (index === myPostsSnap.size - 1) {
-          setMyPosts(newPosts);
+          setMyPosts(newPosts.sort((a, b) => b.createdOn - a.createdOn));
           setLoading(false);
         }
 
@@ -382,9 +383,13 @@ const useProfileLogic = () => {
 
   const [dialogToView, setDialogToView] = useState(null);
 
+  const [followUnfollowLoading, setfollowUnfollowLoading] = useState(false);
+
   const unfollowAPerson = async (e) => {
+    setfollowUnfollowLoading(true);
+
     setDialogToView(null);
-    setLoading(true);
+
     document.body.classList.remove('dialog_active');
 
     const personId = e.target.getAttribute('data-value');
@@ -397,6 +402,7 @@ const useProfileLogic = () => {
 
       // Remove person's id whom you gonna unfollow, from my following array
       const userRef = doc(firestoreInstance, 'users', id);
+
       await updateDoc(userRef, {
         following: arrayRemove(personId),
       });
@@ -404,9 +410,7 @@ const useProfileLogic = () => {
       setTimeout(async () => {
         await getUpdatedUserDoc(id);
 
-        await getUpdatedPosts(info, id);
-
-        setLoading(false);
+        setfollowUnfollowLoading(false);
 
         dispatch(notificationShowInfo({ msg: 'Unfollowed a person!' }));
       }, 1000);
@@ -419,8 +423,9 @@ const useProfileLogic = () => {
   const { sendNotification } = useNotificationOperations();
 
   const followAPerson = async (e) => {
+    setfollowUnfollowLoading(true);
+
     setDialogToView(null);
-    setLoading(true);
     document.body.classList.remove('dialog_active');
 
     const personId = e.target.getAttribute('data-value');
@@ -456,9 +461,7 @@ const useProfileLogic = () => {
       setTimeout(async () => {
         await getUpdatedUserDoc(id);
 
-        await getUpdatedPosts(info, id);
-
-        setLoading(false);
+        setfollowUnfollowLoading(false);
 
         dispatch(
           notificationShowInfo({ msg: 'Successfully followed a person!' })
@@ -565,6 +568,7 @@ const useProfileLogic = () => {
     personPosts,
     handleFollowingFollwersDialog,
     id,
+    followUnfollowLoading,
   };
 };
 

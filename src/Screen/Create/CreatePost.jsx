@@ -4,7 +4,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import PermMediaOutlinedIcon from '@material-ui/icons/PermMediaOutlined';
 import AddBoxOutlinedIcon from '@material-ui/icons/AddBoxOutlined';
 import DeleteForeverOutlinedIcon from '@material-ui/icons/DeleteForeverOutlined';
-import Loader from '../../Components/Loader';
+import CircleLoader from '../../Components/CircleLoader';
 import Button from '../../Components/Button';
 import useCreatePostLogic from './Logic/useCreatePostLogic';
 
@@ -23,142 +23,146 @@ const CreatePost = ({ handleCloseCreatePost }) => {
     previews,
     caption,
     captionValidationMessageTag,
-    userLoading,
+    loading,
   } = useCreatePostLogic(handleCloseCreatePost);
 
-  if (userLoading) {
-    return <Loader />;
-  }
+  // if (!loading) {
+  //   return <CircleLoader cirH='50px' cirW='50px' />;
+  // }
 
   return (
     <Wrapper>
-      <div className='new_post'>
-        <div className='top flex'>
-          <h1 className='heading'>New Post</h1>
-          <CloseIcon className='ic_close' onClick={handleCloseCreatePost} />
-        </div>
-
-        {!preview.p ? (
-          <div className='hero flex' {...getRootProps()}>
-            <PermMediaOutlinedIcon className='ic_images' />
-
-            <input
-              {...getInputProps({
-                accept: '.jpg, .jpeg, .png',
-                max: 4,
-              })}
-            />
-
-            {isDragActive ? (
-              <p>Drop the photo here ...</p>
-            ) : (
-              <h1 className='drag_msg'>
-                Drag your photo, or click to select file here
-              </h1>
-            )}
+      {loading ? (
+        <CircleLoader cirH='100px' cirW='100px' wrapperMargin='0 auto' />
+      ) : (
+        <div className='new_post'>
+          <div className='top flex'>
+            <h1 className='heading'>New Post</h1>
+            <CloseIcon className='ic_close' onClick={handleCloseCreatePost} />
           </div>
-        ) : (
-          <div className='image_preview_and_upload flex'>
-            <PreviewImages className='flex'>
-              <div className='big_preview'>
-                <DeleteForeverOutlinedIcon
-                  className='delete_btn'
-                  onClick={handleRemoveImage}
-                  data-blob={preview.p}
-                  data-name={JSON.stringify(preview.f.name)}
-                />
 
-                <img
-                  src={preview.p}
-                  alt='big_preview'
-                  onLoad={() => URL.revokeObjectURL(previews.p)}
-                />
-              </div>
+          {!preview.p ? (
+            <div className='hero flex' {...getRootProps()}>
+              <PermMediaOutlinedIcon className='ic_images' />
 
-              <div className='small_previews flex'>
-                {previews.length !== 0 &&
-                  previews.map(({ p, f }) => (
-                    <div
-                      className='preview'
-                      key={p}
-                      data-blob={p}
-                      onClick={handleViewPreview}
-                      data-name={f.name}
-                    >
-                      <img
-                        src={p}
-                        alt='blob'
-                        onLoad={() => URL.revokeObjectURL(previews.p)}
-                      />
-                    </div>
-                  ))}
+              <input
+                {...getInputProps({
+                  accept: '.jpg, .jpeg, .png',
+                  max: 4,
+                })}
+              />
 
-                {previews.length < 4 && (
-                  <label htmlFor='image'>
-                    <AddBoxOutlinedIcon className='add_more' />
-                  </label>
-                )}
+              {isDragActive ? (
+                <p>Drop the photo here ...</p>
+              ) : (
+                <h1 className='drag_msg'>
+                  Drag your photo, or click to select file here
+                </h1>
+              )}
+            </div>
+          ) : (
+            <div className='image_preview_and_upload flex'>
+              <PreviewImages className='flex'>
+                <div className='big_preview'>
+                  <DeleteForeverOutlinedIcon
+                    className='delete_btn'
+                    onClick={handleRemoveImage}
+                    data-blob={preview.p}
+                    data-name={JSON.stringify(preview.f.name)}
+                  />
 
-                <input
-                  type='file'
-                  accept='.jpg, .jpeg, .png'
-                  id='image'
-                  style={{ display: 'none' }}
-                  multiple
-                  onChange={handleAddMore}
-                />
-              </div>
-
-              <Button
-                handleClick={cancelUpload}
-                padding='8px 16px'
-                margin='40px 0 0 0'
-                borderRadius='5px'
-                width='40%'
-                transform='scale(1.04)'
-              >
-                Cancel
-              </Button>
-            </PreviewImages>
-
-            <CaptionAndUpload className='flex'>
-              <div className='caption_top'>
-                <div className='user_name_dp flex'>
-                  <div className='dp'>
-                    <img src='https://i.pravatar.cc/300' alt='dp' />
-                  </div>
-
-                  <div className='username'>ddepu11</div>
-                </div>
-
-                <div className='caption_div'>
-                  <textarea
-                    rows='11'
-                    onChange={handleCaption}
-                    value={caption}
-                    placeholder='Write a caption...'
+                  <img
+                    src={preview.p}
+                    alt='big_preview'
+                    onLoad={() => URL.revokeObjectURL(previews.p)}
                   />
                 </div>
 
-                <p className='message' ref={captionValidationMessageTag} />
-              </div>
+                <div className='small_previews flex'>
+                  {previews.length !== 0 &&
+                    previews.map(({ p, f }) => (
+                      <div
+                        className='preview'
+                        key={p}
+                        data-blob={p}
+                        onClick={handleViewPreview}
+                        data-name={f.name}
+                      >
+                        <img
+                          src={p}
+                          alt='blob'
+                          onLoad={() => URL.revokeObjectURL(previews.p)}
+                        />
+                      </div>
+                    ))}
 
-              <Button
-                padding='8px 16px'
-                borderRadius='5px'
-                bgColor='#0095f6'
-                color='#ffffff'
-                width='100%'
-                bSh=''
-                transform='scale(1.03)'
-                handleClick={handleUpload}
-              >
-                Upload
-              </Button>
-            </CaptionAndUpload>
-          </div>
-        )}
-      </div>
+                  {previews.length < 4 && (
+                    <label htmlFor='image'>
+                      <AddBoxOutlinedIcon className='add_more' />
+                    </label>
+                  )}
+
+                  <input
+                    type='file'
+                    accept='.jpg, .jpeg, .png'
+                    id='image'
+                    style={{ display: 'none' }}
+                    multiple
+                    onChange={handleAddMore}
+                  />
+                </div>
+
+                <Button
+                  handleClick={cancelUpload}
+                  padding='8px 16px'
+                  margin='40px 0 0 0'
+                  borderRadius='5px'
+                  width='40%'
+                  transform='scale(1.04)'
+                >
+                  Cancel
+                </Button>
+              </PreviewImages>
+
+              <CaptionAndUpload className='flex'>
+                <div className='caption_top'>
+                  <div className='user_name_dp flex'>
+                    <div className='dp'>
+                      <img src='https://i.pravatar.cc/300' alt='dp' />
+                    </div>
+
+                    <div className='username'>ddepu11</div>
+                  </div>
+
+                  <div className='caption_div'>
+                    <textarea
+                      rows='11'
+                      onChange={handleCaption}
+                      value={caption}
+                      placeholder='Write a caption...'
+                    />
+                  </div>
+
+                  <p className='message' ref={captionValidationMessageTag} />
+                </div>
+
+                <Button
+                  padding='8px 16px'
+                  borderRadius='5px'
+                  bgColor='#0095f6'
+                  color='#ffffff'
+                  width='100%'
+                  bSh=''
+                  transform='scale(1.03)'
+                  handleClick={handleUpload}
+                >
+                  Upload
+                </Button>
+              </CaptionAndUpload>
+            </div>
+          )}
+        </div>
+      )}
     </Wrapper>
   );
 };

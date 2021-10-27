@@ -100,7 +100,8 @@ const usePostLogic = (post) => {
   // ########################## Navigate through images ends #############################
 
   // like/dislike Post
-  const { updatePostsDocFields, getUpdatedPosts } = usePostsOperation();
+  const { updatePostsDocFields } = usePostsOperation();
+
   const { getUpdatedUserDoc } = useUserOperation();
 
   const { sendNotification } = useNotificationOperations(id);
@@ -141,12 +142,9 @@ const usePostLogic = (post) => {
         if (post.userId !== id) {
           sendNotification(post.userId, notification);
         }
-
         // Notification ends
 
         await getUpdatedUserDoc(id);
-
-        await getUpdatedPosts(info, id);
 
         setLoading(false);
 
@@ -174,8 +172,6 @@ const usePostLogic = (post) => {
         });
 
         await getUpdatedUserDoc(id);
-
-        await getUpdatedPosts(info, id);
 
         setLoading(false);
 
@@ -387,7 +383,7 @@ const usePostLogic = (post) => {
 
         await getUpdatedUserDoc(id);
 
-        await getUpdatedPosts(info, id);
+        // await getUpdatedPosts(info, id);
 
         dispatch(notificationShowInfo({ msg: 'Unfollowed a person!' }));
       }, 1000);

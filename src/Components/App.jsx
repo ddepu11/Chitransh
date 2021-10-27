@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { useSelector, useDispatch } from 'react-redux';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { collection, getDocs, query, where } from 'firebase/firestore';
+import { collection, query, where, getDocs } from 'firebase/firestore';
 import { authInstance, firestoreInstance } from '../config/firebase';
 import Home from '../Screen/Home/Home';
 import LogIn from '../Screen/LogIn/LogIn';
@@ -40,13 +40,16 @@ const App = () => {
         const usersRef = collection(firestoreInstance, 'users');
 
         const q = query(usersRef, where('email', '==', email));
+
         const querySnapshot = await getDocs(q);
 
         querySnapshot.forEach((doc) => {
           dispatch(
             notificationShowInfo({ msg: `Welcome back ${doc.data().fullName}` })
           );
+
           dispatch(userLoggedIn({ id: doc.id, info: doc.data() }));
+
           dispatch(userLoadingEnds());
         });
       } catch (err) {

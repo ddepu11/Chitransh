@@ -11,20 +11,18 @@ import {
 } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { firestoreInstance, storage } from '../../../config/firebase';
-import usePostsOperation from '../../../Components/usePostsOperation';
 
 import {
   notificationShowError,
   notificationShowInfo,
   notificationShowSuccess,
 } from '../../../features/notification';
-import { userLoadingBegins, userLoadingEnds } from '../../../features/user';
 import setValidationMessage from '../../../utils/setValidationMessage';
 
 const useCreatePostLogic = (handleCloseCreatePost) => {
   const dispatch = useDispatch();
 
-  const { id, info, userLoading } = useSelector((state) => state.user.value);
+  const { id, info } = useSelector((state) => state.user.value);
 
   const setTimeOutId = useRef(0);
   const captionValidationMessageTag = useRef(null);
@@ -32,6 +30,8 @@ const useCreatePostLogic = (handleCloseCreatePost) => {
   const [caption, setCaption] = useState('');
   const [previews, setPreviews] = useState([]);
   const [preview, setPreview] = useState({ p: '', f: null });
+
+  const [loading, setLoading] = useState(false);
 
   const onDrop = useCallback(
     (acceptedFile) => {
@@ -100,8 +100,6 @@ const useCreatePostLogic = (handleCloseCreatePost) => {
     setCaption(e.target.value);
   };
 
-  const { getUpdatedPosts } = usePostsOperation();
-
   const createPost = async () => {
     try {
       const docRef = await addDoc(collection(firestoreInstance, 'posts'), {
@@ -135,23 +133,21 @@ const useCreatePostLogic = (handleCloseCreatePost) => {
           });
 
           if (index === previews.length - 1) {
-            handleCloseCreatePost();
+            setLoading(false);
 
-            await getUpdatedPosts(info, id);
+            handleCloseCreatePost();
 
             dispatch(
               notificationShowSuccess({
                 msg: 'Successfully created your post!',
               })
             );
-
-            dispatch(userLoadingEnds());
           }
         });
       }
     } catch (err) {
       dispatch(notificationShowError({ msg: err.code.toString().slice(5) }));
-      dispatch(userLoadingEnds());
+      setLoading(false);
       handleCloseCreatePost();
     }
   };
@@ -190,8 +186,8 @@ const useCreatePostLogic = (handleCloseCreatePost) => {
     }
 
     if (!errorFlag) {
+      setLoading(true);
       createPost();
-      dispatch(userLoadingBegins());
     }
   };
 
@@ -231,8 +227,8 @@ const useCreatePostLogic = (handleCloseCreatePost) => {
     preview,
     previews,
     caption,
-    userLoading,
     captionValidationMessageTag,
+    loading,
   };
 };
 

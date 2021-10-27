@@ -306,7 +306,9 @@ const Post = ({ post, viewPost }) => {
               </>
             )}
 
-            <img src={images[currentImageIndex].url} alt={caption} />
+            {images[currentImageIndex] && (
+              <img src={images[currentImageIndex].url} alt={caption} />
+            )}
           </div>
 
           <div className='btns flex'>

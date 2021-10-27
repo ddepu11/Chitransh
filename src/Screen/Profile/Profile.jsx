@@ -9,6 +9,7 @@ import dummyDp from '../../images/dummyDp.png';
 import Loader from '../../Components/Loader';
 import Saved from './Saved/Saved';
 import UserPosts from '../Posts/UserPosts';
+import CircleLoader from '../../Components/CircleLoader';
 
 const Profile = () => {
   const {
@@ -36,6 +37,7 @@ const Profile = () => {
     closeFollowDialog,
     handleFollowingFollwersDialog,
     id,
+    followUnfollowLoading,
   } = useProfileLogic();
 
   const isProfileEmpty = Object.keys(profile).length === 0;
@@ -69,7 +71,7 @@ const Profile = () => {
     website = info.website;
   }
 
-  if (userLoading || loading) {
+  if (userLoading) {
     return <Loader />;
   }
 
@@ -344,17 +346,21 @@ const Profile = () => {
                 </h3>
               </div>
 
-              <div className='following flex'>
-                <h3
-                  data-view='following'
-                  onClick={handleFollowingFollwersDialog}
-                >
-                  {!isProfileEmpty
-                    ? profile.following.length
-                    : info.following.length}
-                  <span className='heading'>following</span>
-                </h3>
-              </div>
+              {followUnfollowLoading ? (
+                <CircleLoader wrapperMargin='0 auto' />
+              ) : (
+                <div className='following flex'>
+                  <h3
+                    data-view='following'
+                    onClick={handleFollowingFollwersDialog}
+                  >
+                    {!isProfileEmpty
+                      ? profile.following.length
+                      : info.following.length}
+                    <span className='heading'>following</span>
+                  </h3>
+                </div>
+              )}
             </div>
 
             <div className='bottom flex'>

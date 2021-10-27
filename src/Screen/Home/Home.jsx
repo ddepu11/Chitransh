@@ -3,29 +3,34 @@ import Loader from '../../Components/Loader';
 import Feed from './Feed/Feed';
 import Post from '../../Components/Post/Post';
 import useHomeLogic from './Logic/useHomeLogic';
+import CircleLoader from '../../Components/CircleLoader';
 
 const Home = () => {
-  const { userLoading, allPosts, postLoading, info, id } = useHomeLogic();
+  const { userLoading, allPosts, info, id, loading } = useHomeLogic();
 
-  if (userLoading || postLoading) {
+  if (userLoading) {
     return <Loader />;
   }
 
   return (
     <Wrapper className='w-960 '>
-      <HomeDiv className='home'>
-        {allPosts.length !== 0 ? (
-          allPosts.map((post) => <Post key={post.id} post={post} />)
-        ) : (
-          <div className='no_posts flex'>
-            <h1>Sorry, there are no post to see!</h1>
+      {loading ? (
+        <CircleLoader cirH='50px' cirW='50px' wrapperMargin='0 auto' />
+      ) : (
+        <HomeDiv className='home'>
+          {allPosts.length !== 0 ? (
+            allPosts.map((post) => <Post key={post.id} post={post} />)
+          ) : (
+            <div className='no_posts flex'>
+              <h1>Sorry, there are no post to see!</h1>
 
-            <p>
-              You need to follow people or create your own posts to see posts
-            </p>
-          </div>
-        )}
-      </HomeDiv>
+              <p>
+                You need to follow people or create your own posts to see posts
+              </p>
+            </div>
+          )}
+        </HomeDiv>
+      )}
 
       {info && <Feed info={info} id={id} />}
     </Wrapper>

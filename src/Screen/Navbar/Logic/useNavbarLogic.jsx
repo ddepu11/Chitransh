@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { getDocs, query, collection, orderBy } from 'firebase/firestore';
-import usePostsOperation from '../../../Components/usePostsOperation';
+import { getDocs, query, collection, where } from 'firebase/firestore';
 import { authInstance, firestoreInstance } from '../../../config/firebase';
 
 import {
@@ -10,7 +9,7 @@ import {
   notificationShowInfo,
 } from '../../../features/notification';
 import { userLoadingEnds } from '../../../features/user';
-import { clearPosts, postsLoadingBegins } from '../../../features/posts';
+import { clearPosts } from '../../../features/posts';
 
 const useNavbarLogic = () => {
   const dispatch = useDispatch();
@@ -143,7 +142,7 @@ const useNavbarLogic = () => {
   const getNotifications = async () => {
     const q = query(
       collection(firestoreInstance, 'notifications'),
-      orderBy('createdOn', 'desc')
+      where('sendToUserId', '==', id)
     );
 
     const myNotificationsSnap = await getDocs(q);
@@ -152,12 +151,13 @@ const useNavbarLogic = () => {
     let index = 0;
 
     myNotificationsSnap.forEach((doc) => {
-      if (doc.get('sendToUserId') === id) {
-        newNotifications.push(doc.data());
-      }
+      newNotifications.push(doc.data());
 
       if (index === myNotificationsSnap.size - 1) {
-        setNotifications(newNotifications);
+        setNotifications(
+          newNotifications.sort((a, b) => b.createdOn - a.createdOn)
+        );
+
         setLoading(false);
       }
 
@@ -216,13 +216,8 @@ const useNavbarLogic = () => {
     dropDownFromAvatar.current.classList.remove('active');
   };
 
-  const { getUpdatedPosts } = usePostsOperation();
-
   const handleClickOnLogo = async () => {
     setActiveIcon('home');
-
-    dispatch(postsLoadingBegins());
-    getUpdatedPosts(info, id);
   };
 
   return {

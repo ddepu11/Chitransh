@@ -2,16 +2,28 @@ import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import dummyDp from '../../../images/dummyDp.png';
-import Loader from '../../../Components/Loader';
 import useFeedLogic from './Logic/useFeedLogic';
 import Button from '../../../Components/Button';
+import CircleLoader from '../../../Components/CircleLoader';
 
 const Feed = ({ info, id }) => {
-  const { users, loading, followAPerson } = useFeedLogic(info, id);
+  const { users, loading, followAPerson, followLoading } = useFeedLogic(
+    info,
+    id
+  );
 
-  if (loading) {
-    return <Loader />;
+  if (loading || followLoading) {
+    return (
+      <CircleLoader
+        cirH='50px'
+        cirW='50px'
+        wrapperMargin='0 auto'
+        wrapperH='400px'
+      />
+    );
   }
+
+  // <CircleLoader cirH='20px' cirW='20px' wrapperMargin='0 auto' />
 
   return (
     <Wrapper>

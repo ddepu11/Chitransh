@@ -12,6 +12,7 @@ const useUserOperation = () => {
       const userDocRef = doc(firestoreInstance, 'users', docId);
 
       const docSnap = await getDoc(userDocRef);
+      
       dispatch(updateInfo(docSnap.data()));
     } catch (err) {
       dispatch(notificationShowError({ msg: err.code.toString().slice(5) }));

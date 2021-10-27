@@ -1,7 +1,7 @@
 import {
   collection,
-  orderBy,
-  getDocs,
+  where,
+  onSnapshot,
   query,
   doc,
   updateDoc,
@@ -10,14 +10,12 @@ import {
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import useNotificationOperations from '../../../../Components/useNotificationOperations';
-import usePostsOperation from '../../../../Components/usePostsOperation';
 import useUserOperation from '../../../../Components/useUserOperations';
 import { firestoreInstance } from '../../../../config/firebase';
 import {
   notificationShowError,
   notificationShowInfo,
 } from '../../../../features/notification';
-import { clearPosts } from '../../../../features/posts';
 
 const useFeedLogic = (info, id) => {
   const dispatch = useDispatch();
@@ -30,65 +28,47 @@ const useFeedLogic = (info, id) => {
   useEffect(() => {
     mounted.current = true;
 
-    const fetchSuggestFollowers = async () => {
-      try {
-        const usersCollection = collection(firestoreInstance, 'users');
+    setLoading(true);
 
-        const q = query(usersCollection, orderBy('createdOn', 'desc'));
+    const q = query(
+      collection(firestoreInstance, 'users'),
+      where('__name__', 'not-in', [...info.following, id])
+    );
 
-        const usersSnap = await getDocs(q);
+    const unsub = onSnapshot(q, (usersSnap) => {
+      let index = 0;
+      const newUsers = [];
 
-        let index = 0;
-        const newUsers = [];
+      usersSnap.forEach((u) => {
+        newUsers.push({ ...u.data(), userDocId: u.id });
 
-        usersSnap.forEach((u) => {
-          if (
-            info.following.length !== 0 &&
-            !info.following.includes(u.id) &&
-            u.id !== id
-          ) {
-            newUsers.push({ ...u.data(), userDocId: u.id });
+        // At the end of usersSnap store new Users in users state
+        if (index === usersSnap.size - 1) {
+          if (mounted.current) {
+            setUsers(newUsers.sort((a, b) => b.createdOn - a.createdOn));
+            setLoading(false);
           }
+        }
 
-          // Runs when you have no followers
-          if (info.following.length === 0) {
-            if (u.id !== id) {
-              newUsers.push({ ...u.data(), userDocId: u.id });
-            }
-          }
-
-          // At the end of usersSnap store new Users in users state
-          if (index === usersSnap.size - 1) {
-            if (mounted.current) {
-              setUsers(newUsers);
-              setLoading(false);
-            }
-          }
-
-          index += 1;
-        });
-      } catch (err) {
-        dispatch(notificationShowError({ msg: err.code.toString().slice(5) }));
-        if (mounted.current) setLoading(false);
-      }
-    };
-
-    if (mounted.current) setLoading(true);
-    fetchSuggestFollowers();
+        index += 1;
+      });
+    });
 
     return () => {
       mounted.current = false;
+      unsub();
     };
   }, [dispatch, id, info.following]);
 
   const { getUpdatedUserDoc } = useUserOperation();
   const { sendNotification } = useNotificationOperations();
-  const { getUpdatedPosts } = usePostsOperation();
+
+  const [followLoading, setFollowLoading] = useState(false);
 
   const followAPerson = async (e) => {
-    const personDocId = e.target.getAttribute('data-value');
+    setFollowLoading(true);
 
-    setLoading(true);
+    const personDocId = e.target.getAttribute('data-value');
 
     try {
       // Adding my id in person's followers array whom you  gonna follow
@@ -98,6 +78,7 @@ const useFeedLogic = (info, id) => {
 
       // Add person's id whom you gonna follow, in logged in user's following array
       const userRef = doc(firestoreInstance, 'users', id);
+
       await updateDoc(userRef, {
         following: arrayUnion(personDocId),
       });
@@ -119,13 +100,9 @@ const useFeedLogic = (info, id) => {
       await sendNotification(personDocId, notification);
 
       setTimeout(async () => {
-        dispatch(clearPosts());
-
         await getUpdatedUserDoc(id);
 
-        await getUpdatedPosts(info, id);
-
-        setLoading(false);
+        setFollowLoading(false);
 
         dispatch(
           notificationShowInfo({ msg: 'Successfully followed a person!' })
@@ -134,11 +111,11 @@ const useFeedLogic = (info, id) => {
     } catch (err) {
       dispatch(notificationShowError({ msg: err.code.toString().slice(5) }));
 
-      setLoading(false);
+      setFollowLoading(true);
     }
   };
 
-  return { users, loading, followAPerson };
+  return { users, loading, followAPerson, followLoading };
 };
 
 export default useFeedLogic;
