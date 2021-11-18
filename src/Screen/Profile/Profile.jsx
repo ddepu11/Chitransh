@@ -262,7 +262,7 @@ const Profile = () => {
         </ViewFollowing>
       )}
 
-      <Wrapper className='w-960'>
+      <Wrapper className='w-960' userId={userId}>
         <div className='dp_and_details flex'>
           <div className='dp' onClick={openChangeDpDialog}>
             {dpLoading ? (
@@ -475,18 +475,20 @@ const Wrapper = styled.main`
     }
 
     .dp:hover {
-      cursor: pointer;
+      cursor: ${({ userId }) => !userId && 'pointer'};
     }
+
     .dp:hover::after {
       content: 'Change profile photo';
       background-color: #333;
       color: #f3f0f0;
-      font-size: 0.8em;
-      padding: 4px 5px;
       border-radius: 5px;
-      position: absolute;
       top: 20px;
       right: 00px;
+      position: absolute;
+
+      font-size: ${({ userId }) => (!userId ? '0.8em' : '0')};
+      padding: ${({ userId }) => (!userId ? '4px 5px' : '0')};
     }
 
     .details {
