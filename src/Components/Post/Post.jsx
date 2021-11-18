@@ -424,13 +424,13 @@ const Post = ({ post, viewPost }) => {
             <Button
               type='button'
               bgColor='transparent'
-              color={comment ? '#0095f6' : '#92c9ee'}
+              color={comment.length !== 0 ? '#0095f6' : '#92c9ee'}
               fs='0.9em'
-              isDisabled={comment ? 0 : 1}
+              isDisabled={comment.length !== 0 ? 0 : 1}
               handleClick={postComment}
               transform='scale(1)'
               transition='all 0.5s ease'
-              cursorOnHover={comment ? 'pointer' : 'default'}
+              cursorOnHover={comment.length !== 0 ? 'pointer' : 'default'}
             >
               <span style={{ fontWeight: '700' }}>Post</span>
             </Button>
