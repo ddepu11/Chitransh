@@ -3,7 +3,7 @@ import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import { Link } from 'react-router-dom';
 import FavoriteBorderOutlinedIcon from '@material-ui/icons/FavoriteBorderOutlined';
 import FavoriteOutlinedIcon from '@material-ui/icons/FavoriteOutlined';
-import ModeCommentOutlinedIcon from '@material-ui/icons/ModeCommentOutlined';
+// import ModeCommentOutlinedIcon from '@material-ui/icons/ModeCommentOutlined';
 import FiberManualRecordRounded from '@material-ui/icons/FiberManualRecordRounded';
 import BookmarkIcon from '@material-ui/icons/Bookmark';
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
@@ -14,6 +14,7 @@ import CloseOutlined from '@material-ui/icons/CloseOutlined';
 import Button from '../Button';
 import dummyDp from '../../images/dummyDp.png';
 import usePostLogic from './Logic/usePostLogic';
+import CircleLoader from '../CircleLoader';
 
 const Post = ({ post, viewPost }) => {
   const { caption, images, likes, userDpUrl, userName, userId } = post;
@@ -41,6 +42,8 @@ const Post = ({ post, viewPost }) => {
     id,
     amIFollowingThePersonWhoCreatedThisPost,
     unfollowAPerson,
+    savePostLoading,
+    likePostLoading,
   } = usePostLogic(post);
 
   return (
@@ -207,9 +210,10 @@ const Post = ({ post, viewPost }) => {
                           onClick={likeThePost}
                         />
                       )}
-                      <label htmlFor='comment'>
+
+                      {/* <label htmlFor='comment'>
                         <ModeCommentOutlinedIcon className='ic_comment' />
-                      </label>
+                      </label> */}
                     </div>
 
                     <div className='btn_save'>
@@ -313,21 +317,27 @@ const Post = ({ post, viewPost }) => {
 
           <div className='btns flex'>
             <div className='btn_left flex'>
-              {didYouLikedThePost ? (
-                <FavoriteOutlinedIcon
-                  className='ic_dislike'
-                  onClick={dislikeThePost}
-                />
+              {likePostLoading ? (
+                <CircleLoader wrapperMargin='8px 0 0 8px' />
               ) : (
-                <FavoriteBorderOutlinedIcon
-                  className='ic_like'
-                  onClick={likeThePost}
-                />
+                <>
+                  {didYouLikedThePost ? (
+                    <FavoriteOutlinedIcon
+                      className='ic_dislike'
+                      onClick={dislikeThePost}
+                    />
+                  ) : (
+                    <FavoriteBorderOutlinedIcon
+                      className='ic_like'
+                      onClick={likeThePost}
+                    />
+                  )}
+                </>
               )}
 
-              <label htmlFor='comment'>
+              {/* <label htmlFor='comment'>
                 <ModeCommentOutlinedIcon className='ic_comment' />
-              </label>
+              </label> */}
             </div>
 
             {images.length > 1 && (
@@ -343,16 +353,20 @@ const Post = ({ post, viewPost }) => {
               </div>
             )}
 
-            <div className='btn_save'>
-              {didYouSavedThePost ? (
-                <BookmarkIcon className='ic_saved' onClick={unSavePost} />
-              ) : (
-                <BookmarkBorderOutlinedIcon
-                  className='ic_save'
-                  onClick={savePost}
-                />
-              )}
-            </div>
+            {savePostLoading ? (
+              <CircleLoader wrapperMargin='8px 0' />
+            ) : (
+              <div className='btn_save'>
+                {didYouSavedThePost ? (
+                  <BookmarkIcon className='ic_saved' onClick={unSavePost} />
+                ) : (
+                  <BookmarkBorderOutlinedIcon
+                    className='ic_save'
+                    onClick={savePost}
+                  />
+                )}
+              </div>
+            )}
           </div>
 
           <div className='likes'>{likes} likes</div>
