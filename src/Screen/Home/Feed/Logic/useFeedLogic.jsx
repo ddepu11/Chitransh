@@ -99,15 +99,13 @@ const useFeedLogic = (info, id) => {
 
       await sendNotification(personDocId, notification);
 
-      setTimeout(async () => {
-        await getUpdatedUserDoc(id);
+      await getUpdatedUserDoc(id);
 
-        setFollowLoading(false);
+      setFollowLoading(false);
 
-        dispatch(
-          notificationShowInfo({ msg: 'Successfully followed a person!' })
-        );
-      }, 2000);
+      dispatch(
+        notificationShowInfo({ msg: 'Successfully followed a person!' })
+      );
     } catch (err) {
       dispatch(notificationShowError({ msg: err.code.toString().slice(5) }));
 
