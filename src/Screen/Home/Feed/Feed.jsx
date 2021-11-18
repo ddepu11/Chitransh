@@ -1,10 +1,8 @@
-import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import dummyDp from '../../../images/dummyDp.png';
 import useFeedLogic from './Logic/useFeedLogic';
-import Button from '../../../Components/Button';
 import CircleLoader from '../../../Components/CircleLoader';
+import SuggestedUser from './SuggestedUser';
 
 const Feed = ({ info, id }) => {
   const { users, loading, followAPerson, followLoading } = useFeedLogic(
@@ -12,7 +10,7 @@ const Feed = ({ info, id }) => {
     id
   );
 
-  if (loading || followLoading) {
+  if (loading) {
     return (
       <CircleLoader
         cirH='50px'
@@ -22,8 +20,6 @@ const Feed = ({ info, id }) => {
       />
     );
   }
-
-  // <CircleLoader cirH='20px' cirW='20px' wrapperMargin='0 auto' />
 
   return (
     <Wrapper>
@@ -42,33 +38,14 @@ const Feed = ({ info, id }) => {
 
       {users.length !== 0 ? (
         users.map((item) => (
-          <div className='row flex' key={item.id}>
-            <div className='far_left flex'>
-              <div className='dp'>
-                <img src={item.dp.url === '' ? dummyDp : item.dp.url} alt='' />
-              </div>
-
-              <Link to={`/profile/${item.userDocId}/`} className='username'>
-                {item.userName}
-              </Link>
-            </div>
-
-            {/* {console.log(item)} */}
-
-            <Button
-              type='button'
-              bgColor='transparent'
-              bSh=''
-              transform='scale(1)'
-              color='#0095f6'
-              fs='0.87em'
-              fWeight='700'
-              handleClick={followAPerson}
-              dataVal={item.userDocId}
-            >
-              Follow
-            </Button>
-          </div>
+          <SuggestedUser
+            key={item.id}
+            item={item}
+            followLoading={followLoading}
+            followAPerson={followAPerson}
+            id={id}
+            info={info}
+          />
         ))
       ) : (
         <h3 className='no_suggestion'>Sorry there are no suggestion</h3>
