@@ -11,9 +11,10 @@ const Saved = ({ info }) => {
 
   useEffect(() => {
     const getPosts = async () => {
-      info.savedPostsIds.forEach(async (savedPostId, index) => {
-        const newPosts = [];
+      let index = 0;
+      const newPosts = [];
 
+      info.savedPostsIds.forEach(async (savedPostId) => {
         const q = query(
           collection(firestoreInstance, 'posts'),
           where('id', '==', savedPostId)
@@ -31,6 +32,8 @@ const Saved = ({ info }) => {
         } else {
           setLoading(false);
         }
+
+        index += 1;
       });
     };
 
