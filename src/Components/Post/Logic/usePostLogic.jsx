@@ -250,68 +250,66 @@ const usePostLogic = (post) => {
   };
 
   const postComment = async () => {
-    setLoading(true);
+    if (comment.trim().length === 0) {
+      dispatch(notificationShowError({ msg: 'Comment is empty!' }));
 
-    const finalComment = {
-      id: uuidv4(),
-      userName: info.userName,
-      userId: id,
-      userDpUrl: info.dp.url,
-      comment,
-      createdOn: Date.now(),
-    };
+      setComment('');
+    } else {
+      setLoading(true);
 
-    try {
-      // add comment doc
-      const commentRef = await addDoc(
-        collection(firestoreInstance, 'comments'),
-        finalComment
-      );
-
-      // Add comment id in post's comment array
-      const postsCollectionReference = collection(firestoreInstance, 'posts');
-      const q = query(postsCollectionReference, where('id', '==', post.id));
-      const querySnapshot = await getDocs(q);
-
-      querySnapshot.forEach(async (p) => {
-        await updateDoc(doc(firestoreInstance, 'posts', p.id), {
-          comments: arrayUnion(commentRef.id),
-        });
-      });
-
-      // $%$$#$#$##$#$# Seperation #$#$$##$##$#
-      // Get that comment add it to comments array of state
-      const docRef = doc(firestoreInstance, 'comments', commentRef.id);
-      const commentSnap = await getDoc(docRef);
-
-      if (commentSnap.exists()) {
-        setComments((prevState) => [...prevState, commentSnap.data()]);
-      }
-
-      const notification = {
-        body: `commented on your post: ${comment}`,
-        sendToUserId: post.userId,
-        whoMade: {
-          userName: info.userName,
-          userId: id,
-          userDpUrl: info.dp.url,
-        },
-        postId: post.id,
-        postImg: post.images[0].url,
+      const finalComment = {
+        id: uuidv4(),
+        userName: info.userName,
+        userId: id,
+        userDpUrl: info.dp.url,
+        comment,
         createdOn: Date.now(),
       };
-
-      if (post.userId !== id) {
-        sendNotification(post.userId, notification);
+      try {
+        // add comment doc
+        const commentRef = await addDoc(
+          collection(firestoreInstance, 'comments'),
+          finalComment
+        );
+        // Add comment id in post's comment array
+        const postsCollectionReference = collection(firestoreInstance, 'posts');
+        const q = query(postsCollectionReference, where('id', '==', post.id));
+        const querySnapshot = await getDocs(q);
+        querySnapshot.forEach(async (p) => {
+          await updateDoc(doc(firestoreInstance, 'posts', p.id), {
+            comments: arrayUnion(commentRef.id),
+          });
+        });
+        // $%$$#$#$##$#$# Seperation #$#$$##$##$#
+        // Get that comment add it to comments array of state
+        const docRef = doc(firestoreInstance, 'comments', commentRef.id);
+        const commentSnap = await getDoc(docRef);
+        if (commentSnap.exists()) {
+          setComments((prevState) => [...prevState, commentSnap.data()]);
+        }
+        const notification = {
+          body: `commented on your post: ${comment}`,
+          sendToUserId: post.userId,
+          whoMade: {
+            userName: info.userName,
+            userId: id,
+            userDpUrl: info.dp.url,
+          },
+          postId: post.id,
+          postImg: post.images[0].url,
+          createdOn: Date.now(),
+        };
+        if (post.userId !== id) {
+          sendNotification(post.userId, notification);
+        }
+        setComment('');
+        dispatch(notificationShowSuccess({ msg: 'successfully commented!' }));
+        setLoading(false);
+      } catch (err) {
+        dispatch(notificationShowError({ msg: err.code.toString().slice(5) }));
+        setComment('');
+        setLoading(false);
       }
-
-      setComment('');
-      dispatch(notificationShowSuccess({ msg: 'successfully commented!' }));
-      setLoading(false);
-    } catch (err) {
-      dispatch(notificationShowError({ msg: err.code.toString().slice(5) }));
-      setComment('');
-      setLoading(false);
     }
   };
 
