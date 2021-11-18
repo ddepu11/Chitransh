@@ -78,11 +78,11 @@ const useLogInLogic = () => {
     const users = [
       { email: 'ddepu11@gmail.com', password: 'aaaaaa' },
       { email: 'mohan11@gmail.com', password: 'aaaaaa' },
-      { email: 'aayush11@gmail.com', password: 'aaaaaa' },
+      { email: 'vibe.natureza11@gmail.com', password: 'aaaaaa' },
       { email: 'theprint22@yahoo.com', password: 'aaaaaa' },
       { email: 'vickykaushal09@gmail.com', password: 'aaaaaa' },
       { email: 'theweekend34@gmail.com', password: 'aaaaaa' },
-      { email: 'vibe.natureza11@gmail.com', password: 'aaaaaa' },
+      { email: 'aayush11@gmail.com', password: 'aaaaaa' },
     ];
     const randomUsers = Math.floor(Math.random() * users.length);
 
