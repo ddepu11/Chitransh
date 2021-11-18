@@ -18,6 +18,7 @@ import {
   notificationShowSuccess,
 } from '../../../features/notification';
 import setValidationMessage from '../../../utils/setValidationMessage';
+import dummyDp from '../../../images/dummyDp.png';
 
 const useCreatePostLogic = (handleCloseCreatePost) => {
   const dispatch = useDispatch();
@@ -214,6 +215,12 @@ const useCreatePostLogic = (handleCloseCreatePost) => {
     );
   };
 
+  let imageErc = dummyDp;
+
+  if (info.dp.fileName !== 'dummyDp') {
+    imageErc = info.dp.url;
+  }
+
   return {
     handleRemoveImage,
     handleUpload,
@@ -229,6 +236,8 @@ const useCreatePostLogic = (handleCloseCreatePost) => {
     caption,
     captionValidationMessageTag,
     loading,
+    info,
+    imageErc,
   };
 };
 

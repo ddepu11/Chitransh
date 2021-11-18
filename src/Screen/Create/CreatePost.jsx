@@ -24,6 +24,8 @@ const CreatePost = ({ handleCloseCreatePost }) => {
     caption,
     captionValidationMessageTag,
     loading,
+    info,
+    imageErc,
   } = useCreatePostLogic(handleCloseCreatePost);
 
   // if (!loading) {
@@ -128,10 +130,10 @@ const CreatePost = ({ handleCloseCreatePost }) => {
                 <div className='caption_top'>
                   <div className='user_name_dp flex'>
                     <div className='dp'>
-                      <img src='https://i.pravatar.cc/300' alt='dp' />
+                      <img src={imageErc} alt={info.userName} />
                     </div>
 
-                    <div className='username'>ddepu11</div>
+                    <div className='username'>{info.userName}</div>
                   </div>
 
                   <div className='caption_div'>
