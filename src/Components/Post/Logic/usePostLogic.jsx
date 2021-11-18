@@ -112,9 +112,11 @@ const usePostLogic = (post) => {
     didYouLikedThePost = true;
   }
 
+  const [likePostLoading, setLikePostLoading] = useState(false);
+
   const likeThePost = async () => {
     if (!didYouLikedThePost) {
-      setLoading(true);
+      setLikePostLoading(true);
 
       try {
         const userDocRef = doc(firestoreInstance, 'users', id);
@@ -146,21 +148,21 @@ const usePostLogic = (post) => {
 
         await getUpdatedUserDoc(id);
 
-        setLoading(false);
+        setLikePostLoading(false);
 
         dispatch(
           notificationShowSuccess({ msg: 'Successfully liked the post!' })
         );
       } catch (err) {
         dispatch(notificationShowError({ msg: err.code.toString().slice(5) }));
-        setLoading(false);
+        setLikePostLoading(false);
       }
     }
   };
 
   const dislikeThePost = async () => {
     if (didYouLikedThePost) {
-      setLoading(true);
+      setLikePostLoading(true);
 
       try {
         const userDocRef = doc(firestoreInstance, 'users', id);
@@ -173,14 +175,14 @@ const usePostLogic = (post) => {
 
         await getUpdatedUserDoc(id);
 
-        setLoading(false);
+        setLikePostLoading(false);
 
         dispatch(
           notificationShowSuccess({ msg: 'Successfully disliked the post!' })
         );
       } catch (err) {
         dispatch(notificationShowError({ msg: err.code.toString().slice(5) }));
-        setLoading(false);
+        setLikePostLoading(false);
       }
     }
   };
@@ -194,9 +196,11 @@ const usePostLogic = (post) => {
     didYouSavedThePost = true;
   }
 
+  const [savePostLoading, setSavePostLoading] = useState(false);
+
   const savePost = async () => {
     if (!didYouSavedThePost) {
-      setLoading(true);
+      setSavePostLoading(true);
 
       try {
         const userDocRef = doc(firestoreInstance, 'users', id);
@@ -205,21 +209,21 @@ const usePostLogic = (post) => {
 
         await getUpdatedUserDoc(id);
 
-        setLoading(false);
+        setSavePostLoading(false);
 
         dispatch(
           notificationShowSuccess({ msg: 'Successfully saved the post!' })
         );
       } catch (err) {
         dispatch(notificationShowError({ msg: err.code.toString().slice(5) }));
-        setLoading(false);
+        setSavePostLoading(false);
       }
     }
   };
 
   const unSavePost = async () => {
     if (didYouSavedThePost) {
-      setLoading(true);
+      setSavePostLoading(true);
 
       try {
         const userDocRef = doc(firestoreInstance, 'users', id);
@@ -228,10 +232,10 @@ const usePostLogic = (post) => {
 
         await getUpdatedUserDoc(id);
 
-        setLoading(false);
+        setSavePostLoading(false);
       } catch (err) {
         dispatch(notificationShowError({ msg: err.code.toString().slice(5) }));
-        setLoading(false);
+        setSavePostLoading(false);
       }
     }
   };
@@ -436,6 +440,8 @@ const usePostLogic = (post) => {
     openDialog,
     closeViewPost,
     amIFollowingThePersonWhoCreatedThisPost,
+    savePostLoading,
+    likePostLoading,
   };
 };
 
