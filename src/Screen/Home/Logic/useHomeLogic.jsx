@@ -23,7 +23,7 @@ const useHomeLogic = () => {
 
     let unsub = () => {};
 
-    if (info) {
+    if (hasUserLoggedIn) {
       setLoading(true);
 
       const q = query(
@@ -55,7 +55,7 @@ const useHomeLogic = () => {
     return () => {
       unsub();
     };
-  }, [hasUserLoggedIn, history, dispatch, id, info]);
+  }, [hasUserLoggedIn, history, dispatch, id]);
 
   return {
     userLoading,
